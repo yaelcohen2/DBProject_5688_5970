@@ -1,7 +1,6 @@
 -- 1. Table for physical rooms
 CREATE TABLE ROOM (
-  roomID SERIAL PRIMARY KEY, -- Auto-incrementing identifier
-  roomNumber VARCHAR(10) NOT NULL -- Room designation (e.g., '101A', '505')
+  roomID SERIAL PRIMARY KEY
 );
 
 COMMENT ON TABLE ROOM IS 'Physical room records within the hotel';
