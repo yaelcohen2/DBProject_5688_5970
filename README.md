@@ -1,4 +1,5 @@
-
+איפיון המערכת - שנוצר על ידי Google AI Studio
+https://aistudio.google.com/apps/1c574e94-81fa-401e-82d4-e36bce312f38?showPreview=true&showAssistant=true
 
 ## 📋 Overview
 המערכת הינה פלטפורמה לניהול מחלקת משק בית (Housekeeping) בבית מלון, המיועדת לייעל את תהליכי הניקיון, התחזוקה והפיקוח בצורה חכמה ומסודרת.
