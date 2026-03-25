@@ -1,8 +1,6 @@
 -- 1. Table for physical rooms
 CREATE TABLE ROOM (
-  roomID SERIAL PRIMARY KEY,
-  roomNumber VARCHAR(10) NOT NULL,
-  floor INT NOT NULL
+  roomID SERIAL PRIMARY KEY
 );
 
 COMMENT ON TABLE ROOM IS 'Physical room records within the hotel';
@@ -99,7 +97,7 @@ COMMENT ON TABLE BELONGSTO IS 'Mapping table linking employees to their assigned
 CREATE TABLE USES (
   suppliesID INT NOT NULL,
   taskID INT NOT NULL,
-  quantityUsed INT DEFAULT 1 CHECK (quantityUsed > 0),
+  quantityUsed INT DEFAULT 1 CHECK (quantityUsed > 0)
   PRIMARY KEY (suppliesID, taskID),
   CONSTRAINT fk_uses_supply FOREIGN KEY (suppliesID) REFERENCES CLEANINGSUPPLIES(suppliesID),
   CONSTRAINT fk_uses_task FOREIGN KEY (taskID) REFERENCES HOUSEKEEPINGTASK(taskID)

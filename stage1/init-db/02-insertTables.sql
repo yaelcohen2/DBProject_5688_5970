@@ -6,52 +6,47 @@ DECLARE
     i INT;
 BEGIN
     -- 1. הכנסת נתוני בסיס (Lookup Data)
-    -- שימוש בגרשיים כפולות מבטיח ש-Postgres ימצא את הטבלה בדיוק בשם הזה
-    INSERT INTO "housekeepingstatus" ("statusname") VALUES 
-    ('Dirty'), ('In Progress'), ('Clean'), ('Inspected'), ('Maintenance Required') 
-    ON CONFLICT DO NOTHING;
-
-    INSERT INTO "tasktype" ("name") VALUES 
-    ('Deep Clean'), ('Stay-over'), ('Check-out'), ('Turn-down'), ('Sanitization') 
-    ON CONFLICT DO NOTHING;
+    INSERT INTO HOUSEKEEPINGSTATUS (statusName) VALUES ('Dirty'), ('In Progress'), ('Clean'), ('Inspected'), ('Maintenance Required') ON CONFLICT DO NOTHING;
+    INSERT INTO TASKTYPE (name) VALUES ('Deep Clean'), ('Stay-over'), ('Check-out'), ('Turn-down'), ('Sanitization') ON CONFLICT DO NOTHING;
 
     -- 2. הכנסת 500 חדרים
     FOR i IN 1..500 LOOP
-        INSERT INTO "room" ("roomnumber", "floor") 
+        INSERT INTO ROOM (roomNumber, floor) 
         VALUES ('R-' || (100 + i), (floor(random() * 5) + 1)) ON CONFLICT DO NOTHING;
     END LOOP;
 
     -- 3. הכנסת 500 עובדים
     FOR i IN 1..500 LOOP
-        INSERT INTO "housekeepingemployee" ("name", "shiftid") 
+        INSERT INTO HOUSEKEEPINGEMPLOYEE (name, shiftID) 
         VALUES ('Employee_' || i, (floor(random() * 3) + 1)) ON CONFLICT DO NOTHING;
     END LOOP;
 
-    -- 4. הכנסת 500 פריטי ציוד (N אחת לפי ה-Schema שלך)
+    -- 4. הכנסת 500 פריטי ציוד (תיקון איות: N אחת)
     FOR i IN 1..500 LOOP
-        INSERT INTO "cleaningsupplies" ("name", "quantity") 
+        INSERT INTO CLEANINGSUPPLIES (name, quantity) 
         VALUES ('Supply_Item_' || i, floor(random() * 1000) + 100) ON CONFLICT DO NOTHING;
     END LOOP;
 
     -- 5. הכנסת 500 משימות
     FOR i IN 1..500 LOOP
-        INSERT INTO "housekeepingtask" ("roomid", "tasktypeid", "statusid", "priority", "duedate")
+        INSERT INTO HOUSEKEEPINGTASK (roomID, taskTypeID, statusID, priority, dueDate)
         VALUES (i, (floor(random() * 5) + 1), (floor(random() * 5) + 1), (floor(random() * 5) + 1), CURRENT_DATE + (i % 30)) ON CONFLICT DO NOTHING;
     END LOOP;
 
-    -- 6. הכנסת 20,000 שורות ליומן (N אחת לפי ה-Schema שלך)
+    -- 6. הכנסת 20,000 שורות ליומן (תיקון איות: N אחת)
     FOR i IN 1..20000 LOOP
-        INSERT INTO "cleaninglog" ("taskid", "employeeid", "starttime", "endtime", "comment")
+        INSERT INTO CLEANINGLOG (taskID, employeeID, startTime, endTime, comment)
         VALUES ((floor(random() * 500) + 1), (floor(random() * 500) + 1), CURRENT_TIMESTAMP - (random() * INTERVAL '60 days'), CURRENT_TIMESTAMP - (random() * INTERVAL '59 days'), 'Completed #' || i);
     END LOOP;
 
     -- 7. הכנסת 20,000 שורות לשימוש בציוד
     FOR i IN 1..20000 LOOP
-        INSERT INTO "uses" ("suppliesid", "taskid", "quantityused")
+        INSERT INTO USES (suppliesID, taskID, quantityUsed)
         VALUES ((floor(random() * 500) + 1), (floor(random() * 500) + 1), (floor(random() * 5) + 1)) ON CONFLICT DO NOTHING;
     END LOOP;
 
 END $$;
+
 
 
 -- ======================================================
