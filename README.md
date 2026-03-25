@@ -1,41 +1,52 @@
+# 🏨 Project Report
+
+This project represents a comprehensive Hotel Management System, with this specific unit dedicated to **Housekeeping**.
+
+**Authors:** Shani Levy and Yael Cohen
+
+## 📑 Table of Contents
+- [Overview](#-overview)
+
+---
+
 איפיון המערכת - שנוצר על ידי Google AI Studio
 https://aistudio.google.com/apps/45d4298d-a5b6-4634-97e4-b68336430388?showPreview=true&showAssistant=true
 
 ## 📋 Overview
-המערכת הינה פלטפורמה לניהול מחלקת משק בית (Housekeeping) בבית מלון, המיועדת לייעל את תהליכי הניקיון, התחזוקה והפיקוח בצורה חכמה ומסודרת.
-המערכת מאפשרת מעקב וניהול אחר הישויות הבאות:
+The system is a platform for managing the Housekeeping department in a hotel, designed to streamline cleaning, maintenance, and supervision processes in a smart and organized manner.
+The system allows tracking and management of the following entities:
 
-  **חדרים (`ROOM`)**:
-    ניהול רשימת החדרים הפיזיים במלון ומעקב שוטף.
+  **Rooms (`ROOM`)**:
+    Managing the list of physical rooms in the hotel and ongoing monitoring.
 
-  **משימות וסוגי ניקיון (`TASKTYPE`, `HOUSEKEPINGTASK`)**:
-    הגדרת סוגי משימות (כגון ניקיון יסודי, סידור ערב) ושיבוץ משימות ספציפיות לחדרים, כולל תעדוף (Priority) ותאריכי יעד.
+  **Tasks and Cleaning Types (`TASKTYPE`, `HOUSEKEPINGTASK`)**:
+    Defining task types (such as deep cleaning, evening turndown) and scheduling specific tasks for rooms, including priority and deadlines.
 
-  **סטטוסים (`HOUSEKEEPINGSTATUS`)**:
-    מעקב בזמן אמת אחר סטטוס החדר/המשימה (למשל: מלוכלך, בביצוע, נקי, נבדק).
+  **Statuses (`HOUSEKEEPINGSTATUS`)**:
+    Real-time tracking of room/task status (e.g., dirty, in progress, clean, inspected).
 
-  **עובדים (`HOUSEKEEPINGEMPLOYEE`)**:
-    ניהול פרטי עובדי משק הבית וסידורי המשמרות שלהם.
+  **Employees (`HOUSEKEEPINGEMPLOYEE`)**:
+    Managing housekeeping employee details and shift schedules.
 
-  **יומן ביצוע (`CLEANNINGLOG`)**:
-    תיעוד דיגיטלי בזמן אמת של ביצוע המשימות, כולל שעות התחלה וסיום והערות עובדים.
+  **Execution Log (`CLEANNINGLOG`)**:
+    Real-time digital documentation of task execution, including start/end times and employee notes.
 
-  **בקרת איכות (`ROOMCHECK`)**:
-    ביצוע בדיקות על ידי מפקחים, מתן ציוני איכות לניקיון ושמירת היסטוריית הבדיקות לשיפור מתמיד.
+  **Quality Control (`ROOMCHECK`)**:
+    Inspections performed by supervisors, assigning quality scores for cleaning, and maintaining inspection history for continuous improvement.
 
-  **מלאי וחומרים (`CLEANNINGSUPPLIES`, `USES`)**:
-    ניהול מלאי חומרי הניקוי והכלים, ומעקב מדויק אחר הכמויות שנצרכו בכל משימה.
+  **Inventory and Supplies (`CLEANNINGSUPPLIES`, `USES`)**:
+    Managing inventory of cleaning supplies and tools, and precise tracking of quantities consumed per task.
 
-  **קשרי עובדים-משימות (`BELONGSTO`)**:
-    שיוך חכם של עובדים למשימות ספציפיות לביצוע יעיל.
+  **Employee-Task Relations (`BELONGSTO`)**:
+    Smart assignment of employees to specific tasks for efficient execution.
 
 ---
-**סיכום:** המערכת מספקת תמונת מצב עדכנית ושקופה על סטטוס החדרים, משפרת את יעילות העובדים ומייעלת את ניצול המשאבים במלון.
+**Summary:** The system provides an up-to-date and transparent view of room status, improves employee efficiency, and optimizes resource utilization in the hotel.
 
 ## 📊 ERD & DSD
 
-### Entity Relationship Diagram (ERD)
+### 🔗 Entity Relationship Diagram (ERD)
 ![ERD](stage1/ERD.png)
 
-### Data Structure Diagram (DSD)
+### 📉 Data Structure Diagram (DSD)
 ![DSD](stage1/DSD.png)
