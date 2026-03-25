@@ -13,10 +13,15 @@
 - [Backup & Restore Strategy](#-backup--restore-strategy)
 
 ---
+## 🔗 System Link
+[View the System in Google AI Studio](https://aistudio.google.com/apps/45d4298d-a5b6-4634-97e4-b68336430388?showPreview=true&showAssistant=true)
 
-איפיון המערכת - שנוצר על ידי Google AI Studio
-https://aistudio.google.com/apps/45d4298d-a5b6-4634-97e4-b68336430388?showPreview=true&showAssistant=true
+![screen1](stage1/images/screen1.jpeg)
+![screen2](stage1/images/screen2.jpeg)
+![screen3](stage1/images/screen3.jpeg)
+![screen4](stage1/images/screen4.jpeg)
 
+---
 ## 📋 Introduction
 The system is a platform for managing the Housekeeping department in a hotel, designed to streamline cleaning, maintenance, and supervision processes in a smart and organized manner.
 The system allows tracking and management of the following entities:
@@ -51,10 +56,10 @@ The system allows tracking and management of the following entities:
 ## 📊 ERD & DSD
 
 ### 🔗 Entity Relationship Diagram (ERD)
-![ERD](stage1/ERD.png)
+![ERD](stage1/images/ERD.png)
 
 ### 📉 Data Structure Diagram (DSD)
-![DSD](stage1/DSD.png)
+![DSD](stage1/images/DSD.png)
 
 ## 🔄 Insertion Methods
 
