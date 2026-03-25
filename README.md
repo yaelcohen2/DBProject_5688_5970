@@ -62,13 +62,11 @@ The system allows tracking and management of the following entities:
 We utilized **Mockaroo** to generate realistic and structured dummy data for our database tables. This tool allowed us to define specific data types (e.g., names, dates, custom lists) and ensure referential integrity between tables (Foreign Keys). The configuration involved setting up fields exactly matching our ERD, generating thousands of records to simulate a busy hotel environment.
 ![Mockaroo Configuration](stage1/images/mockaroo_config.jpeg)
 
-### Method 2: Process Flow
-The data pipeline follows a structured process:
-- **Schema Design**: Creating the ERD and DSD diagrams.
-- **Data Generation**: Using Mockaroo to produce raw data in CSV/SQL formats.
-- **Script Execution**: Running our custom Python script to parse and insert data.
-- **Database Population**: Storing the structured data into the RDBMS.
-![Process Diagram](stage1/images/Process.jpeg)
+### Method 2: Insert
+To populate the database, we use standard SQL `INSERT` statements generated from our data source.
+- **SQL Execution**: The `.sql` files containing the data are executed against the database tables.
+- **Data Integrity**: This direct method ensures that data is added in the correct sequence, respecting all foreign key constraints.
+![Insert Operation](stage1/images/Screenshot 2026-03-26 001110.png)
 
 ### Method 3: Scripted Insertion
 A dedicated Python script (`insert_data.py`) was developed to automate the data insertion process. The script handles:
@@ -78,8 +76,7 @@ A dedicated Python script (`insert_data.py`) was developed to automate the data 
 - Handling data type conversions (e.g., date formats) and error checking during insertion.
 ![Python Script](stage1/images/python_script.jpeg)
 
-## 💾 Backup & Restore Strategy
-
+### Method 4: Backup & Restore Strategy
 To ensure data safety and continuity, we implemented a robust backup and restore strategy. Regular SQL dumps of the entire database schema and data are generated.
 - **Backup**: Creating `.sql` snapshot files (e.g., `backup_19_03_2026.sql`) containing all logical data.
 - **Restore**: The ability to reconstruct the database state from these files in case of failure or data corruption.
