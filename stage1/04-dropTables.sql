@@ -1,15 +1,11 @@
--- 1. First, drop relationship and log tables (which depend on tasks, employees, and supplies)
-DROP TABLE IF EXISTS USES;
-DROP TABLE IF EXISTS BELONGSTO;
-DROP TABLE IF EXISTS CLEANNINGLOG;
-DROP TABLE IF EXISTS ROOMCHECK;
+DROP TABLE IF EXISTS "uses" CASCADE;
+DROP TABLE IF EXISTS "cleaninglog" CASCADE;
+DROP TABLE IF EXISTS "roomcheck" CASCADE;
+DROP TABLE IF EXISTS "belongsto" CASCADE;
+DROP TABLE IF EXISTS "housekeepingtask" CASCADE;
+DROP TABLE IF EXISTS "cleaningsupplies" CASCADE;
+DROP TABLE IF EXISTS "housekeepingemployee" CASCADE;
+DROP TABLE IF EXISTS "housekeepingstatus" CASCADE;
+DROP TABLE IF EXISTS "tasktype" CASCADE;
+DROP TABLE IF EXISTS "room" CASCADE;
 
--- 2. Next, drop the main transaction table (which depends on rooms, statuses, and types)
-DROP TABLE IF EXISTS HOUSEKEPINGTASK;
-
--- 3. Finally, drop the base lookup and entity tables (which have no foreign keys)
-DROP TABLE IF EXISTS CLEANINGSUPPLIES;
-DROP TABLE IF EXISTS HOUSEKEEPINGEMPLOYEE;
-DROP TABLE IF EXISTS HOUSEKEEPINGSTATUS;
-DROP TABLE IF EXISTS TASKTYPE;
-DROP TABLE IF EXISTS ROOM;
