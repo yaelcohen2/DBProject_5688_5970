@@ -66,7 +66,7 @@ We utilized **Mockaroo** to generate realistic and structured dummy data for our
 To populate the database, we use standard SQL `INSERT` statements generated from our data source.
 - **SQL Execution**: The `.sql` files containing the data are executed against the database tables.
 - **Data Integrity**: This direct method ensures that data is added in the correct sequence, respecting all foreign key constraints.
-![Insert Operation](stage1/images/Screenshot 2026-03-26 001110.png)
+![Insert Operation](stage1/images/Screenshot%202026-03-26%20001110.png)
 
 ### Method 3: Scripted Insertion
 A dedicated Python script (`insert_data.py`) was developed to automate the data insertion process. The script handles:
