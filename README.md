@@ -9,7 +9,8 @@
 ## 📑 Table of Contents
 - [Introduction](#-introduction)
 - [ERD & DSD](#-erd--dsd)
-- [Workflow & Execution](#-workflow--execution)
+- [Insertion Methods](#-insertion-methods)
+- [Backup & Restore Strategy](#-backup--restore-strategy)
 
 ---
 
@@ -55,13 +56,13 @@ The system allows tracking and management of the following entities:
 ### 📉 Data Structure Diagram (DSD)
 ![DSD](stage1/DSD.png)
 
-## 🔄 Workflow & Execution
+## 🔄 Insertion Methods
 
-### 1. Data Generation
+### Method 1: Data Generation
 We utilized **Mockaroo** to generate realistic and structured dummy data for our database tables. This tool allowed us to define specific data types (e.g., names, dates, custom lists) and ensure referential integrity between tables (Foreign Keys). The configuration involved setting up fields exactly matching our ERD, generating thousands of records to simulate a busy hotel environment.
 ![Mockaroo Configuration](stage1/images/mockaroo_config.jpeg)
 
-### 2. Data Processing Flow
+### Method 2: Process Flow
 The data pipeline follows a structured process:
 - **Schema Design**: Creating the ERD and DSD diagrams.
 - **Data Generation**: Using Mockaroo to produce raw data in CSV/SQL formats.
@@ -69,7 +70,7 @@ The data pipeline follows a structured process:
 - **Database Population**: Storing the structured data into the RDBMS.
 ![Process Diagram](stage1/images/Process.jpeg)
 
-### 3. Data Insertion Script
+### Method 3: Scripted Insertion
 A dedicated Python script (`insert_data.py`) was developed to automate the data insertion process. The script handles:
 - Establishing a connection to the database.
 - Reading and parsing the generated data files.
@@ -77,9 +78,9 @@ A dedicated Python script (`insert_data.py`) was developed to automate the data 
 - Handling data type conversions (e.g., date formats) and error checking during insertion.
 ![Python Script](stage1/images/python_script.jpeg)
 
-### 4. Database Verification
-After the data insertion process, we verified the integrity and accuracy of the data using a database management tool (e.g., DBeaver). The screenshot below demonstrates a successful `SELECT` query execution, confirming that:
-- Tables are populated correctly.
-- Data types match the schema definitions.
-- Relationships between entities are preserved.
-![Database Verification](stage1/images/EXAMPLE.jpeg)
+## 💾 Backup & Restore Strategy
+
+To ensure data safety and continuity, we implemented a robust backup and restore strategy. Regular SQL dumps of the entire database schema and data are generated.
+- **Backup**: Creating `.sql` snapshot files (e.g., `backup_19_03_2026.sql`) containing all logical data.
+- **Restore**: The ability to reconstruct the database state from these files in case of failure or data corruption.
+![Backup Strategy](stage1/images/backup_success.jpeg)
