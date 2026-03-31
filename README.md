@@ -61,6 +61,28 @@ The system allows tracking and management of the following entities:
 ### 📉 Data Structure Diagram (DSD)
 ![DSD](stage1/images/DSD.png)
 
+
+
+### SQL Scripts
+
+Provide the following SQL scripts:
+
+* **Create Tables Script** - The SQL script for creating the database tables is available in the repository:
+  
+  📜 [View create_tables.sql](./createTables.sql)
+
+* **Insert Data Script** - The SQL script for insert data to the database tables is available in the repository:
+  
+  📜 [View insert_tables.sql](./insertTables.sql)
+
+* **Drop Tables Script** - The SQL script for droping all tables is available in the repository:
+  
+  📜 [View drop_tables.sql](./dropTables.sql)
+
+* **Select All Data Script** - The SQL script for selectAll tables is available in the repository:
+  
+  📜 [View selectAll_tables.sql](./selectAll.sql)
+
 ## 🔄 Insertion Methods
 
 ### Method 1: Data Generation
