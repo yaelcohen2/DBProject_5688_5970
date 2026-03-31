@@ -1,17 +1,25 @@
 # 🏨 Hotel Management System - Housekeeping Unit
 
-**Project Report**
+## 📘 Project Report
 
-**Authors:** Shani Levy and Yael Cohen
+This database system was designed to manage the Housekeeping department of a hotel, tracking room statuses, cleaning tasks, employees, and cleaning supplies usage.
 
+### 👩‍💻 Authors
+
+* Yael Cohen
+* Shani Gronberger
+
+### 🏢 Project Scope
+
+* **System:** Hotel Management System
+* **Unit:** Housekeeping
 ---
 
 ## 📑 Table of Contents
-- [Introduction](#-introduction)
-- [ERD & DSD](#-erd--dsd)
-- [Insertion Methods](#-insertion-methods)
-- [Backup & Restore Strategy](#-backup--restore-strategy)
-
+- [Introduction](#introduction)
+- [ERD & DSD](#erd--dsd)
+- [Insertion Methods](#insertion-methods)
+- [Backup & Restore Strategy](#backup--restore-strategy)
 ---
 ## 🔗 System Link
 [View the System in Google AI Studio](https://aistudio.google.com/apps/45d4298d-a5b6-4634-97e4-b68336430388?showPreview=true&showAssistant=true)
@@ -69,24 +77,26 @@ Provide the following SQL scripts:
 
 * **Create Tables Script** - The SQL script for creating the database tables is available in the repository:
   
-  📜 [View create_tables.sql](./createTables.sql)
+  📜 [View create_tables](./init-db/01-createTable.sql)
 
 * **Insert Data Script** - The SQL script for insert data to the database tables is available in the repository:
   
-  📜 [View insert_tables.sql](./insertTables.sql)
+  📜 [View insert_tables](./init-db/02-insertTables.sql)
 
 * **Drop Tables Script** - The SQL script for droping all tables is available in the repository:
   
-  📜 [View drop_tables.sql](./dropTables.sql)
+  📜 [View drop_tables](./init-db/03-dropTables.sql)
 
 * **Select All Data Script** - The SQL script for selectAll tables is available in the repository:
   
-  📜 [View selectAll_tables.sql](./selectAll.sql)
+  📜 [View selectAll_tables](./init-db/04-selectAll.sql)
 
 ## 🔄 Insertion Methods
 
 ### Method 1: Data Generation
+* 📜 [View roomMock_data.sql](./mockarooFiles/roomMock_data.sql)
 We utilized **Mockaroo** to generate realistic and structured dummy data for our database tables. This tool allowed us to define specific data types (e.g., names, dates, custom lists) and ensure referential integrity between tables (Foreign Keys). The configuration involved setting up fields exactly matching our ERD, generating thousands of records to simulate a busy hotel environment.
+Entering a data to ROOM table
 ![Mockaroo Configuration](stage1/images/mockaroo_config.jpeg)
 
 ### Method 2: Insert
