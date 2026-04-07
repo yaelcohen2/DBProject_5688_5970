@@ -16,11 +16,14 @@ This database system was designed to manage the Housekeeping department of a hot
 ---
 
 ## 📑 Table of Contents
-- [Introduction](#introduction)
-- [ERD & DSD](#erd--dsd)
-- [Insertion Methods](#insertion-methods)
-- [Backup & Restore Strategy](#backup--restore-strategy)
+## 📑 Table of Contents
+- [Introduction](#-introduction)
+- [ERD & DSD](#-erd--dsd)
+- [SQL Scripts](#sql-scripts)
+- [Insertion Methods](#-insertion-methods)
+- [Backup & Restore Strategy](#method-4-backup--restore-strategy)
 ---
+
 ## 🔗 System Link
 [View the System in Google AI Studio](https://aistudio.google.com/apps/45d4298d-a5b6-4634-97e4-b68336430388?showPreview=true&showAssistant=true)
 
