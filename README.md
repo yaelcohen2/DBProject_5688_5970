@@ -21,7 +21,7 @@ This database system was designed to manage the Housekeeping department of a hot
 - [ERD & DSD](#-erd--dsd)
 - [SQL Scripts](#sql-scripts)
 - [Insertion Methods](#-insertion-methods)
-- [Backup & Restore Strategy](#method-4-backup--restore-strategy)
+- [Backup & Restore Strategy](#-backup--restore-strategy)
 ---
 
 ## 🔗 System Link
@@ -97,14 +97,14 @@ Provide the following SQL scripts:
 ## 🔄 Insertion Methods
 
 ### Method 1: Data Generation
-* 📜 [View roomMock_data.sql](./mockarooFiles/ROOMCHECK_data.sql)
+* 📜 [View ROOMCHECK_data.sql](./stage1/mockarooFiles/ROOMCHECK_data.sql)
 
 We utilized **Mockaroo** to generate realistic and structured dummy data for our database tables. This tool allowed us to define specific data types (e.g., names, dates, custom lists) and ensure referential integrity between tables (Foreign Keys). The configuration involved setting up fields exactly matching our ERD, generating thousands of records to simulate a busy hotel environment.
 Entering a data to ROOM table
 ![Mockaroo Configuration](stage1/images/mockaroo_config.jpeg)
 
 ### Method 2: Data Import from Files
-* 📜 [View ROOMCHECK.csv](./DataImportFiles/ROOMCHECK.csv)
+* 📜 [View ROOMCHECK.csv](./stage1/DataImportFiles/ROOMCHECK.csv)
 
 This method simulates a **Data Migration** process, where existing hotel records are imported into our new system. Instead of writing manual SQL commands, we use structured files to populate the database efficiently.
 - **Bulk Loading**: We use the PostgreSQL `COPY` command or the pgAdmin Import tool to ingest thousands of rows from CSV (Comma-Separated Values) files directly into our tables.
@@ -113,7 +113,7 @@ This method simulates a **Data Migration** process, where existing hotel records
 
 
 ### Method 3: Scripted Insertion
-* 📜 [View insert_data.py](./Programming/insert_data.py)
+* 📜 [View insert_data.py](./stage1/Programming/insert_data.py)
 
 A dedicated Python script (`insert_data.py`) was developed to automate the data insertion process. The script handles:
 - Establishing a connection to the database.
@@ -123,7 +123,7 @@ A dedicated Python script (`insert_data.py`) was developed to automate the data 
 ![Python Script](stage1/images/python_script.jpeg)
 
 ### Backup & Restore Strategy
-* 📜 [View Backup File](./backup_25_03_2026.sql)
+* 📜 [View Backup File](./stage1/backup/backup_25_03_2026.sql)
 
 To ensure data safety and continuity, we implemented a robust backup and restore strategy. Regular SQL dumps of the entire database schema and data are generated.
 - **Backup**: Creating `.sql` snapshot files (e.g., `backup_19_03_2026.sql`) containing all logical data.
