@@ -123,9 +123,9 @@ A dedicated Python script (`insert_data.py`) was developed to automate the data 
 ![Python Script](stage1/images/python_script.jpeg)
 
 ### Backup & Restore Strategy
-* 📜 [View Backup File](./stage1/backup/backup_25_03_2026.sql)
+* 📜 [View Backup File](./stage1/backup/backup_12_04_2026.sql)
 
 To ensure data safety and continuity, we implemented a robust backup and restore strategy. Regular SQL dumps of the entire database schema and data are generated.
-- **Backup**: Creating `.sql` snapshot files (e.g., `backup_25_03_2026.sql`) containing all logical data.
+- **Backup**: Creating `.sql` snapshot files (e.g., `backup_12_04_2026.sql`) containing all logical data.
 - **Restore**: The ability to reconstruct the database state from these files in case of failure or data corruption.
-![Backup Strategy](stage1/images/backup_success.jpeg)
+![Backup Strategy](stage1/images/backup_success.png)
