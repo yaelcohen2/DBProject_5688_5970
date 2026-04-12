@@ -52,7 +52,7 @@ END $$;
 -- ======================================================
 -- Method 2: Data from Mockaroo (SQL Inserts)
 -- ======================================================
-insert into ROOMCHECK (roomID, employeeID, checkDate, score, checkid) values (258, 388, '7/28/2025', 2, 1);
+insert into ROOMCHECK (roomID, employeeID, checkDate, score, checkid) values (258, 388, '7/28/2025', 2, 9999);
 insert into ROOMCHECK (roomID, employeeID, checkDate, score, checkid) values (380, 397, '2/18/2026', 5, 2);
 insert into ROOMCHECK (roomID, employeeID, checkDate, score, checkid) values (135, 276, '7/15/2025', 5, 3);
 insert into ROOMCHECK (roomID, employeeID, checkDate, score, checkid) values (244, 474, '10/1/2025', 4, 4);

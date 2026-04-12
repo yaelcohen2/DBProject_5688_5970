@@ -11,10 +11,10 @@ SELECT * FROM ROOM;
 SELECT * FROM HOUSEKEEPINGEMPLOYEE;
 
 -- Retrieve all data from the cleaning supplies inventory table
-SELECT * FROM CLEANNINGSUPPLIES;
+SELECT * FROM CLEANINGSUPPLIES;
 
 -- Retrieve all data from the tasks table
-SELECT * FROM HOUSEKEPINGTASK;
+SELECT * FROM HOUSEKEEPINGTASK;
 
 -- Retrieve all data from the room checks table (quality inspection scores)
 SELECT * FROM ROOMCHECK;
@@ -23,7 +23,7 @@ SELECT * FROM ROOMCHECK;
 SELECT * FROM BELONGSTO;
 
 -- Retrieve all data from the cleaning log table (large table with 20,000 records)
-SELECT * FROM CLEANNINGLOG;
+SELECT * FROM CLEANINGLOG;
 
 -- Retrieve all data from the supplies usage table (large table with 20,000 records)
 SELECT * FROM USES;
