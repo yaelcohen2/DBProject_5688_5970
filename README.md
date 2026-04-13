@@ -131,4 +131,62 @@ To ensure data safety and continuity, we implemented a robust backup and restore
 ![Backup Strategy](stage1/images/backup_success.png)
 ![Backup Complete](stage1/images/Screenshot%202026-04-13%20165859.png)
 
-The backup is complete.
+
+# SQL Query Analysis
+
+## Introduction
+This report presents a series of "Double Queries" (two different SQL versions yielding the same result) for the Hotel Housekeeping Management System. The objective is to demonstrate proficiency in complex table joins, subqueries, and database performance optimization.
+
+---
+
+## Query 1: Task Execution Distribution by Type (April 2026)
+
+### Description
+This query calculates the total number of times each type of task (e.g., 'Stay-over', 'Deep Clean') was performed during April 2026. This helps management understand which tasks are most common and how to allocate resources efficiently.
+
+### SQL Implementation
+
+**Version A: Standard 3-Table Join**  
+Joins three tables (TASKTYPE, HOUSEKEEPINGTASK, CLEANINGLOG).  
+Suitable for smaller datasets.
+![QueryV1a](stage1/images/QueryV1a.png)
+
+
+**Version B: Aggregated Subquery (Derived Table)**  
+Performs aggregation inside a subquery before joining.  
+More efficient because it works mainly with numeric IDs.
+![QueryV1b](stage1/images/QueryV1b.png)
+
+
+---
+
+### Technical Analysis
+Version A joins all tables before counting, including string data.  
+Version B performs aggregation earlier using numeric IDs, which reduces memory usage and improves performance for large datasets.
+
+---
+
+## Query 2: Identifying Rooms Without Quality Inspections
+
+### Description
+This query finds rooms that do not appear in the ROOMCHECK table.  
+It helps identify rooms that were not inspected and ensures quality standards.
+
+### SQL Implementation
+
+**Version A: NOT IN**  
+Filters rooms based on a list of inspected room IDs.
+![QueryV2a](stage1/images/QueryV2a.png)
+
+
+
+**Version B: NOT EXISTS**  
+Checks for each room if no matching inspection exists.
+![QueryV2b](stage1/images/QueryV2b.png)
+
+
+---
+
+### Technical Analysis
+NOT EXISTS is more efficient because it stops searching as soon as it finds a match.  
+NOT IN usually scans the entire result set, which is slower for large datasets.
