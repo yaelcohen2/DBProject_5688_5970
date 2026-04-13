@@ -129,3 +129,6 @@ To ensure data safety and continuity, we implemented a robust backup and restore
 - **Backup**: Creating `.sql` snapshot files (e.g., `backup_12_04_2026.sql`) containing all logical data.
 - **Restore**: The ability to reconstruct the database state from these files in case of failure or data corruption.
 ![Backup Strategy](stage1/images/backup_success.png)
+![Backup Complete](stage1/images/Screenshot%202026-04-13%20165859.png)
+
+The backup is complete.
