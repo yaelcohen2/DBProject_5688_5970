@@ -21,11 +21,11 @@ SELECT
     S.name AS SupplyName,
     SUM(U.quantityUsed) AS TotalUsed
 FROM
-    CLEANINGSUPPLIES S
+    CLEANNINGSUPPLIES S
 JOIN
     USES U ON S.suppliesID = U.suppliesID
 JOIN
-    HOUSEKEEPINGTASK T ON U.taskID = T.taskID
+    HOUSEKEPINGTASK T ON U.taskID = T.taskID
 WHERE
     T.priority = 5
 GROUP BY
@@ -33,23 +33,23 @@ GROUP BY
 ORDER BY
     TotalUsed DESC;
 
--- Query 3: For each floor, find the total number of tasks that are currently 'In Progress'.
--- This query aggregates data per floor, joining rooms, tasks, and statuses.
+-- Query 3: For each room, find the total number of tasks that are currently 'In Progress'.
+-- This query lists rooms directly since the 'floor' column is absent in the live data.
 SELECT
-    R.floor AS FloorNumber,
+    R.roomnumber AS RoomNumber,
     COUNT(T.taskID) AS InProgressTasks
 FROM
     ROOM R
 JOIN
-    HOUSEKEEPINGTASK T ON R.roomID = T.roomID
+    HOUSEKEPINGTASK T ON R.roomID = T.roomID
 JOIN
     HOUSEKEEPINGSTATUS HS ON T.statusID = HS.statusID
 WHERE
     HS.statusName = 'In Progress'
 GROUP BY
-    R.floor
+    R.roomnumber
 ORDER BY
-    R.floor;
+    R.roomnumber;
 
 -- Query 4: Calculate the average duration in minutes for each task type based on completed cleaning logs.
 -- This query joins multiple tables, extracts the time duration, and groups by task type.
@@ -59,9 +59,9 @@ SELECT
 FROM
     TASKTYPE TT
 JOIN
-    HOUSEKEEPINGTASK HT ON TT.taskTypeID = HT.taskTypeID
+    HOUSEKEPINGTASK HT ON TT.taskTypeID = HT.taskTypeID
 JOIN
-    CLEANINGLOG CL ON HT.taskID = CL.taskID
+    CLEANNINGLOG CL ON HT.taskID = CL.taskID
 WHERE
     CL.endTime IS NOT NULL
 GROUP BY
