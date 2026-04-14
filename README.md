@@ -22,7 +22,7 @@ This database system was designed to manage the Housekeeping department of a hot
 - [SQL Scripts](#sql-scripts)
 - [Insertion Methods](#-insertion-methods)
 - [Backup & Restore Strategy](#backup--restore-strategy)
-- [Queries](#-queries)
+- [SQL Query Analysis](#sql-query-analysis)
 ---
 
 ## 🔗 System Link
@@ -132,7 +132,9 @@ To ensure data safety and continuity, we implemented a robust backup and restore
 ![Backup Strategy](stage1/images/backup_success.png)
 ![Backup Complete](stage1/images/Screenshot%202026-04-13%20165859.png)
 
-## 🔍 Queries
+# SQL Query Analysis
+
+## Standard Queries
 
 Here are four main queries that demonstrate data retrieval and aggregation across the system's tables.
 
@@ -154,9 +156,9 @@ This query calculates the average duration in minutes for each task type based o
 
 ---
 
-# SQL Query Analysis
+## Double Queries Analysis
 
-## Introduction
+### Introduction
 This report presents a series of "Double Queries" (two different SQL versions yielding the same result) for the Hotel Housekeeping Management System. The objective is to demonstrate proficiency in complex table joins, subqueries, and database performance optimization.
 
 ---
