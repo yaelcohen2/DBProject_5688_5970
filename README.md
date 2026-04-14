@@ -22,6 +22,7 @@ This database system was designed to manage the Housekeeping department of a hot
 - [SQL Scripts](#sql-scripts)
 - [Insertion Methods](#-insertion-methods)
 - [Backup & Restore Strategy](#backup--restore-strategy)
+- [Queries](#-queries)
 ---
 
 ## 🔗 System Link
@@ -131,6 +132,27 @@ To ensure data safety and continuity, we implemented a robust backup and restore
 ![Backup Strategy](stage1/images/backup_success.png)
 ![Backup Complete](stage1/images/Screenshot%202026-04-13%20165859.png)
 
+## 🔍 Queries
+
+Here are four main queries that demonstrate data retrieval and aggregation across the system's tables.
+
+### Query 1: Employee Average Score
+This query gets the average room check score for each employee, along with the total number of checks performed. It uses JOIN, GROUP BY, and HAVING clauses to filter and aggregate data.
+![Query 1](stage1/images/selectQuary.png)
+
+### Query 2: Urgent Tasks Supply Usage
+This query finds the total quantity used for each cleaning supply for urgent tasks (priority = 5). It joins three tables and filters by a specific priority level.
+![Query 2](stage1/images/selectQuary2.png)
+
+### Query 3: 'In Progress' Tasks Per Room
+For each room, this query finds the total number of tasks that are currently 'In Progress'. It tracks ongoing work by joining room, task, and status tables.
+![Query 3](stage1/images/selectQuary3.png)
+
+### Query 4: Average Task Duration
+This query calculates the average duration in minutes for each task type based on completed cleaning logs. It joins multiple tables, extracts the time duration, and groups by task type.
+![Query 4](stage1/images/selectuary4.png)
+
+---
 
 # SQL Query Analysis
 
