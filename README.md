@@ -214,3 +214,70 @@ Checks for each room if no matching inspection exists.
 ### Technical Analysis
 NOT EXISTS is more efficient because it stops searching as soon as it finds a match.  
 NOT IN usually scans the entire result set, which is slower for large datasets.
+------------------
+
+### Query 1: Delete Specific Cleaning Log Entry
+
+**Description:**  
+Deleting a specific cleaning log entry from the `CLEANINGLOG` table using a unique identifier (`logID`).  
+This query demonstrates a simple deletion operation based on a primary key condition.
+
+**SQL Code:**
+```sql
+DELETE FROM CLEANINGLOG
+WHERE logID = 105;
+```
+
+Before Delete: ![beforeDeleteQuery1](stage1/images/beforeDeleteQueryQ1.png)
+
+Execution Run: ![deleteQuery1](stage1/images/deleteQueryQ1.png)
+
+After Delete: ![afterDeleteQuery1.png](stage1/images/afterDeleteQueryQ1.png)
+
+### Query 2: Archive - Delete Old Cleaning Logs for Floor 1
+
+**Description:**  
+Deleting cleaning log records created before April 10, 2026, specifically for rooms located on the first floor (rooms starting with 'R-1').  
+This query uses nested subqueries and the `LIKE` operator to filter relevant rooms and their associated tasks.
+**SQL Code:**
+```sql
+DELETE FROM CLEANINGLOG
+WHERE startTime < '2026-04-10'
+AND taskID IN (
+    SELECT taskID 
+    FROM HOUSEKEEPINGTASK 
+    WHERE roomID IN (
+        SELECT roomID 
+        FROM ROOM 
+        WHERE roomnumber LIKE 'R-1%'
+    )
+);
+```
+
+Before Delete: ![beforeDeleteQuery2](stage1/images/beforeDeleteQueryQ2.png)
+
+Execution Run: ![deleteQuery2](stage1/images/deleteQueryQ2.png)
+
+After Delete: ![afterDeleteQuery2.png](stage1/images/afterDeleteQueryQ2.png)
+
+
+### Query 3: Delete Usage History for a Specific Supply Item
+**Description:**  
+Deleting the usage history of 'Supply_Item_26' from the `USES` table.  
+The query uses a subquery to dynamically find the item's ID based on its name in the table.
+
+**SQL Code:**
+```sql
+DELETE FROM USES
+WHERE suppliesID = (
+    SELECT suppliesID 
+    FROM CLEANINGSUPPLIES 
+    WHERE name = 'Supply_Item_26'
+);
+```
+
+Before Delete: ![beforeDeleteQuery3](stage1/images/beforeDeleteQueryQ3.png)
+
+Execution Run: ![deleteQuery3](stage1/images/deleteQueryQ3.png)
+
+After Delete: ![afterDeleteQuery3](stage1/images/afterDeleteQueryQ3.png)
