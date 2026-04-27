@@ -229,16 +229,12 @@ DELETE FROM CLEANINGLOG
 WHERE logID = 105;
 ```
 
-* 📸 **Before Delete:**
-  ![Before Delete](stage1/images/beforeDeleteQueryQ1.png)
+Before Update: ![beforeUpdate1](stage1/images/beforeDeleteQueryQ1.png)
 
-* ▶️ **Execution Run:**
-  ![Execution Run](stage1/images/deleteQueryQ1.png)
+Execution Run : ![update1](stage1/images/deleteQueryQ1.png)
+After Update: ![afterUpdate1](stage1/images/afterDeleteQueryQ1.png)
 
-* 📸 **After Delete:**
-  ![After Delete](stage1/images/afterDeleteQueryQ1.png)
 
----
 
 ### Query 2: Archive - Delete Old Cleaning Logs for Floor 1
 
@@ -258,14 +254,11 @@ AND taskID IN (
         WHERE roomnumber LIKE 'R-1%'
     )
 );
-* 📸 **Before Delete:**
-  ![Before Delete](stage1/images/beforeDeleteQueryQ2.png)
+```
+Before Update: ![beforeUpdate1](stage1/images/beforeDeleteQueryQ2.png)
+Execution Run : ![update1](stage1/images/deleteQueryQ2.png)
+After Update: ![afterUpdate1](stage1/images/afterDeleteQueryQ2.png)
 
-* ▶️ **Execution Run:**
-  ![Execution Run](stage1/images/deleteQueryQ2.png)
-
-* 📸 **After Delete:**
-  ![After Delete](stage1/images/afterDeleteQueryQ2.png)
 
 ---
 
@@ -283,16 +276,10 @@ WHERE suppliesID = (
     WHERE name = 'Supply_Item_27'
 );
 ```
+Before Update: ![beforeUpdate1](stage1/images/beforeDeleteQueryQ3.png)
+Execution Run : ![update1](stage1/images/deleteQueryQ3.png)
+After Update: ![afterUpdate1](stage1/images/afterDeleteQueryQ3.png)
 
-
-* 📸 **Before Delete:**
-  ![Before Delete](stage1/images/beforeDeleteQueryQ3.png)
-
-* ▶️ **Execution Run:**
-  ![Execution Run](stage1/images/deleteQueryQ3.png)
-
-* 📸 **After Delete:**
-  ![After Delete](stage1/images/afterDeleteQueryQ3.png)
 
 ---
 ## Update Queries
@@ -396,7 +383,7 @@ Results and Explanation:
 
 Execution Time BEFORE (Seq Scan): ~15.702 milliseconds (ms). The system scanned all rows in the table.
 
-![Before Index 1](stage1/images/beforeIndex1.png)
+![Before Index 1](stage1/images/index1_before.png)
 
 Index Creation Command:
 
@@ -405,7 +392,7 @@ CREATE INDEX idx_cleaninglog_starttime ON cleaninglog(starttime);
 ```
 Execution Time AFTER (Index Scan): ~0.012 milliseconds (ms).
 
-![After Index 1](stage1/images/afterIndex1.png)
+![After Index 1](stage1/images/index1_after.png)
 
 Analysis: The retrieval time improved by a factor of over 1,000. The system bypassed the sequential scan and accessed the relevant data directly.
 
@@ -424,7 +411,7 @@ Results and Explanation:
 
 Execution Time BEFORE Index Creation: ~3.051 milliseconds (ms).
 
-![Before Index 2](stage1/images/beforeIndex2.png)
+![Before Index 2](stage1/images/index2_before.png)
 
 Index Creation Command:
 
@@ -433,7 +420,7 @@ CREATE INDEX idx_cleaninglog_employeeid ON cleaninglog(employeeid);
 ```
 Execution Time AFTER Index Creation: ~1.512 milliseconds (ms).
 
-![After Index 2](stage1/images/afterIndex2.png)
+![After Index 2](stage1/images/index2_after.png)
 
 Analysis: After applying the index, the execution time was cut in half. The database engine opted for a Bitmap Index Scan, which is a highly efficient way for PostgreSQL to fetch multiple rows associated with a single ID from a large dataset.
 
@@ -453,7 +440,7 @@ Results and Explanation:
 
 Execution Time BEFORE Index Creation: ~27.833 milliseconds (ms).
 
-![Before Index 3](stage1/images/beforeIndex3.png)
+![Before Index 3](stage1/images/index3_before.png)
 
 Index Creation Command:
 
@@ -463,6 +450,6 @@ CREATE INDEX idx_uses_supplies ON uses(suppliesid);
 
 Execution Time AFTER Index Creation: ~0.179 milliseconds (ms).
 
-![After Index 3](stage1/images/afterIndex3.png)
+![After Index 3](stage1/images/Index3_after.png)
 
 Analysis: This represents a massive performance jump (around 150x faster). The dedicated index allowed the database to bypass the complex primary key scan and retrieve the inventory usage data almost instantaneously
