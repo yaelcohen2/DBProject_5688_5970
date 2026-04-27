@@ -23,6 +23,7 @@ This database system was designed to manage the Housekeeping department of a hot
 - [Insertion Methods](#-insertion-methods)
 - [Backup & Restore Strategy](#backup--restore-strategy)
 - [SQL Query Analysis](#sql-query-analysis)
+- [Update Queries](#update-queries)
 ---
 
 ## 🔗 System Link
@@ -281,3 +282,90 @@ Before Delete: ![beforeDeleteQuery3](stage1/images/beforeDeleteQueryQ3.png)
 Execution Run: ![deleteQuery3](stage1/images/deleteQueryQ3.png)
 
 After Delete: ![afterDeleteQuery3](stage1/images/afterDeleteQueryQ3.png)
+
+---
+
+## Update Queries
+
+The following update queries demonstrate data modification operations across the system's tables. Each query includes a **Before**, **Execution**, and **After** screenshot to show the effect of the update.
+
+---
+
+### Update 1: Escalate Overdue In-Progress Tasks
+
+**Description:**  
+This query escalates the priority to **urgent (5)** for all tasks that have an `'In Progress'` status and are past their due date.  
+It ensures that overdue tasks are immediately flagged for attention, preventing further delays in housekeeping operations.
+
+**SQL Code:**
+```sql
+UPDATE HOUSEKEPINGTASK
+SET priority = 5
+WHERE statusID = (
+    SELECT statusID 
+    FROM HOUSEKEEPINGSTATUS 
+    WHERE statusName = 'In Progress'
+)
+AND dueDate < CURRENT_DATE;
+```
+
+Before Update: ![beforeUpdate1](stage1/images/beforeUpdate1.png)
+
+Execution Run: ![update1](stage1/images/update1.png)
+
+After Update: ![afterUpdate1](stage1/images/afterUpdate1.png)
+
+---
+
+### Update 2: Restock Low-Inventory Cleaning Supplies
+
+**Description:**  
+This query adds **50 units** to any cleaning supply item that has fallen below a stock level of 10.  
+It simulates an automated restocking mechanism to ensure essential supplies are always available for housekeeping staff.
+
+**SQL Code:**
+```sql
+UPDATE CLEANNINGSUPPLIES
+SET quantity = quantity + 50
+WHERE quantity < 10;
+```
+
+Before Update: ![beforeUpdate2](stage1/images/beforeUpdate2.png)
+
+Execution Run: ![update2](stage1/images/update2.png)
+
+After Update: ![afterUpdate2](stage1/images/afterUpdate2.png)
+
+---
+
+### Update 3: Synchronize Task Status with Cleaning Logs
+
+**Description:**  
+This query marks tasks as `'Clean'` when their corresponding cleaning log entry has a recorded `endTime` (meaning the cleaning was completed), but only if the task is not already in `'Clean'` status.  
+It synchronizes the task statuses with actual cleaning activity, ensuring the system reflects real-world completion of work.
+
+**SQL Code:**
+```sql
+UPDATE HOUSEKEPINGTASK
+SET statusID = (
+    SELECT statusID 
+    FROM HOUSEKEEPINGSTATUS 
+    WHERE statusName = 'Clean'
+)
+WHERE taskID IN (
+    SELECT taskID 
+    FROM CLEANNINGLOG 
+    WHERE endTime IS NOT NULL
+)
+AND statusID != (
+    SELECT statusID 
+    FROM HOUSEKEEPINGSTATUS 
+    WHERE statusName = 'Clean'
+);
+```
+
+Before Update: ![beforeUpdate3](stage1/images/beforeUpdate3.png)
+
+Execution Run: ![update3](stage1/images/update3.png)
+
+After Update: ![afterUpdate3](stage1/images/afterUpdate3.png)

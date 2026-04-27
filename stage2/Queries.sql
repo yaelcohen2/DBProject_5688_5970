@@ -143,6 +143,7 @@ WHERE NOT EXISTS (
 );
 
 
+<<<<<<< HEAD
 
 /* Query 1: Delete Specific Cleaning Log Entry*/
 
@@ -177,6 +178,17 @@ WHERE suppliesID = (
 
 
 -- Update task priority based on room type and current status
+=======
+/* ======================================================================
+   UPDATE QUERIES (with Transaction Control - Commit & Rollback)
+   ====================================================================== */
+
+-- Update 1: Escalate priority to urgent (5) for all 'In Progress' tasks that are overdue.
+-- This ensures that tasks past their due date get immediate attention.
+-- Transaction: ROLLBACK — demonstrates undoing the change.
+BEGIN;
+
+>>>>>>> 2df47ebe541de6a048a8200961f310d7a53bb3f7
 UPDATE HOUSEKEPINGTASK
 SET priority = 5
 WHERE statusID = (
@@ -184,21 +196,32 @@ WHERE statusID = (
     FROM HOUSEKEEPINGSTATUS 
     WHERE statusName = 'In Progress'
 )
-AND roomID IN (
-    SELECT roomID 
-    FROM ROOM 
-    WHERE roomType = 'Suite'
-);
--- Restock supplies by adding 50 units to items with low inventory
+AND dueDate < CURRENT_DATE;
+
+ROLLBACK;
+
+-- Update 2: Restock cleaning supplies by adding 50 units to any item with low inventory (below 10).
+-- This keeps essential supplies available and prevents housekeeping delays.
+-- Transaction: COMMIT — demonstrates saving the change permanently.
+BEGIN;
+
 UPDATE CLEANNINGSUPPLIES
-SET quantityInStock = quantityInStock + 50
-WHERE quantityInStock < 10;
--- Synchronize task status with cleaning logs
+SET quantity = quantity + 50
+WHERE quantity < 10;
+
+COMMIT;
+
+-- Update 3: Mark tasks as 'Clean' when their cleaning log shows a completed end time,
+-- but only if the task is not already in 'Clean' status. This synchronizes task statuses
+-- with actual cleaning activity recorded in the logs.
+-- Transaction: ROLLBACK — demonstrates undoing the change.
+BEGIN;
+
 UPDATE HOUSEKEPINGTASK
 SET statusID = (
     SELECT statusID 
     FROM HOUSEKEEPINGSTATUS 
-    WHERE statusName = 'Completed'
+    WHERE statusName = 'Clean'
 )
 WHERE taskID IN (
     SELECT taskID 
@@ -208,7 +231,11 @@ WHERE taskID IN (
 AND statusID != (
     SELECT statusID 
     FROM HOUSEKEEPINGSTATUS 
-    WHERE statusName = 'Completed'
+    WHERE statusName = 'Clean'
 );
 
+<<<<<<< HEAD
 
+=======
+ROLLBACK;
+>>>>>>> 2df47ebe541de6a048a8200961f310d7a53bb3f7
