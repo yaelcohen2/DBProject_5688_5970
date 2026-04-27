@@ -141,6 +141,40 @@ WHERE NOT EXISTS (
     FROM ROOMCHECK rc 
     WHERE rc.roomID = r.roomID
 );
+-- Update task priority based on room type and current status
+UPDATE HOUSEKEPINGTASK
+SET priority = 5
+WHERE statusID = (
+    SELECT statusID 
+    FROM HOUSEKEEPINGSTATUS 
+    WHERE statusName = 'In Progress'
+)
+AND roomID IN (
+    SELECT roomID 
+    FROM ROOM 
+    WHERE roomType = 'Suite'
+);
+-- Restock supplies by adding 50 units to items with low inventory
+UPDATE CLEANNINGSUPPLIES
+SET quantityInStock = quantityInStock + 50
+WHERE quantityInStock < 10;
+-- Synchronize task status with cleaning logs
+UPDATE HOUSEKEPINGTASK
+SET statusID = (
+    SELECT statusID 
+    FROM HOUSEKEEPINGSTATUS 
+    WHERE statusName = 'Completed'
+)
+WHERE taskID IN (
+    SELECT taskID 
+    FROM CLEANNINGLOG 
+    WHERE endTime IS NOT NULL
+)
+AND statusID != (
+    SELECT statusID 
+    FROM HOUSEKEEPINGSTATUS 
+    WHERE statusName = 'Completed'
+);
 
 
 
