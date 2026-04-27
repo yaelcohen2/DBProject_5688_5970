@@ -229,11 +229,16 @@ DELETE FROM CLEANINGLOG
 WHERE logID = 105;
 ```
 
-Before Delete: ![beforeDeleteQuery1](stage1/images/beforeDeleteQueryQ1.png)
+ 📸 Before Delete
+![Before Delete](stage1/images/beforeDeleteQueryQ1.png)
 
-Execution Run: ![deleteQuery1](stage1/images/deleteQueryQ1.png)
+ ▶️ Execution Run
+![Execution Run](stage1/images/deleteQueryQ1.png)
 
-After Delete: ![afterDeleteQuery1.png](stage1/images/afterDeleteQueryQ1.png)
+ 📸 After Delete
+![After Delete](stage1/images/afterDeleteQueryQ1.png)
+
+
 
 ### Query 2: Archive - Delete Old Cleaning Logs for Floor 1
 
@@ -255,12 +260,14 @@ AND taskID IN (
 );
 ```
 
-Before Delete: ![beforeDeleteQuery2](stage1/images/beforeDeleteQueryQ2.png)
+ 📸 Before Delete
+![Before Delete](stage1/images/beforeDeleteQueryQ2.png)
 
-Execution Run: ![deleteQuery2](stage1/images/deleteQueryQ2.png)
+ ▶️ Execution Run
+![Execution Run](stage1/images/deleteQueryQ2.png)
 
-After Delete: ![afterDeleteQuery2.png](stage1/images/afterDeleteQueryQ2.png)
-
+ 📸 After Delete
+![After Delete](stage1/images/afterDeleteQueryQ2.png)
 
 ### Query 3: Delete Usage History for a Specific Supply Item
 **Description:**  
@@ -277,12 +284,15 @@ WHERE suppliesID = (
 );
 ```
 
-Before Delete: ![beforeDeleteQuery3](stage1/images/beforeDeleteQueryQ3.png)
 
-Execution Run: ![deleteQuery3](stage1/images/deleteQueryQ3.png)
+ 📸 Before Delete
+![Before Delete](stage1/images/beforeDeleteQueryQ3.png)
 
-After Delete: ![afterDeleteQuery3](stage1/images/afterDeleteQueryQ3.png)
+ ▶️ Execution Run
+![Execution Run](stage1/images/deleteQueryQ3.png)
 
+ 📸 After Delete
+![After Delete](stage1/images/afterDeleteQueryQ3.png)
 ---
 
 ## Update Queries
@@ -369,3 +379,5 @@ Before Update: ![beforeUpdate3](stage1/images/beforeUpdate3.png)
 Execution Run: ![update3](stage1/images/update3.png)
 
 After Update: ![afterUpdate3](stage1/images/afterUpdate3.png)
+
+
