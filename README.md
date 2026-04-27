@@ -229,16 +229,16 @@ DELETE FROM CLEANINGLOG
 WHERE logID = 105;
 ```
 
- 📸 Before Delete
-![Before Delete](stage1/images/beforeDeleteQueryQ1.png)
+* 📸 **Before Delete:**
+  ![Before Delete](stage1/images/beforeDeleteQueryQ1.png)
 
- ▶️ Execution Run
-![Execution Run](stage1/images/deleteQueryQ1.png)
+* ▶️ **Execution Run:**
+  ![Execution Run](stage1/images/deleteQueryQ1.png)
 
- 📸 After Delete
-![After Delete](stage1/images/afterDeleteQueryQ1.png)
+* 📸 **After Delete:**
+  ![After Delete](stage1/images/afterDeleteQueryQ1.png)
 
-
+---
 
 ### Query 2: Archive - Delete Old Cleaning Logs for Floor 1
 
@@ -258,16 +258,16 @@ AND taskID IN (
         WHERE roomnumber LIKE 'R-1%'
     )
 );
-```
+* 📸 **Before Delete:**
+  ![Before Delete](stage1/images/beforeDeleteQueryQ2.png)
 
- 📸 Before Delete
-![Before Delete](stage1/images/beforeDeleteQueryQ2.png)
+* ▶️ **Execution Run:**
+  ![Execution Run](stage1/images/deleteQueryQ2.png)
 
- ▶️ Execution Run
-![Execution Run](stage1/images/deleteQueryQ2.png)
+* 📸 **After Delete:**
+  ![After Delete](stage1/images/afterDeleteQueryQ2.png)
 
- 📸 After Delete
-![After Delete](stage1/images/afterDeleteQueryQ2.png)
+---
 
 ### Query 3: Delete Usage History for a Specific Supply Item
 **Description:**  
@@ -285,16 +285,16 @@ WHERE suppliesID = (
 ```
 
 
- 📸 Before Delete
-![Before Delete](stage1/images/beforeDeleteQueryQ3.png)
+* 📸 **Before Delete:**
+  ![Before Delete](stage1/images/beforeDeleteQueryQ3.png)
 
- ▶️ Execution Run
-![Execution Run](stage1/images/deleteQueryQ3.png)
+* ▶️ **Execution Run:**
+  ![Execution Run](stage1/images/deleteQueryQ3.png)
 
- 📸 After Delete
-![After Delete](stage1/images/afterDeleteQueryQ3.png)
+* 📸 **After Delete:**
+  ![After Delete](stage1/images/afterDeleteQueryQ3.png)
+
 ---
-
 ## Update Queries
 
 The following update queries demonstrate data modification operations across the system's tables. Each query includes a **Before**, **Execution**, and **After** screenshot to show the effect of the update.
@@ -381,3 +381,88 @@ Execution Run: ![update3](stage1/images/update3.png)
 After Update: ![afterUpdate3](stage1/images/afterUpdate3.png)
 
 
+## Index 1: Optimizing Date Range Searches in the Cleaning Log
+
+**Motivation and Benefit:**
+In a hotel management system, generating periodic reports (e.g., "which rooms were cleaned during a specific month") is a highly frequent operation. Without an index, the database engine is forced to perform a Sequential Scan (`Seq Scan`) across all 20,000 records in the `cleaninglog` table. Creating a B-Tree index on the `starttime` column allows the system to jump directly to the requested time range, significantly improving response times.
+
+**Test Query:**
+```sql
+EXPLAIN ANALYZE 
+SELECT * FROM cleaninglog 
+WHERE starttime BETWEEN '2025-06-01' AND '2025-12-31';
+```
+Results and Explanation:
+
+Execution Time BEFORE (Seq Scan): ~15.702 milliseconds (ms). The system scanned all rows in the table.
+
+![Before Index 1](stage1/images/beforeIndex1.png)
+
+Index Creation Command:
+
+```
+CREATE INDEX idx_cleaninglog_starttime ON cleaninglog(starttime);
+```
+Execution Time AFTER (Index Scan): ~0.012 milliseconds (ms).
+
+![After Index 1](stage1/images/afterIndex1.png)
+
+Analysis: The retrieval time improved by a factor of over 1,000. The system bypassed the sequential scan and accessed the relevant data directly.
+
+## Index 2: Optimizing Foreign Key Lookups (Employee Performance Tracking)
+
+**Motivation and Benefit:**
+The `employeeid` column in the `cleaninglog` table acts as a Foreign Key referencing the `employee` table. Relational database management systems (like PostgreSQL) do not automatically create indexes on foreign keys. In a hotel system, managers frequently query this table to review a specific employee's task history. Adding an index to this Foreign Key prevents full table scans when filtering by specific employees, greatly enhancing the performance of these routine administrative queries.
+
+**Test Query:**
+```sql
+EXPLAIN ANALYZE 
+SELECT * FROM cleaninglog 
+WHERE employeeid = 5;
+```
+Results and Explanation:
+
+Execution Time BEFORE Index Creation: ~3.051 milliseconds (ms).
+
+![Before Index 2](stage1/images/beforeIndex2.png)
+
+Index Creation Command:
+
+```sql
+CREATE INDEX idx_cleaninglog_employeeid ON cleaninglog(employeeid);
+```
+Execution Time AFTER Index Creation: ~1.512 milliseconds (ms).
+
+![After Index 2](stage1/images/afterIndex2.png)
+
+Analysis: After applying the index, the execution time was cut in half. The database engine opted for a Bitmap Index Scan, which is a highly efficient way for PostgreSQL to fetch multiple rows associated with a single ID from a large dataset.
+
+## Index 3: Optimizing Inventory Queries in the Junction Table (USES)
+
+**Motivation and Benefit:**
+The `uses` table is a junction table that tracks the equipment utilized in each task. Queries checking "which tasks used a specific inventory item" are critical for inventory management. Adding an index on `suppliesid` optimizes data retrieval from this heavy table (20,000 records), even though the column is part of a composite primary key. It allows for direct filtering without relying on the slower primary key scan.
+
+**Test Query:**
+```sql
+EXPLAIN ANALYZE 
+SELECT * FROM uses 
+WHERE suppliesid = 3;
+```
+
+Results and Explanation:
+
+Execution Time BEFORE Index Creation: ~27.833 milliseconds (ms).
+
+![Before Index 3](stage1/images/beforeIndex3.png)
+
+Index Creation Command:
+
+```sql
+CREATE INDEX idx_uses_supplies ON uses(suppliesid);
+```
+
+Execution Time AFTER Index Creation: ~0.179 milliseconds (ms).
+
+![After Index 3](stage1/images/afterIndex3.png)
+
+Analysis: This represents a massive performance jump (around 150x faster). The dedicated index allowed the database to bypass the complex primary key scan and retrieve the inventory usage data almost instantaneously
