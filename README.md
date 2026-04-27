@@ -23,7 +23,21 @@ This database system was designed to manage the Housekeeping department of a hot
 - [Insertion Methods](#-insertion-methods)
 - [Backup & Restore Strategy](#backup--restore-strategy)
 - [SQL Query Analysis](#sql-query-analysis)
+
+- [Delete Queries](#delete-queries)
+  - [Delete 1: Specific Log Entry](#query-1-delete-specific-cleaning-log-entry)
+  - [Delete 2: Archive Old Floor 1 Logs](#query-2-archive---delete-old-cleaning-logs-for-floor-1)
+  - [Delete 3: Supply Usage History](#query-3-delete-usage-history-for-a-specific-supply-item)
+
 - [Update Queries](#update-queries)
+  - [Update 1: Escalate Overdue Tasks](#update-1-escalate-overdue-in-progress-tasks)
+  - [Update 2: Restock Low Inventory](#update-2-restock-low-inventory-cleaning-supplies)
+  - [Update 3: Synchronize Task Status](#update-3-synchronize-task-status-with-cleaning-logs)
+  
+- [Database Indexing Performance](#database-indexing-performance)
+  - [Index 1: Date Range Optimization](#index-1-optimizing-date-range-searches-in-the-cleaning-log)
+  - [Index 2: Foreign Key Optimization](#index-2-optimizing-foreign-key-lookups-employee-performance-tracking)
+  - [Index 3: Junction Table Optimization](#index-3-optimizing-inventory-queries-in-the-junction-table-uses)  
 ---
 
 ## 🔗 System Link
@@ -229,10 +243,11 @@ DELETE FROM CLEANINGLOG
 WHERE logID = 105;
 ```
 
-Before Update: ![beforeUpdate1](stage1/images/beforeDeleteQueryQ1.png)
+Before Update: ![before_DELETE1](stage1/images/beforeDeleteQueryQ1.png)
 
-Execution Run : ![update1](stage1/images/deleteQueryQ1.png)
-After Update: ![afterUpdate1](stage1/images/afterDeleteQueryQ1.png)
+Execution Run : ![DELETE1](stage1/images/deleteQueryQ1.png)
+
+After Update: ![after_DELETE1](stage1/images/afterDeleteQueryQ1.png)
 
 
 
@@ -255,9 +270,11 @@ AND taskID IN (
     )
 );
 ```
-Before Update: ![beforeUpdate1](stage1/images/beforeDeleteQueryQ2.png)
-Execution Run : ![update1](stage1/images/deleteQueryQ2.png)
-After Update: ![afterUpdate1](stage1/images/afterDeleteQueryQ2.png)
+Before Update: ![before_DELETE2](stage1/images/beforeDeleteQueryQ2.png)
+
+Execution Run : ![DELETE2](stage1/images/deleteQueryQ2.png)
+
+After Update: ![after_DELETE2](stage1/images/afterDeleteQueryQ2.png)
 
 
 ---
@@ -276,9 +293,11 @@ WHERE suppliesID = (
     WHERE name = 'Supply_Item_27'
 );
 ```
-Before Update: ![beforeUpdate1](stage1/images/beforeDeleteQueryQ3.png)
-Execution Run : ![update1](stage1/images/deleteQueryQ3.png)
-After Update: ![afterUpdate1](stage1/images/afterDeleteQueryQ3.png)
+Before Update: ![before_DELETE3](stage1/images/beforeDeleteQueryQ3.png)
+
+Execution Run : ![DELETE3](stage1/images/deleteQueryQ3.png)
+
+After Update: ![after_DELETE](stage1/images/afterDeleteQueryQ3.png)
 
 
 ---
@@ -368,6 +387,9 @@ Execution Run: ![update3](stage1/images/update3.png)
 After Update: ![afterUpdate3](stage1/images/afterUpdate3.png)
 
 
+
+
+
 ## Index 1: Optimizing Date Range Searches in the Cleaning Log
 
 **Motivation and Benefit:**
@@ -450,6 +472,6 @@ CREATE INDEX idx_uses_supplies ON uses(suppliesid);
 
 Execution Time AFTER Index Creation: ~0.179 milliseconds (ms).
 
-![After Index 3](stage1/images/Index3_after.png)
+![After Index 3](stage1/images/index3_after.png)
 
 Analysis: This represents a massive performance jump (around 150x faster). The dedicated index allowed the database to bypass the complex primary key scan and retrieve the inventory usage data almost instantaneously
