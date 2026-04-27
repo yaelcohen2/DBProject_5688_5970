@@ -141,7 +141,14 @@ WHERE NOT EXISTS (
     FROM ROOMCHECK rc 
     WHERE rc.roomID = r.roomID
 );
--- Update task priority based on room type and current status
+
+
+/* ======================================================================
+   UPDATE QUERIES
+   ====================================================================== */
+
+-- Update 1: Escalate priority to urgent (5) for all 'In Progress' tasks that are overdue.
+-- This ensures that tasks past their due date get immediate attention.
 UPDATE HOUSEKEPINGTASK
 SET priority = 5
 WHERE statusID = (
@@ -149,21 +156,22 @@ WHERE statusID = (
     FROM HOUSEKEEPINGSTATUS 
     WHERE statusName = 'In Progress'
 )
-AND roomID IN (
-    SELECT roomID 
-    FROM ROOM 
-    WHERE roomType = 'Suite'
-);
--- Restock supplies by adding 50 units to items with low inventory
+AND dueDate < CURRENT_DATE;
+
+-- Update 2: Restock cleaning supplies by adding 50 units to any item with low inventory (below 10).
+-- This keeps essential supplies available and prevents housekeeping delays.
 UPDATE CLEANNINGSUPPLIES
-SET quantityInStock = quantityInStock + 50
-WHERE quantityInStock < 10;
--- Synchronize task status with cleaning logs
+SET quantity = quantity + 50
+WHERE quantity < 10;
+
+-- Update 3: Mark tasks as 'Clean' when their cleaning log shows a completed end time,
+-- but only if the task is not already in 'Clean' status. This synchronizes task statuses
+-- with actual cleaning activity recorded in the logs.
 UPDATE HOUSEKEPINGTASK
 SET statusID = (
     SELECT statusID 
     FROM HOUSEKEEPINGSTATUS 
-    WHERE statusName = 'Completed'
+    WHERE statusName = 'Clean'
 )
 WHERE taskID IN (
     SELECT taskID 
@@ -173,8 +181,5 @@ WHERE taskID IN (
 AND statusID != (
     SELECT statusID 
     FROM HOUSEKEEPINGSTATUS 
-    WHERE statusName = 'Completed'
+    WHERE statusName = 'Clean'
 );
-
-
-
