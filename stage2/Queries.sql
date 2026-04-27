@@ -144,11 +144,14 @@ WHERE NOT EXISTS (
 
 
 /* ======================================================================
-   UPDATE QUERIES
+   UPDATE QUERIES (with Transaction Control - Commit & Rollback)
    ====================================================================== */
 
 -- Update 1: Escalate priority to urgent (5) for all 'In Progress' tasks that are overdue.
 -- This ensures that tasks past their due date get immediate attention.
+-- Transaction: ROLLBACK — demonstrates undoing the change.
+BEGIN;
+
 UPDATE HOUSEKEPINGTASK
 SET priority = 5
 WHERE statusID = (
@@ -158,15 +161,25 @@ WHERE statusID = (
 )
 AND dueDate < CURRENT_DATE;
 
+ROLLBACK;
+
 -- Update 2: Restock cleaning supplies by adding 50 units to any item with low inventory (below 10).
 -- This keeps essential supplies available and prevents housekeeping delays.
+-- Transaction: COMMIT — demonstrates saving the change permanently.
+BEGIN;
+
 UPDATE CLEANNINGSUPPLIES
 SET quantity = quantity + 50
 WHERE quantity < 10;
 
+COMMIT;
+
 -- Update 3: Mark tasks as 'Clean' when their cleaning log shows a completed end time,
 -- but only if the task is not already in 'Clean' status. This synchronizes task statuses
 -- with actual cleaning activity recorded in the logs.
+-- Transaction: ROLLBACK — demonstrates undoing the change.
+BEGIN;
+
 UPDATE HOUSEKEPINGTASK
 SET statusID = (
     SELECT statusID 
@@ -183,3 +196,5 @@ AND statusID != (
     FROM HOUSEKEEPINGSTATUS 
     WHERE statusName = 'Clean'
 );
+
+ROLLBACK;
