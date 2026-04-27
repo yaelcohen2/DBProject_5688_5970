@@ -126,21 +126,56 @@ English Objective: This query identifies staff members who are registered in the
 SELECT roomID, roomNumber, floor
 FROM ROOM
 WHERE roomID NOT IN (
-    SELECT DISTINCT roomID 
-    FROM ROOMCHECK
+    SELECT DISTINCT roomID 
+    FROM ROOMCHECK
 );
 
 /* Version B: Existence Check (Correlated Subquery).
-   This version checks for the absence of a relationship for each room row. 
-   It stops searching as soon as it finds a single match (Short-circuit logic).
+    This version checks for the absence of a relationship for each room row. 
+    It stops searching as soon as it finds a single match (Short-circuit logic).
 */
 SELECT r.roomID, r.roomNumber, r.floor
 FROM ROOM r
 WHERE NOT EXISTS (
-    SELECT 1 
-    FROM ROOMCHECK rc 
-    WHERE rc.roomID = r.roomID
+    SELECT 1 
+    FROM ROOMCHECK rc 
+    WHERE rc.roomID = r.roomID
 );
+
+
+
+/* Query 1: Delete Specific Cleaning Log Entry*/
+
+DELETE FROM CLEANINGLOG
+WHERE logID = 105;
+
+
+
+/* Query 2: Archive - Delete Old Cleaning Logs for Floor 1*/
+
+DELETE FROM CLEANINGLOG
+WHERE startTime < '2026-04-10'
+AND taskID IN (
+    SELECT taskID 
+    FROM HOUSEKEEPINGTASK 
+    WHERE roomID IN (
+        SELECT roomID 
+        FROM ROOM 
+        WHERE roomnumber LIKE 'R-1%'
+    )
+);
+
+
+/* Query 3: Delete Usage History for a Specific Supply Item*/
+
+DELETE FROM USES
+WHERE suppliesID = (
+    SELECT suppliesID 
+    FROM CLEANINGSUPPLIES 
+    WHERE name = 'Supply_Item_27'
+);
+
+
 -- Update task priority based on room type and current status
 UPDATE HOUSEKEPINGTASK
 SET priority = 5
@@ -175,6 +210,5 @@ AND statusID != (
     FROM HOUSEKEEPINGSTATUS 
     WHERE statusName = 'Completed'
 );
-
 
 

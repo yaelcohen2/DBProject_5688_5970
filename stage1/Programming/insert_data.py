@@ -2,61 +2,45 @@ import psycopg2
 import random
 from datetime import datetime, timedelta
 
-
-# --- 1. פרטי התחברות לבסיס הנתונים שלך ---
+# --- 1. פרטי התחברות מעודכנים לפי התמונה ---
 connection_params = {
-    "host": "localhost",
-    "database": "hotel",       
-    "user": "myUser",          
-    "password": "1234"        
+    "host": "localhost",     # השאירי localhost כי פייתון רץ מהמחשב שלך אל המכולה (Container)
+    "port": "5432",
+    "database": "hotel", 
+    "user": "myUser",        # בדיוק כפי שמופיע בתמונה
+    "password": "1234"       # הסיסמה שהגדרת ב-Docker/pgAdmin
 }
 
 def insert_big_data():
     conn = None
     try:
-        # התחברות לשרת
         print("Connecting to the PostgreSQL database...")
         conn = psycopg2.connect(**connection_params)
         cur = conn.cursor()
+        print("Connection established!")
 
-        # כמות השורות להכנסה
         num_rows = 20000
-        print(f"Starting to insert {num_rows} rows into CLEANNINGLOG and USES...")
+        print(f"Starting to insert {num_rows} rows...")
 
-        # --- 2. הכנסת נתונים לטבלת CLEANNINGLOG ---
         for i in range(num_rows):
-            task_id = random.randint(1, 500)
-            employee_id = random.randint(1, 500)
+            task_id = random.randint(1, 10) 
+            employee_id = random.randint(1, 10)
             start_time = datetime.now() - timedelta(days=random.randint(0, 365))
             end_time = start_time + timedelta(hours=random.randint(1, 3))
-            comment = f"Log entry #{i} generated via Python"
+            comment = f"Log entry #{i}"
 
             cur.execute(
-                "INSERT INTO CLEANNINGLOG (taskID, employeeID, startTime, endTime, comment) VALUES (%s, %s, %s, %s, %s)",
+                "INSERT INTO cleaninglog (taskid, employeeid, starttime, endtime, comment) VALUES (%s, %s, %s, %s, %s)",
                 (task_id, employee_id, start_time, end_time, comment)
             )
 
-        # --- 3. הכנסת נתונים לטבלת USES ---
-        for i in range(num_rows):
-            supplies_id = random.randint(1, 500)
-            task_id = random.randint(1, 500)
-            quantity = random.randint(1, 10)
-
-            # שימוש ב-ON CONFLICT כדי למנוע שגיאות אם המפתח כבר קיים
-            cur.execute(
-                "INSERT INTO USES (suppliesID, taskID, quantityUsed) VALUES (%s, %s, %s) ON CONFLICT DO NOTHING",
-                (supplies_id, task_id, quantity)
-            )
-
-        # שמירת השינויים בבסיס הנתונים (חשוב מאוד!)
         conn.commit()
-        print(f"Successfully inserted {num_rows} rows into both tables!")
+        print(f"Successfully inserted {num_rows} rows!")
 
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(f"Error while connecting to PostgreSQL: {error}")
+    except Exception as error:
+        print(f"Error: {error}")
     
     finally:
-        # סגירת החיבור
         if conn is not None:
             cur.close()
             conn.close()

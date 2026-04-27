@@ -272,7 +272,7 @@ DELETE FROM USES
 WHERE suppliesID = (
     SELECT suppliesID 
     FROM CLEANINGSUPPLIES 
-    WHERE name = 'Supply_Item_26'
+    WHERE name = 'Supply_Item_27'
 );
 ```
 
