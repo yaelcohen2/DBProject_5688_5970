@@ -1,0 +1,26391 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict g5uDsZpLMPlr4yvgPoAO7pUfCPRokfbjqGpLyNZC4GDFIJ1AvgLCqrdtThUNsEQ
+
+-- Dumped from database version 17.1 (Debian 17.1-1.pgdg120+1)
+-- Dumped by pg_dump version 17.9
+
+-- Started on 2026-04-28 09:50:23 UTC
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 4 (class 2615 OID 2200)
+-- Name: public; Type: SCHEMA; Schema: -; Owner: pg_database_owner
+--
+
+CREATE SCHEMA public;
+
+
+ALTER SCHEMA public OWNER TO pg_database_owner;
+
+--
+-- TOC entry 3472 (class 0 OID 0)
+-- Dependencies: 4
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: pg_database_owner
+--
+
+COMMENT ON SCHEMA public IS 'standard public schema';
+
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 233 (class 1259 OID 32864)
+-- Name: belongsto; Type: TABLE; Schema: public; Owner: myUser
+--
+
+CREATE TABLE public.belongsto (
+    employeeid integer NOT NULL,
+    taskid integer NOT NULL
+);
+
+
+ALTER TABLE public.belongsto OWNER TO "myUser";
+
+--
+-- TOC entry 3473 (class 0 OID 0)
+-- Dependencies: 233
+-- Name: TABLE belongsto; Type: COMMENT; Schema: public; Owner: myUser
+--
+
+COMMENT ON TABLE public.belongsto IS 'Mapping table linking employees to their assigned cleaning tasks';
+
+
+--
+-- TOC entry 228 (class 1259 OID 32819)
+-- Name: cleaninglog; Type: TABLE; Schema: public; Owner: myUser
+--
+
+CREATE TABLE public.cleaninglog (
+    logid integer NOT NULL,
+    taskid integer NOT NULL,
+    employeeid integer NOT NULL,
+    starttime timestamp without time zone NOT NULL,
+    endtime timestamp without time zone,
+    comment text
+);
+
+
+ALTER TABLE public.cleaninglog OWNER TO "myUser";
+
+--
+-- TOC entry 3474 (class 0 OID 0)
+-- Dependencies: 228
+-- Name: TABLE cleaninglog; Type: COMMENT; Schema: public; Owner: myUser
+--
+
+COMMENT ON TABLE public.cleaninglog IS 'Real-time tracking of when cleaning started and finished for a task';
+
+
+--
+-- TOC entry 227 (class 1259 OID 32818)
+-- Name: cleaninglog_logid_seq; Type: SEQUENCE; Schema: public; Owner: myUser
+--
+
+CREATE SEQUENCE public.cleaninglog_logid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.cleaninglog_logid_seq OWNER TO "myUser";
+
+--
+-- TOC entry 3475 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: cleaninglog_logid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: myUser
+--
+
+ALTER SEQUENCE public.cleaninglog_logid_seq OWNED BY public.cleaninglog.logid;
+
+
+--
+-- TOC entry 232 (class 1259 OID 32857)
+-- Name: cleaningsupplies; Type: TABLE; Schema: public; Owner: myUser
+--
+
+CREATE TABLE public.cleaningsupplies (
+    suppliesid integer NOT NULL,
+    name character varying(100) NOT NULL,
+    quantity integer DEFAULT 0 NOT NULL,
+    CONSTRAINT chk_quantity_not_negative CHECK ((quantity >= 0))
+);
+
+
+ALTER TABLE public.cleaningsupplies OWNER TO "myUser";
+
+--
+-- TOC entry 3476 (class 0 OID 0)
+-- Dependencies: 232
+-- Name: TABLE cleaningsupplies; Type: COMMENT; Schema: public; Owner: myUser
+--
+
+COMMENT ON TABLE public.cleaningsupplies IS 'Inventory of cleaning materials, chemicals, and tools';
+
+
+--
+-- TOC entry 231 (class 1259 OID 32856)
+-- Name: cleaningsupplies_suppliesid_seq; Type: SEQUENCE; Schema: public; Owner: myUser
+--
+
+CREATE SEQUENCE public.cleaningsupplies_suppliesid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.cleaningsupplies_suppliesid_seq OWNER TO "myUser";
+
+--
+-- TOC entry 3477 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: cleaningsupplies_suppliesid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: myUser
+--
+
+ALTER SEQUENCE public.cleaningsupplies_suppliesid_seq OWNED BY public.cleaningsupplies.suppliesid;
+
+
+--
+-- TOC entry 226 (class 1259 OID 32812)
+-- Name: housekeepingemployee; Type: TABLE; Schema: public; Owner: myUser
+--
+
+CREATE TABLE public.housekeepingemployee (
+    employeeid integer NOT NULL,
+    name character varying(100) NOT NULL,
+    shiftid integer NOT NULL
+);
+
+
+ALTER TABLE public.housekeepingemployee OWNER TO "myUser";
+
+--
+-- TOC entry 3478 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: TABLE housekeepingemployee; Type: COMMENT; Schema: public; Owner: myUser
+--
+
+COMMENT ON TABLE public.housekeepingemployee IS 'Details of employees working within the housekeeping department';
+
+
+--
+-- TOC entry 225 (class 1259 OID 32811)
+-- Name: housekeepingemployee_employeeid_seq; Type: SEQUENCE; Schema: public; Owner: myUser
+--
+
+CREATE SEQUENCE public.housekeepingemployee_employeeid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.housekeepingemployee_employeeid_seq OWNER TO "myUser";
+
+--
+-- TOC entry 3479 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: housekeepingemployee_employeeid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: myUser
+--
+
+ALTER SEQUENCE public.housekeepingemployee_employeeid_seq OWNED BY public.housekeepingemployee.employeeid;
+
+
+--
+-- TOC entry 222 (class 1259 OID 32783)
+-- Name: housekeepingstatus; Type: TABLE; Schema: public; Owner: myUser
+--
+
+CREATE TABLE public.housekeepingstatus (
+    statusid integer NOT NULL,
+    statusname character varying(50) NOT NULL
+);
+
+
+ALTER TABLE public.housekeepingstatus OWNER TO "myUser";
+
+--
+-- TOC entry 3480 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: TABLE housekeepingstatus; Type: COMMENT; Schema: public; Owner: myUser
+--
+
+COMMENT ON TABLE public.housekeepingstatus IS 'Look-up table for housekeeping and room cleanliness statuses';
+
+
+--
+-- TOC entry 221 (class 1259 OID 32782)
+-- Name: housekeepingstatus_statusid_seq; Type: SEQUENCE; Schema: public; Owner: myUser
+--
+
+CREATE SEQUENCE public.housekeepingstatus_statusid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.housekeepingstatus_statusid_seq OWNER TO "myUser";
+
+--
+-- TOC entry 3481 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: housekeepingstatus_statusid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: myUser
+--
+
+ALTER SEQUENCE public.housekeepingstatus_statusid_seq OWNED BY public.housekeepingstatus.statusid;
+
+
+--
+-- TOC entry 224 (class 1259 OID 32790)
+-- Name: housekeepingtask; Type: TABLE; Schema: public; Owner: myUser
+--
+
+CREATE TABLE public.housekeepingtask (
+    taskid integer NOT NULL,
+    roomid integer NOT NULL,
+    tasktypeid integer NOT NULL,
+    statusid integer NOT NULL,
+    priority integer NOT NULL,
+    duedate date NOT NULL
+);
+
+
+ALTER TABLE public.housekeepingtask OWNER TO "myUser";
+
+--
+-- TOC entry 3482 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: TABLE housekeepingtask; Type: COMMENT; Schema: public; Owner: myUser
+--
+
+COMMENT ON TABLE public.housekeepingtask IS 'Scheduled cleaning assignments assigned to specific rooms';
+
+
+--
+-- TOC entry 3483 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: COLUMN housekeepingtask.priority; Type: COMMENT; Schema: public; Owner: myUser
+--
+
+COMMENT ON COLUMN public.housekeepingtask.priority IS 'Priority level: 1 (Low) to 5 (Urgent)';
+
+
+--
+-- TOC entry 223 (class 1259 OID 32789)
+-- Name: housekeepingtask_taskid_seq; Type: SEQUENCE; Schema: public; Owner: myUser
+--
+
+CREATE SEQUENCE public.housekeepingtask_taskid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.housekeepingtask_taskid_seq OWNER TO "myUser";
+
+--
+-- TOC entry 3484 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: housekeepingtask_taskid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: myUser
+--
+
+ALTER SEQUENCE public.housekeepingtask_taskid_seq OWNED BY public.housekeepingtask.taskid;
+
+
+--
+-- TOC entry 218 (class 1259 OID 32769)
+-- Name: room; Type: TABLE; Schema: public; Owner: myUser
+--
+
+CREATE TABLE public.room (
+    roomid integer NOT NULL,
+    roomnumber character varying(10) NOT NULL,
+    floor integer NOT NULL
+);
+
+
+ALTER TABLE public.room OWNER TO "myUser";
+
+--
+-- TOC entry 3485 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: TABLE room; Type: COMMENT; Schema: public; Owner: myUser
+--
+
+COMMENT ON TABLE public.room IS 'Physical room records within the hotel';
+
+
+--
+-- TOC entry 217 (class 1259 OID 32768)
+-- Name: room_roomid_seq; Type: SEQUENCE; Schema: public; Owner: myUser
+--
+
+CREATE SEQUENCE public.room_roomid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.room_roomid_seq OWNER TO "myUser";
+
+--
+-- TOC entry 3486 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: room_roomid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: myUser
+--
+
+ALTER SEQUENCE public.room_roomid_seq OWNED BY public.room.roomid;
+
+
+--
+-- TOC entry 230 (class 1259 OID 32838)
+-- Name: roomcheck; Type: TABLE; Schema: public; Owner: myUser
+--
+
+CREATE TABLE public.roomcheck (
+    checkid integer NOT NULL,
+    roomid integer NOT NULL,
+    employeeid integer NOT NULL,
+    checkdate timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    score integer,
+    CONSTRAINT chk_score_range CHECK (((score >= 0) AND (score <= 100))),
+    CONSTRAINT roomcheck_score_check CHECK (((score >= 0) AND (score <= 100)))
+);
+
+
+ALTER TABLE public.roomcheck OWNER TO "myUser";
+
+--
+-- TOC entry 3487 (class 0 OID 0)
+-- Dependencies: 230
+-- Name: TABLE roomcheck; Type: COMMENT; Schema: public; Owner: myUser
+--
+
+COMMENT ON TABLE public.roomcheck IS 'Quality inspection records and scores after a room has been cleaned';
+
+
+--
+-- TOC entry 3488 (class 0 OID 0)
+-- Dependencies: 230
+-- Name: COLUMN roomcheck.score; Type: COMMENT; Schema: public; Owner: myUser
+--
+
+COMMENT ON COLUMN public.roomcheck.score IS 'Inspection result expressed as a percentage (0-100)';
+
+
+--
+-- TOC entry 229 (class 1259 OID 32837)
+-- Name: roomcheck_checkid_seq; Type: SEQUENCE; Schema: public; Owner: myUser
+--
+
+CREATE SEQUENCE public.roomcheck_checkid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.roomcheck_checkid_seq OWNER TO "myUser";
+
+--
+-- TOC entry 3489 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: roomcheck_checkid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: myUser
+--
+
+ALTER SEQUENCE public.roomcheck_checkid_seq OWNED BY public.roomcheck.checkid;
+
+
+--
+-- TOC entry 220 (class 1259 OID 32776)
+-- Name: tasktype; Type: TABLE; Schema: public; Owner: myUser
+--
+
+CREATE TABLE public.tasktype (
+    tasktypeid integer NOT NULL,
+    name character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.tasktype OWNER TO "myUser";
+
+--
+-- TOC entry 3490 (class 0 OID 0)
+-- Dependencies: 220
+-- Name: TABLE tasktype; Type: COMMENT; Schema: public; Owner: myUser
+--
+
+COMMENT ON TABLE public.tasktype IS 'Definition of cleaning task types and their categories';
+
+
+--
+-- TOC entry 219 (class 1259 OID 32775)
+-- Name: tasktype_tasktypeid_seq; Type: SEQUENCE; Schema: public; Owner: myUser
+--
+
+CREATE SEQUENCE public.tasktype_tasktypeid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.tasktype_tasktypeid_seq OWNER TO "myUser";
+
+--
+-- TOC entry 3491 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: tasktype_tasktypeid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: myUser
+--
+
+ALTER SEQUENCE public.tasktype_tasktypeid_seq OWNED BY public.tasktype.tasktypeid;
+
+
+--
+-- TOC entry 234 (class 1259 OID 32879)
+-- Name: uses; Type: TABLE; Schema: public; Owner: myUser
+--
+
+CREATE TABLE public.uses (
+    suppliesid integer NOT NULL,
+    taskid integer NOT NULL,
+    quantityused integer DEFAULT 1,
+    CONSTRAINT uses_quantityused_check CHECK ((quantityused > 0))
+);
+
+
+ALTER TABLE public.uses OWNER TO "myUser";
+
+--
+-- TOC entry 3492 (class 0 OID 0)
+-- Dependencies: 234
+-- Name: TABLE uses; Type: COMMENT; Schema: public; Owner: myUser
+--
+
+COMMENT ON TABLE public.uses IS 'Records of cleaning supplies consumed during specific tasks';
+
+
+--
+-- TOC entry 3258 (class 2604 OID 32822)
+-- Name: cleaninglog logid; Type: DEFAULT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.cleaninglog ALTER COLUMN logid SET DEFAULT nextval('public.cleaninglog_logid_seq'::regclass);
+
+
+--
+-- TOC entry 3261 (class 2604 OID 32860)
+-- Name: cleaningsupplies suppliesid; Type: DEFAULT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.cleaningsupplies ALTER COLUMN suppliesid SET DEFAULT nextval('public.cleaningsupplies_suppliesid_seq'::regclass);
+
+
+--
+-- TOC entry 3257 (class 2604 OID 32815)
+-- Name: housekeepingemployee employeeid; Type: DEFAULT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.housekeepingemployee ALTER COLUMN employeeid SET DEFAULT nextval('public.housekeepingemployee_employeeid_seq'::regclass);
+
+
+--
+-- TOC entry 3255 (class 2604 OID 32786)
+-- Name: housekeepingstatus statusid; Type: DEFAULT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.housekeepingstatus ALTER COLUMN statusid SET DEFAULT nextval('public.housekeepingstatus_statusid_seq'::regclass);
+
+
+--
+-- TOC entry 3256 (class 2604 OID 32793)
+-- Name: housekeepingtask taskid; Type: DEFAULT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.housekeepingtask ALTER COLUMN taskid SET DEFAULT nextval('public.housekeepingtask_taskid_seq'::regclass);
+
+
+--
+-- TOC entry 3253 (class 2604 OID 32772)
+-- Name: room roomid; Type: DEFAULT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.room ALTER COLUMN roomid SET DEFAULT nextval('public.room_roomid_seq'::regclass);
+
+
+--
+-- TOC entry 3259 (class 2604 OID 32841)
+-- Name: roomcheck checkid; Type: DEFAULT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.roomcheck ALTER COLUMN checkid SET DEFAULT nextval('public.roomcheck_checkid_seq'::regclass);
+
+
+--
+-- TOC entry 3254 (class 2604 OID 32779)
+-- Name: tasktype tasktypeid; Type: DEFAULT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.tasktype ALTER COLUMN tasktypeid SET DEFAULT nextval('public.tasktype_tasktypeid_seq'::regclass);
+
+
+--
+-- TOC entry 3465 (class 0 OID 32864)
+-- Dependencies: 233
+-- Data for Name: belongsto; Type: TABLE DATA; Schema: public; Owner: myUser
+--
+
+COPY public.belongsto (employeeid, taskid) FROM stdin;
+\.
+
+
+--
+-- TOC entry 3460 (class 0 OID 32819)
+-- Dependencies: 228
+-- Data for Name: cleaninglog; Type: TABLE DATA; Schema: public; Owner: myUser
+--
+
+COPY public.cleaninglog (logid, taskid, employeeid, starttime, endtime, comment) FROM stdin;
+100035	9	6	2026-04-15 21:55:20.075311	2026-04-16 00:55:20.075311	Log entry #34
+100037	8	1	2026-04-18 21:55:20.076273	2026-04-19 00:55:20.076273	Log entry #36
+100051	6	6	2026-04-11 21:55:20.087687	2026-04-11 23:55:20.087687	Log entry #50
+100057	1	10	2026-04-20 21:55:20.092489	2026-04-20 23:55:20.092489	Log entry #56
+100063	9	5	2026-04-14 21:55:20.097529	2026-04-15 00:55:20.097529	Log entry #62
+100096	5	6	2026-04-27 21:55:20.122761	2026-04-27 22:55:20.122761	Log entry #95
+100143	3	10	2026-04-20 21:55:20.158384	2026-04-20 22:55:20.158384	Log entry #142
+100196	4	6	2026-04-24 21:55:20.198538	2026-04-25 00:55:20.198538	Log entry #195
+100221	1	2	2026-04-13 21:55:20.214093	2026-04-14 00:55:20.214093	Log entry #220
+100244	2	10	2026-04-24 21:55:20.229557	2026-04-25 00:55:20.229557	Log entry #243
+100292	7	6	2026-04-17 21:55:20.258541	2026-04-17 23:55:20.258541	Log entry #291
+100299	8	6	2026-04-16 21:55:20.26255	2026-04-17 00:55:20.26255	Log entry #298
+100322	6	6	2026-04-18 21:55:20.278797	2026-04-19 00:55:20.278797	Log entry #321
+100334	3	5	2026-04-10 21:55:20.285814	2026-04-10 22:55:20.285814	Log entry #333
+100336	7	10	2026-04-25 21:55:20.286915	2026-04-25 23:55:20.286915	Log entry #335
+100337	1	7	2026-04-26 21:55:20.287878	2026-04-27 00:55:20.287878	Log entry #336
+100348	5	5	2026-04-12 21:55:20.295984	2026-04-12 23:55:20.295984	Log entry #347
+100351	4	8	2026-04-14 21:55:20.298425	2026-04-14 22:55:20.298425	Log entry #350
+100363	6	7	2026-04-19 21:55:20.306373	2026-04-20 00:55:20.306373	Log entry #362
+100383	10	10	2026-04-27 21:55:20.318648	2026-04-27 22:55:20.318648	Log entry #382
+100390	7	4	2026-04-25 21:55:20.323511	2026-04-26 00:55:20.323511	Log entry #389
+100392	3	2	2026-04-25 21:55:20.325091	2026-04-26 00:55:20.325091	Log entry #391
+100415	7	4	2026-04-12 21:55:20.342422	2026-04-13 00:55:20.342422	Log entry #414
+100426	2	1	2026-04-18 21:55:20.350299	2026-04-18 22:55:20.350299	Log entry #425
+100446	6	6	2026-04-18 21:55:20.365552	2026-04-19 00:55:20.365552	Log entry #445
+100471	1	9	2026-04-10 21:55:20.382222	2026-04-10 23:55:20.382222	Log entry #470
+100484	9	10	2026-04-23 21:55:20.390897	2026-04-23 22:55:20.390897	Log entry #483
+100510	3	2	2026-04-26 21:55:20.407614	2026-04-26 22:55:20.407614	Log entry #509
+100541	4	1	2026-04-19 21:55:20.426325	2026-04-20 00:55:20.426325	Log entry #540
+100547	9	6	2026-04-27 21:55:20.430208	2026-04-27 22:55:20.430208	Log entry #546
+100597	5	1	2026-04-10 21:55:20.4607	2026-04-10 22:55:20.4607	Log entry #596
+100605	8	3	2026-04-26 21:55:20.465983	2026-04-26 22:55:20.465983	Log entry #604
+100644	3	9	2026-04-10 21:55:20.493494	2026-04-10 23:55:20.493494	Log entry #643
+100648	1	9	2026-04-26 21:55:20.496949	2026-04-26 23:55:20.496949	Log entry #647
+100671	6	7	2026-04-17 21:55:20.515277	2026-04-17 22:55:20.515277	Log entry #670
+100681	9	6	2026-04-19 21:55:20.52442	2026-04-19 22:55:20.52442	Log entry #680
+100698	1	5	2026-04-12 21:55:20.540251	2026-04-12 22:55:20.540251	Log entry #697
+100707	1	10	2026-04-24 21:55:20.547849	2026-04-24 22:55:20.547849	Log entry #706
+100758	7	5	2026-04-25 21:55:20.584742	2026-04-25 23:55:20.584742	Log entry #757
+100763	2	4	2026-04-26 21:55:20.587656	2026-04-26 22:55:20.587656	Log entry #762
+100778	8	2	2026-04-10 21:55:20.596927	2026-04-10 23:55:20.596927	Log entry #777
+100801	5	7	2026-04-11 21:55:20.611905	2026-04-12 00:55:20.611905	Log entry #800
+100814	10	8	2026-04-16 21:55:20.621175	2026-04-17 00:55:20.621175	Log entry #813
+100818	9	7	2026-04-13 21:55:20.623485	2026-04-13 22:55:20.623485	Log entry #817
+100824	1	1	2026-04-16 21:55:20.626993	2026-04-16 23:55:20.626993	Log entry #823
+100849	3	2	2026-04-27 21:55:20.641517	2026-04-27 22:55:20.641517	Log entry #848
+100901	7	10	2026-04-12 21:55:20.679241	2026-04-12 22:55:20.679241	Log entry #900
+100904	7	6	2026-04-18 21:55:20.681032	2026-04-18 23:55:20.681032	Log entry #903
+100905	6	6	2026-04-10 21:55:20.681622	2026-04-11 00:55:20.681622	Log entry #904
+100918	7	9	2026-04-24 21:55:20.688805	2026-04-25 00:55:20.688805	Log entry #917
+100995	2	3	2026-04-25 21:55:20.735494	2026-04-25 22:55:20.735494	Log entry #994
+101004	10	3	2026-04-21 21:55:20.74063	2026-04-22 00:55:20.74063	Log entry #1003
+101009	4	1	2026-04-15 21:55:20.743246	2026-04-15 23:55:20.743246	Log entry #1008
+101039	2	10	2026-04-16 21:55:20.762679	2026-04-16 23:55:20.762679	Log entry #1038
+101064	4	4	2026-04-19 21:55:20.780634	2026-04-20 00:55:20.780634	Log entry #1063
+101095	8	5	2026-04-12 21:55:20.799988	2026-04-13 00:55:20.799988	Log entry #1094
+101103	3	9	2026-04-16 21:55:20.805399	2026-04-16 23:55:20.805399	Log entry #1102
+101108	5	3	2026-04-18 21:55:20.808419	2026-04-18 22:55:20.808419	Log entry #1107
+101111	7	7	2026-04-11 21:55:20.810015	2026-04-11 22:55:20.810015	Log entry #1110
+101112	3	4	2026-04-22 21:55:20.810543	2026-04-22 23:55:20.810543	Log entry #1111
+101116	7	10	2026-04-27 21:55:20.813187	2026-04-27 23:55:20.813187	Log entry #1115
+101126	5	10	2026-04-26 21:55:20.819018	2026-04-26 22:55:20.819018	Log entry #1125
+101148	3	7	2026-04-20 21:55:20.832307	2026-04-20 23:55:20.832307	Log entry #1147
+101149	5	6	2026-04-24 21:55:20.833024	2026-04-24 22:55:20.833024	Log entry #1148
+101187	9	1	2026-04-22 21:55:20.857299	2026-04-23 00:55:20.857299	Log entry #1186
+101189	9	10	2026-04-17 21:55:20.858937	2026-04-18 00:55:20.858937	Log entry #1188
+101193	1	8	2026-04-22 21:55:20.861102	2026-04-23 00:55:20.861102	Log entry #1192
+101226	4	4	2026-04-15 21:55:20.893893	2026-04-15 23:55:20.893893	Log entry #1225
+101270	1	3	2026-04-15 21:55:20.926111	2026-04-15 23:55:20.926111	Log entry #1269
+101285	9	9	2026-04-24 21:55:20.936904	2026-04-24 22:55:20.936904	Log entry #1284
+101316	3	2	2026-04-19 21:55:20.959964	2026-04-19 22:55:20.959964	Log entry #1315
+101341	5	9	2026-04-27 21:55:20.981249	2026-04-27 23:55:20.981249	Log entry #1340
+101348	9	5	2026-04-13 21:55:20.985477	2026-04-13 22:55:20.985477	Log entry #1347
+101381	2	7	2026-04-11 21:55:21.009091	2026-04-11 23:55:21.009091	Log entry #1380
+101396	6	5	2026-04-22 21:55:21.019566	2026-04-23 00:55:21.019566	Log entry #1395
+101400	2	5	2026-04-18 21:55:21.022066	2026-04-18 23:55:21.022066	Log entry #1399
+101434	1	1	2026-04-10 21:55:21.045563	2026-04-10 23:55:21.045563	Log entry #1433
+101467	8	9	2026-04-11 21:55:21.073018	2026-04-11 23:55:21.073018	Log entry #1466
+101482	4	4	2026-04-27 21:55:21.084663	2026-04-27 22:55:21.084663	Log entry #1481
+101574	2	6	2026-04-12 21:55:21.163552	2026-04-12 22:55:21.163552	Log entry #1573
+101595	9	8	2026-04-21 21:55:21.179825	2026-04-22 00:55:21.179825	Log entry #1594
+101605	10	6	2026-04-11 21:55:21.186485	2026-04-12 00:55:21.186485	Log entry #1604
+101611	3	1	2026-04-22 21:55:21.190231	2026-04-22 23:55:21.190231	Log entry #1610
+101637	6	10	2026-04-13 21:55:21.20757	2026-04-13 22:55:21.20757	Log entry #1636
+101710	9	5	2026-04-15 21:55:21.284445	2026-04-15 23:55:21.284445	Log entry #1709
+101730	8	10	2026-04-27 21:55:21.314638	2026-04-27 23:55:21.314638	Log entry #1729
+101734	9	1	2026-04-21 21:55:21.321512	2026-04-22 00:55:21.321512	Log entry #1733
+101738	2	7	2026-04-15 21:55:21.32783	2026-04-15 22:55:21.32783	Log entry #1737
+101745	2	7	2026-04-17 21:55:21.336799	2026-04-17 22:55:21.336799	Log entry #1744
+101746	3	10	2026-04-27 21:55:21.337853	2026-04-27 22:55:21.337853	Log entry #1745
+101763	2	10	2026-04-24 21:55:21.361022	2026-04-25 00:55:21.361022	Log entry #1762
+101771	6	6	2026-04-23 21:55:21.371962	2026-04-24 00:55:21.371962	Log entry #1770
+101782	5	3	2026-04-14 21:55:21.383937	2026-04-15 00:55:21.383937	Log entry #1781
+101811	5	9	2026-04-23 21:55:21.407974	2026-04-23 23:55:21.407974	Log entry #1810
+101833	4	6	2026-04-14 21:55:21.427367	2026-04-14 22:55:21.427367	Log entry #1832
+101835	4	9	2026-04-13 21:55:21.42929	2026-04-14 00:55:21.42929	Log entry #1834
+101853	8	3	2026-04-19 21:55:21.442501	2026-04-19 23:55:21.442501	Log entry #1852
+101855	5	8	2026-04-11 21:55:21.444151	2026-04-11 22:55:21.444151	Log entry #1854
+101894	7	3	2026-04-13 21:55:21.479817	2026-04-14 00:55:21.479817	Log entry #1893
+101902	7	4	2026-04-20 21:55:21.485474	2026-04-20 22:55:21.485474	Log entry #1901
+101923	9	4	2026-04-18 21:55:21.500836	2026-04-19 00:55:21.500836	Log entry #1922
+101925	10	7	2026-04-16 21:55:21.502951	2026-04-16 23:55:21.502951	Log entry #1924
+101957	4	4	2026-04-11 21:55:21.527445	2026-04-11 22:55:21.527445	Log entry #1956
+101967	6	4	2026-04-15 21:55:21.538244	2026-04-16 00:55:21.538244	Log entry #1966
+101994	2	4	2026-04-18 21:55:21.567974	2026-04-19 00:55:21.567974	Log entry #1993
+102003	4	2	2026-04-19 21:55:21.578812	2026-04-19 23:55:21.578812	Log entry #2002
+102015	8	3	2026-04-10 21:55:21.596606	2026-04-10 23:55:21.596606	Log entry #2014
+102023	9	6	2026-04-14 21:55:21.606652	2026-04-14 23:55:21.606652	Log entry #2022
+102027	7	8	2026-04-24 21:55:21.610839	2026-04-24 22:55:21.610839	Log entry #2026
+102040	7	3	2026-04-16 21:55:21.625438	2026-04-17 00:55:21.625438	Log entry #2039
+102045	9	8	2026-04-12 21:55:21.630725	2026-04-12 23:55:21.630725	Log entry #2044
+102049	7	6	2026-04-22 21:55:21.635104	2026-04-22 23:55:21.635104	Log entry #2048
+102070	3	2	2026-04-10 21:55:21.657505	2026-04-10 23:55:21.657505	Log entry #2069
+102075	9	3	2026-04-16 21:55:21.662076	2026-04-17 00:55:21.662076	Log entry #2074
+102077	10	6	2026-04-23 21:55:21.664143	2026-04-23 23:55:21.664143	Log entry #2076
+102105	7	1	2026-04-21 21:55:21.699486	2026-04-21 23:55:21.699486	Log entry #2104
+102114	8	4	2026-04-14 21:55:21.709189	2026-04-14 23:55:21.709189	Log entry #2113
+102119	5	3	2026-04-23 21:55:21.714303	2026-04-23 22:55:21.714303	Log entry #2118
+102140	4	1	2026-04-16 21:55:21.73376	2026-04-16 23:55:21.73376	Log entry #2139
+102154	6	6	2026-04-27 21:55:21.743567	2026-04-27 23:55:21.743567	Log entry #2153
+102160	9	10	2026-04-21 21:55:21.748424	2026-04-21 23:55:21.748424	Log entry #2159
+102171	4	2	2026-04-15 21:55:21.754997	2026-04-15 22:55:21.754997	Log entry #2170
+102175	5	3	2026-04-24 21:55:21.757951	2026-04-24 23:55:21.757951	Log entry #2174
+102191	5	3	2026-04-11 21:55:21.771508	2026-04-12 00:55:21.771508	Log entry #2190
+102194	4	5	2026-04-22 21:55:21.774715	2026-04-23 00:55:21.774715	Log entry #2193
+102205	7	7	2026-04-12 21:55:21.785067	2026-04-12 22:55:21.785067	Log entry #2204
+102218	5	8	2026-04-14 21:55:21.794307	2026-04-14 22:55:21.794307	Log entry #2217
+102223	2	3	2026-04-12 21:55:21.798598	2026-04-12 22:55:21.798598	Log entry #2222
+102230	4	1	2026-04-10 21:55:21.802832	2026-04-11 00:55:21.802832	Log entry #2229
+102254	5	1	2026-04-20 21:55:21.819649	2026-04-20 22:55:21.819649	Log entry #2253
+102270	3	6	2026-04-23 21:55:21.831523	2026-04-24 00:55:21.831523	Log entry #2269
+102275	10	8	2026-04-21 21:55:21.835049	2026-04-21 23:55:21.835049	Log entry #2274
+102288	5	5	2026-04-24 21:55:21.843897	2026-04-24 22:55:21.843897	Log entry #2287
+102290	8	1	2026-04-18 21:55:21.845606	2026-04-18 23:55:21.845606	Log entry #2289
+102293	1	10	2026-04-17 21:55:21.847709	2026-04-17 23:55:21.847709	Log entry #2292
+102303	1	4	2026-04-22 21:55:21.854129	2026-04-23 00:55:21.854129	Log entry #2302
+102309	10	6	2026-04-12 21:55:21.857852	2026-04-12 22:55:21.857852	Log entry #2308
+102338	7	1	2026-04-21 21:55:21.881303	2026-04-21 22:55:21.881303	Log entry #2337
+102355	9	5	2026-04-10 21:55:21.892703	2026-04-11 00:55:21.892703	Log entry #2354
+102366	1	1	2026-04-23 21:55:21.899745	2026-04-24 00:55:21.899745	Log entry #2365
+102378	3	1	2026-04-22 21:55:21.910256	2026-04-22 23:55:21.910256	Log entry #2377
+102390	2	3	2026-04-22 21:55:21.918865	2026-04-23 00:55:21.918865	Log entry #2389
+102442	9	8	2026-04-22 21:55:21.955934	2026-04-23 00:55:21.955934	Log entry #2441
+102457	7	1	2026-04-14 21:55:21.967628	2026-04-14 22:55:21.967628	Log entry #2456
+102458	7	2	2026-04-11 21:55:21.968441	2026-04-12 00:55:21.968441	Log entry #2457
+102474	3	2	2026-04-19 21:55:21.979288	2026-04-19 22:55:21.979288	Log entry #2473
+102481	8	4	2026-04-18 21:55:21.983799	2026-04-19 00:55:21.983799	Log entry #2480
+102491	9	6	2026-04-27 21:55:21.989869	2026-04-27 23:55:21.989869	Log entry #2490
+102539	3	1	2026-04-11 21:55:22.018721	2026-04-11 23:55:22.018721	Log entry #2538
+102554	8	4	2026-04-10 21:55:22.026688	2026-04-10 23:55:22.026688	Log entry #2553
+102586	1	3	2026-04-14 21:55:22.052813	2026-04-14 23:55:22.052813	Log entry #2585
+102599	9	1	2026-04-13 21:55:22.064661	2026-04-13 23:55:22.064661	Log entry #2598
+102631	7	10	2026-04-10 21:55:22.096178	2026-04-11 00:55:22.096178	Log entry #2630
+102636	10	9	2026-04-27 21:55:22.100126	2026-04-28 00:55:22.100126	Log entry #2635
+102640	9	9	2026-04-15 21:55:22.10364	2026-04-15 23:55:22.10364	Log entry #2639
+102708	8	1	2026-04-25 21:55:22.150281	2026-04-26 00:55:22.150281	Log entry #2707
+102726	4	4	2026-04-27 21:55:22.162606	2026-04-27 22:55:22.162606	Log entry #2725
+102731	7	2	2026-04-19 21:55:22.166632	2026-04-19 23:55:22.166632	Log entry #2730
+102742	9	3	2026-04-20 21:55:22.177193	2026-04-21 00:55:22.177193	Log entry #2741
+102751	10	4	2026-04-12 21:55:22.183288	2026-04-13 00:55:22.183288	Log entry #2750
+102756	6	10	2026-04-18 21:55:22.187604	2026-04-19 00:55:22.187604	Log entry #2755
+102780	9	5	2026-04-22 21:55:22.210757	2026-04-23 00:55:22.210757	Log entry #2779
+102782	6	10	2026-04-23 21:55:22.213321	2026-04-23 23:55:22.213321	Log entry #2781
+102837	6	4	2026-04-14 21:55:22.261439	2026-04-15 00:55:22.261439	Log entry #2836
+102857	1	7	2026-04-27 21:55:22.278043	2026-04-28 00:55:22.278043	Log entry #2856
+102901	5	3	2026-04-15 21:55:22.308467	2026-04-15 22:55:22.308467	Log entry #2900
+102912	10	6	2026-04-14 21:55:22.315102	2026-04-14 22:55:22.315102	Log entry #2911
+102923	5	2	2026-04-25 21:55:22.323025	2026-04-25 23:55:22.323025	Log entry #2922
+102956	4	3	2026-04-14 21:55:22.348608	2026-04-14 22:55:22.348608	Log entry #2955
+102996	2	8	2026-04-12 21:55:22.378925	2026-04-13 00:55:22.378925	Log entry #2995
+102997	6	6	2026-04-19 21:55:22.379606	2026-04-19 22:55:22.379606	Log entry #2996
+103003	3	4	2026-04-26 21:55:22.384962	2026-04-26 22:55:22.384962	Log entry #3002
+103005	1	4	2026-04-21 21:55:22.386465	2026-04-21 23:55:22.386465	Log entry #3004
+103016	3	10	2026-04-22 21:55:22.393336	2026-04-23 00:55:22.393336	Log entry #3015
+103038	2	5	2026-04-15 21:55:22.409425	2026-04-15 22:55:22.409425	Log entry #3037
+103081	10	6	2026-04-24 21:55:22.438956	2026-04-24 22:55:22.438956	Log entry #3080
+103097	7	7	2026-04-22 21:55:22.45281	2026-04-22 22:55:22.45281	Log entry #3096
+103106	5	2	2026-04-12 21:55:22.459302	2026-04-12 23:55:22.459302	Log entry #3105
+103136	6	2	2026-04-27 21:55:22.484462	2026-04-27 22:55:22.484462	Log entry #3135
+103214	7	1	2026-04-27 21:55:22.550072	2026-04-27 23:55:22.550072	Log entry #3213
+103239	2	4	2026-04-19 21:55:22.570616	2026-04-20 00:55:22.570616	Log entry #3238
+103258	7	9	2026-04-27 21:55:22.588805	2026-04-27 22:55:22.588805	Log entry #3257
+103279	4	5	2026-04-14 21:55:22.604974	2026-04-15 00:55:22.604974	Log entry #3278
+103287	1	10	2026-04-16 21:55:22.610515	2026-04-16 23:55:22.610515	Log entry #3286
+103339	4	2	2026-04-16 21:55:22.653091	2026-04-16 23:55:22.653091	Log entry #3338
+103345	2	3	2026-04-12 21:55:22.657085	2026-04-13 00:55:22.657085	Log entry #3344
+103356	4	2	2026-04-17 21:55:22.668655	2026-04-17 23:55:22.668655	Log entry #3355
+103363	7	8	2026-04-12 21:55:22.675845	2026-04-12 23:55:22.675845	Log entry #3362
+103385	8	10	2026-04-23 21:55:22.696146	2026-04-23 23:55:22.696146	Log entry #3384
+103422	5	7	2026-04-16 21:55:22.731284	2026-04-16 22:55:22.731284	Log entry #3421
+103425	2	5	2026-04-22 21:55:22.734262	2026-04-22 23:55:22.734262	Log entry #3424
+103459	1	9	2026-04-13 21:55:22.761221	2026-04-13 23:55:22.761221	Log entry #3458
+103461	10	1	2026-04-26 21:55:22.763068	2026-04-26 23:55:22.763068	Log entry #3460
+103493	9	6	2026-04-14 21:55:22.787436	2026-04-14 23:55:22.787436	Log entry #3492
+103508	8	4	2026-04-11 21:55:22.79836	2026-04-11 23:55:22.79836	Log entry #3507
+103557	2	8	2026-04-27 21:55:22.830301	2026-04-27 22:55:22.830301	Log entry #3556
+103560	5	5	2026-04-17 21:55:22.832403	2026-04-17 22:55:22.832403	Log entry #3559
+103579	3	6	2026-04-12 21:55:22.844234	2026-04-13 00:55:22.844234	Log entry #3578
+103600	6	7	2026-04-16 21:55:22.856986	2026-04-16 22:55:22.856986	Log entry #3599
+103602	5	5	2026-04-13 21:55:22.858672	2026-04-14 00:55:22.858672	Log entry #3601
+103637	4	1	2026-04-26 21:55:22.884217	2026-04-27 00:55:22.884217	Log entry #3636
+103677	1	7	2026-04-21 21:55:22.910681	2026-04-21 23:55:22.910681	Log entry #3676
+103679	2	8	2026-04-25 21:55:22.912275	2026-04-26 00:55:22.912275	Log entry #3678
+103688	4	3	2026-04-19 21:55:22.918756	2026-04-19 22:55:22.918756	Log entry #3687
+103723	1	7	2026-04-10 21:55:22.943004	2026-04-11 00:55:22.943004	Log entry #3722
+103727	7	8	2026-04-18 21:55:22.945942	2026-04-18 23:55:22.945942	Log entry #3726
+103753	2	7	2026-04-15 21:55:22.96355	2026-04-15 22:55:22.96355	Log entry #3752
+103776	6	3	2026-04-10 21:55:22.982275	2026-04-10 22:55:22.982275	Log entry #3775
+103777	6	8	2026-04-19 21:55:22.982831	2026-04-19 22:55:22.982831	Log entry #3776
+103799	8	9	2026-04-15 21:55:22.997797	2026-04-15 23:55:22.997797	Log entry #3798
+103815	10	10	2026-04-14 21:55:23.007517	2026-04-14 22:55:23.007517	Log entry #3814
+103837	5	5	2026-04-13 21:55:23.021973	2026-04-14 00:55:23.021973	Log entry #3836
+103843	9	7	2026-04-27 21:55:23.02598	2026-04-27 22:55:23.02598	Log entry #3842
+103858	5	4	2026-04-24 21:55:23.035444	2026-04-25 00:55:23.035444	Log entry #3857
+103901	1	3	2026-04-20 21:55:23.06857	2026-04-21 00:55:23.06857	Log entry #3900
+103988	5	8	2026-04-17 21:55:23.132196	2026-04-17 23:55:23.132196	Log entry #3987
+104012	1	8	2026-04-15 21:55:23.148797	2026-04-16 00:55:23.148797	Log entry #4011
+104026	10	7	2026-04-20 21:55:23.15836	2026-04-20 22:55:23.15836	Log entry #4025
+104029	6	4	2026-04-22 21:55:23.160099	2026-04-23 00:55:23.160099	Log entry #4028
+104046	5	7	2026-04-22 21:55:23.171794	2026-04-23 00:55:23.171794	Log entry #4045
+104059	4	4	2026-04-18 21:55:23.185759	2026-04-18 22:55:23.185759	Log entry #4058
+104073	6	9	2026-04-14 21:55:23.197289	2026-04-14 22:55:23.197289	Log entry #4072
+104107	3	5	2026-04-26 21:55:23.21871	2026-04-26 22:55:23.21871	Log entry #4106
+104131	2	6	2026-04-23 21:55:23.23504	2026-04-24 00:55:23.23504	Log entry #4130
+104140	4	5	2026-04-12 21:55:23.240487	2026-04-13 00:55:23.240487	Log entry #4139
+104146	6	8	2026-04-10 21:55:23.244046	2026-04-11 00:55:23.244046	Log entry #4145
+104147	5	3	2026-04-27 21:55:23.244685	2026-04-27 22:55:23.244685	Log entry #4146
+104158	1	2	2026-04-10 21:55:23.25177	2026-04-11 00:55:23.25177	Log entry #4157
+104215	9	5	2026-04-25 21:55:23.289872	2026-04-25 23:55:23.289872	Log entry #4214
+104221	7	4	2026-04-19 21:55:23.293266	2026-04-19 22:55:23.293266	Log entry #4220
+104226	2	3	2026-04-25 21:55:23.297021	2026-04-25 23:55:23.297021	Log entry #4225
+104242	4	4	2026-04-15 21:55:23.306248	2026-04-15 22:55:23.306248	Log entry #4241
+104248	4	4	2026-04-27 21:55:23.309981	2026-04-28 00:55:23.309981	Log entry #4247
+104254	2	10	2026-04-20 21:55:23.315066	2026-04-21 00:55:23.315066	Log entry #4253
+104276	10	2	2026-04-23 21:55:23.330345	2026-04-24 00:55:23.330345	Log entry #4275
+104317	5	8	2026-04-15 21:55:23.356986	2026-04-15 22:55:23.356986	Log entry #4316
+104334	5	4	2026-04-24 21:55:23.369314	2026-04-25 00:55:23.369314	Log entry #4333
+104339	1	7	2026-04-17 21:55:23.37351	2026-04-18 00:55:23.37351	Log entry #4338
+104350	8	7	2026-04-14 21:55:23.380939	2026-04-14 23:55:23.380939	Log entry #4349
+104355	1	6	2026-04-24 21:55:23.383438	2026-04-24 22:55:23.383438	Log entry #4354
+104364	1	7	2026-04-10 21:55:23.393885	2026-04-10 22:55:23.393885	Log entry #4363
+104365	3	4	2026-04-16 21:55:23.395425	2026-04-16 22:55:23.395425	Log entry #4364
+104374	9	6	2026-04-13 21:55:23.408836	2026-04-14 00:55:23.408836	Log entry #4373
+104377	3	10	2026-04-24 21:55:23.41359	2026-04-25 00:55:23.41359	Log entry #4376
+104388	7	4	2026-04-26 21:55:23.428828	2026-04-26 23:55:23.428828	Log entry #4387
+104391	5	2	2026-04-13 21:55:23.432227	2026-04-13 22:55:23.432227	Log entry #4390
+104413	4	2	2026-04-19 21:55:23.4518	2026-04-19 23:55:23.4518	Log entry #4412
+104475	3	5	2026-04-12 21:55:23.544729	2026-04-13 00:55:23.544729	Log entry #4474
+104526	9	6	2026-04-10 21:55:23.697322	2026-04-11 00:55:23.697322	Log entry #4525
+104540	1	8	2026-04-13 21:55:23.719177	2026-04-13 22:55:23.719177	Log entry #4539
+104559	9	2	2026-04-22 21:55:23.751824	2026-04-22 22:55:23.751824	Log entry #4558
+104565	6	6	2026-04-19 21:55:23.761604	2026-04-20 00:55:23.761604	Log entry #4564
+104573	5	9	2026-04-19 21:55:23.779179	2026-04-19 23:55:23.779179	Log entry #4572
+104598	10	1	2026-04-24 21:55:23.816428	2026-04-25 00:55:23.816428	Log entry #4597
+104600	1	2	2026-04-14 21:55:23.81917	2026-04-15 00:55:23.81917	Log entry #4599
+104633	9	3	2026-04-26 21:55:23.852163	2026-04-26 22:55:23.852163	Log entry #4632
+104684	6	10	2026-04-25 21:55:23.901872	2026-04-26 00:55:23.901872	Log entry #4683
+104689	4	2	2026-04-16 21:55:23.908625	2026-04-17 00:55:23.908625	Log entry #4688
+104713	10	5	2026-04-10 21:55:23.930274	2026-04-10 23:55:23.930274	Log entry #4712
+104719	8	7	2026-04-27 21:55:23.935642	2026-04-27 23:55:23.935642	Log entry #4718
+104721	7	10	2026-04-11 21:55:23.937319	2026-04-11 23:55:23.937319	Log entry #4720
+104744	4	7	2026-04-17 21:55:23.957346	2026-04-17 22:55:23.957346	Log entry #4743
+104747	2	7	2026-04-20 21:55:23.959454	2026-04-20 22:55:23.959454	Log entry #4746
+104779	7	10	2026-04-23 21:55:23.990317	2026-04-23 22:55:23.990317	Log entry #4778
+104884	4	7	2026-04-18 21:55:24.069687	2026-04-18 22:55:24.069687	Log entry #4883
+104934	8	6	2026-04-21 21:55:24.109892	2026-04-22 00:55:24.109892	Log entry #4933
+104939	5	7	2026-04-17 21:55:24.113607	2026-04-18 00:55:24.113607	Log entry #4938
+104948	4	10	2026-04-20 21:55:24.119586	2026-04-20 23:55:24.119586	Log entry #4947
+104957	1	8	2026-04-26 21:55:24.125176	2026-04-27 00:55:24.125176	Log entry #4956
+104990	2	9	2026-04-14 21:55:24.155105	2026-04-14 22:55:24.155105	Log entry #4989
+105023	9	3	2026-04-25 21:55:24.19197	2026-04-25 22:55:24.19197	Log entry #5022
+105127	4	3	2026-04-17 21:55:24.279945	2026-04-18 00:55:24.279945	Log entry #5126
+105133	1	3	2026-04-13 21:55:24.283749	2026-04-13 22:55:24.283749	Log entry #5132
+105204	7	3	2026-04-20 21:55:24.353895	2026-04-21 00:55:24.353895	Log entry #5203
+105285	10	8	2026-04-20 21:55:24.417357	2026-04-21 00:55:24.417357	Log entry #5284
+105315	2	7	2026-04-20 21:55:24.437489	2026-04-21 00:55:24.437489	Log entry #5314
+105317	8	8	2026-04-23 21:55:24.438798	2026-04-24 00:55:24.438798	Log entry #5316
+105336	2	9	2026-04-25 21:55:24.45268	2026-04-25 22:55:24.45268	Log entry #5335
+105343	1	7	2026-04-24 21:55:24.457201	2026-04-24 22:55:24.457201	Log entry #5342
+105356	8	7	2026-04-22 21:55:24.472393	2026-04-22 23:55:24.472393	Log entry #5355
+105366	7	9	2026-04-13 21:55:24.481611	2026-04-13 22:55:24.481611	Log entry #5365
+105373	10	2	2026-04-20 21:55:24.48632	2026-04-21 00:55:24.48632	Log entry #5372
+105384	1	6	2026-04-14 21:55:24.494286	2026-04-15 00:55:24.494286	Log entry #5383
+105448	9	10	2026-04-25 21:55:24.53917	2026-04-26 00:55:24.53917	Log entry #5447
+105470	5	7	2026-04-11 21:55:24.5555	2026-04-11 22:55:24.5555	Log entry #5469
+105487	8	4	2026-04-16 21:55:24.569844	2026-04-17 00:55:24.569844	Log entry #5486
+105494	4	8	2026-04-21 21:55:24.575889	2026-04-21 22:55:24.575889	Log entry #5493
+105572	3	4	2026-04-17 21:55:24.632665	2026-04-17 23:55:24.632665	Log entry #5571
+105602	8	6	2026-04-10 21:55:24.656338	2026-04-10 22:55:24.656338	Log entry #5601
+105623	2	4	2026-04-24 21:55:24.672951	2026-04-24 22:55:24.672951	Log entry #5622
+105685	9	3	2026-04-19 21:55:24.722064	2026-04-19 22:55:24.722064	Log entry #5684
+105704	3	3	2026-04-23 21:55:24.736267	2026-04-24 00:55:24.736267	Log entry #5703
+105737	3	5	2026-04-27 21:55:24.761108	2026-04-27 22:55:24.761108	Log entry #5736
+105787	10	2	2026-04-23 21:55:24.801988	2026-04-23 23:55:24.801988	Log entry #5786
+105820	2	9	2026-04-17 21:55:24.826692	2026-04-18 00:55:24.826692	Log entry #5819
+105849	7	9	2026-04-15 21:55:24.84965	2026-04-15 23:55:24.84965	Log entry #5848
+105854	8	3	2026-04-17 21:55:24.854292	2026-04-17 23:55:24.854292	Log entry #5853
+105875	4	5	2026-04-12 21:55:24.874686	2026-04-12 23:55:24.874686	Log entry #5874
+105887	5	5	2026-04-12 21:55:24.887096	2026-04-13 00:55:24.887096	Log entry #5886
+105918	2	3	2026-04-14 21:55:24.915854	2026-04-14 23:55:24.915854	Log entry #5917
+105923	8	5	2026-04-21 21:55:24.918989	2026-04-21 23:55:24.918989	Log entry #5922
+105939	5	7	2026-04-27 21:55:24.929591	2026-04-27 22:55:24.929591	Log entry #5938
+105951	10	7	2026-04-21 21:55:24.94004	2026-04-21 22:55:24.94004	Log entry #5950
+105955	1	1	2026-04-10 21:55:24.94274	2026-04-11 00:55:24.94274	Log entry #5954
+106008	2	4	2026-04-21 21:55:24.985099	2026-04-22 00:55:24.985099	Log entry #6007
+106017	3	2	2026-04-15 21:55:24.990768	2026-04-15 23:55:24.990768	Log entry #6016
+106025	7	3	2026-04-13 21:55:24.998174	2026-04-14 00:55:24.998174	Log entry #6024
+106027	7	5	2026-04-22 21:55:24.999508	2026-04-22 22:55:24.999508	Log entry #6026
+106042	4	1	2026-04-16 21:55:25.00933	2026-04-16 23:55:25.00933	Log entry #6041
+106064	5	5	2026-04-19 21:55:25.024009	2026-04-19 22:55:25.024009	Log entry #6063
+106075	5	9	2026-04-15 21:55:25.031534	2026-04-15 23:55:25.031534	Log entry #6074
+106099	7	2	2026-04-21 21:55:25.048141	2026-04-21 22:55:25.048141	Log entry #6098
+106101	10	5	2026-04-26 21:55:25.049478	2026-04-27 00:55:25.049478	Log entry #6100
+106111	7	8	2026-04-13 21:55:25.056215	2026-04-14 00:55:25.056215	Log entry #6110
+106140	5	10	2026-04-11 21:55:25.089526	2026-04-12 00:55:25.089526	Log entry #6139
+106145	1	2	2026-04-20 21:55:25.093527	2026-04-20 22:55:25.093527	Log entry #6144
+106159	9	9	2026-04-25 21:55:25.103683	2026-04-25 23:55:25.103683	Log entry #6158
+106170	6	6	2026-04-13 21:55:25.111986	2026-04-14 00:55:25.111986	Log entry #6169
+106214	5	1	2026-04-16 21:55:25.141954	2026-04-16 23:55:25.141954	Log entry #6213
+106221	8	6	2026-04-15 21:55:25.147681	2026-04-15 22:55:25.147681	Log entry #6220
+106229	9	1	2026-04-22 21:55:25.15303	2026-04-22 23:55:25.15303	Log entry #6228
+106232	3	6	2026-04-13 21:55:25.154816	2026-04-14 00:55:25.154816	Log entry #6231
+106316	1	6	2026-04-19 21:55:25.218747	2026-04-19 23:55:25.218747	Log entry #6315
+106330	8	2	2026-04-15 21:55:25.229884	2026-04-15 23:55:25.229884	Log entry #6329
+106375	8	1	2026-04-24 21:55:25.264259	2026-04-24 23:55:25.264259	Log entry #6374
+106403	8	4	2026-04-14 21:55:25.287912	2026-04-14 22:55:25.287912	Log entry #6402
+106416	8	7	2026-04-19 21:55:25.297875	2026-04-20 00:55:25.297875	Log entry #6415
+106459	7	1	2026-04-17 21:55:25.332974	2026-04-17 22:55:25.332974	Log entry #6458
+106492	6	5	2026-04-25 21:55:25.360966	2026-04-25 22:55:25.360966	Log entry #6491
+106503	1	9	2026-04-16 21:55:25.369555	2026-04-16 22:55:25.369555	Log entry #6502
+106513	9	7	2026-04-26 21:55:25.378331	2026-04-26 23:55:25.378331	Log entry #6512
+106526	9	9	2026-04-23 21:55:25.386927	2026-04-24 00:55:25.386927	Log entry #6525
+106566	5	9	2026-04-22 21:55:25.417418	2026-04-23 00:55:25.417418	Log entry #6565
+106572	5	9	2026-04-12 21:55:25.422893	2026-04-12 22:55:25.422893	Log entry #6571
+106579	10	9	2026-04-23 21:55:25.428149	2026-04-24 00:55:25.428149	Log entry #6578
+106597	4	9	2026-04-12 21:55:25.439353	2026-04-12 22:55:25.439353	Log entry #6596
+106601	4	2	2026-04-23 21:55:25.442086	2026-04-23 22:55:25.442086	Log entry #6600
+106602	2	8	2026-04-19 21:55:25.443466	2026-04-19 23:55:25.443466	Log entry #6601
+106620	2	2	2026-04-18 21:55:25.455444	2026-04-18 23:55:25.455444	Log entry #6619
+106635	4	4	2026-04-10 21:55:25.465191	2026-04-11 00:55:25.465191	Log entry #6634
+106640	6	3	2026-04-22 21:55:25.469193	2026-04-22 22:55:25.469193	Log entry #6639
+106645	5	1	2026-04-17 21:55:25.472733	2026-04-18 00:55:25.472733	Log entry #6644
+106668	9	9	2026-04-14 21:55:25.493378	2026-04-15 00:55:25.493378	Log entry #6667
+106681	5	9	2026-04-12 21:55:25.504386	2026-04-12 22:55:25.504386	Log entry #6680
+106838	8	8	2026-04-21 21:55:25.643047	2026-04-21 23:55:25.643047	Log entry #6837
+106844	1	4	2026-04-20 21:55:25.648678	2026-04-20 23:55:25.648678	Log entry #6843
+106888	6	1	2026-04-26 21:55:25.693337	2026-04-26 22:55:25.693337	Log entry #6887
+106889	4	9	2026-04-22 21:55:25.694452	2026-04-22 23:55:25.694452	Log entry #6888
+106979	9	10	2026-04-13 21:55:25.771349	2026-04-13 23:55:25.771349	Log entry #6978
+106980	2	9	2026-04-26 21:55:25.772141	2026-04-27 00:55:25.772141	Log entry #6979
+106989	5	2	2026-04-10 21:55:25.781878	2026-04-10 22:55:25.781878	Log entry #6988
+106999	7	4	2026-04-24 21:55:25.789772	2026-04-24 23:55:25.789772	Log entry #6998
+107043	10	5	2026-04-14 21:55:25.820908	2026-04-14 22:55:25.820908	Log entry #7042
+107046	4	8	2026-04-12 21:55:25.823138	2026-04-12 22:55:25.823138	Log entry #7045
+107082	5	9	2026-04-20 21:55:25.85597	2026-04-20 22:55:25.85597	Log entry #7081
+107095	5	7	2026-04-20 21:55:25.87436	2026-04-21 00:55:25.87436	Log entry #7094
+107151	3	10	2026-04-26 21:55:25.924833	2026-04-27 00:55:25.924833	Log entry #7150
+107155	7	4	2026-04-17 21:55:25.92909	2026-04-17 22:55:25.92909	Log entry #7154
+107162	9	7	2026-04-15 21:55:25.93694	2026-04-15 23:55:25.93694	Log entry #7161
+107185	8	2	2026-04-20 21:55:25.963658	2026-04-20 22:55:25.963658	Log entry #7184
+107191	8	9	2026-04-18 21:55:25.969429	2026-04-18 22:55:25.969429	Log entry #7190
+107259	3	5	2026-04-10 21:55:26.040741	2026-04-10 22:55:26.040741	Log entry #7258
+107290	4	7	2026-04-12 21:55:26.075298	2026-04-12 22:55:26.075298	Log entry #7289
+107311	3	8	2026-04-11 21:55:26.098775	2026-04-12 00:55:26.098775	Log entry #7310
+107318	3	9	2026-04-18 21:55:26.104847	2026-04-18 23:55:26.104847	Log entry #7317
+107332	3	5	2026-04-19 21:55:26.117811	2026-04-19 22:55:26.117811	Log entry #7331
+107337	10	1	2026-04-22 21:55:26.121511	2026-04-23 00:55:26.121511	Log entry #7336
+107348	9	1	2026-04-13 21:55:26.133249	2026-04-13 23:55:26.133249	Log entry #7347
+107357	5	6	2026-04-12 21:55:26.14283	2026-04-12 23:55:26.14283	Log entry #7356
+107365	3	9	2026-04-19 21:55:26.150615	2026-04-20 00:55:26.150615	Log entry #7364
+107390	6	3	2026-04-11 21:55:26.173779	2026-04-11 23:55:26.173779	Log entry #7389
+107465	9	4	2026-04-12 21:55:26.233399	2026-04-12 22:55:26.233399	Log entry #7464
+107477	7	3	2026-04-25 21:55:26.242021	2026-04-25 23:55:26.242021	Log entry #7476
+107511	8	4	2026-04-27 21:55:26.278469	2026-04-27 23:55:26.278469	Log entry #7510
+107609	3	10	2026-04-16 21:55:26.364564	2026-04-16 22:55:26.364564	Log entry #7608
+107617	4	2	2026-04-19 21:55:26.370532	2026-04-20 00:55:26.370532	Log entry #7616
+107630	9	5	2026-04-18 21:55:26.384704	2026-04-19 00:55:26.384704	Log entry #7629
+107647	6	5	2026-04-21 21:55:26.399268	2026-04-21 22:55:26.399268	Log entry #7646
+107694	3	5	2026-04-14 21:55:26.446868	2026-04-15 00:55:26.446868	Log entry #7693
+107700	6	4	2026-04-17 21:55:26.452645	2026-04-17 22:55:26.452645	Log entry #7699
+107746	1	2	2026-04-27 21:55:26.497118	2026-04-27 22:55:26.497118	Log entry #7745
+107748	3	1	2026-04-12 21:55:26.498721	2026-04-12 22:55:26.498721	Log entry #7747
+107767	3	4	2026-04-18 21:55:26.517298	2026-04-19 00:55:26.517298	Log entry #7766
+107802	6	3	2026-04-17 21:55:26.55615	2026-04-17 23:55:26.55615	Log entry #7801
+107845	5	6	2026-04-16 21:55:26.622184	2026-04-17 00:55:26.622184	Log entry #7844
+107847	5	10	2026-04-10 21:55:26.624842	2026-04-11 00:55:26.624842	Log entry #7846
+107857	10	2	2026-04-25 21:55:26.635942	2026-04-26 00:55:26.635942	Log entry #7856
+107922	9	4	2026-04-24 21:55:26.715957	2026-04-25 00:55:26.715957	Log entry #7921
+107927	3	7	2026-04-10 21:55:26.721272	2026-04-10 23:55:26.721272	Log entry #7926
+107943	6	10	2026-04-27 21:55:26.740499	2026-04-27 23:55:26.740499	Log entry #7942
+107957	8	6	2026-04-24 21:55:26.75663	2026-04-25 00:55:26.75663	Log entry #7956
+107978	4	5	2026-04-15 21:55:26.780349	2026-04-16 00:55:26.780349	Log entry #7977
+107985	9	6	2026-04-20 21:55:26.79007	2026-04-21 00:55:26.79007	Log entry #7984
+107995	3	1	2026-04-15 21:55:26.800845	2026-04-15 22:55:26.800845	Log entry #7994
+108021	6	5	2026-04-16 21:55:26.834718	2026-04-17 00:55:26.834718	Log entry #8020
+108031	1	9	2026-04-24 21:55:26.851708	2026-04-25 00:55:26.851708	Log entry #8030
+108033	8	6	2026-04-18 21:55:26.854917	2026-04-18 22:55:26.854917	Log entry #8032
+108068	9	4	2026-04-27 21:55:26.905109	2026-04-27 22:55:26.905109	Log entry #8067
+108098	2	10	2026-04-19 21:55:26.950764	2026-04-19 23:55:26.950764	Log entry #8097
+108102	4	3	2026-04-10 21:55:26.956045	2026-04-11 00:55:26.956045	Log entry #8101
+108107	3	5	2026-04-19 21:55:26.962574	2026-04-20 00:55:26.962574	Log entry #8106
+108133	3	10	2026-04-27 21:55:27.000279	2026-04-27 22:55:27.000279	Log entry #8132
+108136	5	9	2026-04-18 21:55:27.004578	2026-04-19 00:55:27.004578	Log entry #8135
+108166	4	8	2026-04-26 21:55:27.047284	2026-04-26 23:55:27.047284	Log entry #8165
+108171	1	1	2026-04-15 21:55:27.053888	2026-04-16 00:55:27.053888	Log entry #8170
+108175	5	6	2026-04-22 21:55:27.061705	2026-04-22 23:55:27.061705	Log entry #8174
+108197	1	7	2026-04-18 21:55:27.101945	2026-04-18 23:55:27.101945	Log entry #8196
+108215	7	10	2026-04-21 21:55:27.130462	2026-04-22 00:55:27.130462	Log entry #8214
+108239	5	6	2026-04-15 21:55:27.160286	2026-04-15 23:55:27.160286	Log entry #8238
+108256	6	10	2026-04-26 21:55:27.182568	2026-04-27 00:55:27.182568	Log entry #8255
+108263	7	6	2026-04-26 21:55:27.192914	2026-04-26 22:55:27.192914	Log entry #8262
+108352	1	7	2026-04-18 21:55:27.316516	2026-04-18 22:55:27.316516	Log entry #8351
+108380	8	8	2026-04-11 21:55:27.359344	2026-04-11 22:55:27.359344	Log entry #8379
+108392	7	8	2026-04-21 21:55:27.375445	2026-04-22 00:55:27.375445	Log entry #8391
+108398	9	8	2026-04-27 21:55:27.385456	2026-04-27 23:55:27.385456	Log entry #8397
+108419	9	1	2026-04-15 21:55:27.410992	2026-04-16 00:55:27.410992	Log entry #8418
+108433	6	8	2026-04-24 21:55:27.426061	2026-04-24 22:55:27.426061	Log entry #8432
+108441	5	2	2026-04-21 21:55:27.433745	2026-04-21 23:55:27.433745	Log entry #8440
+108484	7	1	2026-04-23 21:55:27.474758	2026-04-23 23:55:27.474758	Log entry #8483
+108524	1	3	2026-04-13 21:55:27.516723	2026-04-13 23:55:27.516723	Log entry #8523
+108526	1	1	2026-04-14 21:55:27.518868	2026-04-15 00:55:27.518868	Log entry #8525
+108527	6	5	2026-04-26 21:55:27.519624	2026-04-26 22:55:27.519624	Log entry #8526
+108534	2	1	2026-04-12 21:55:27.527042	2026-04-12 23:55:27.527042	Log entry #8533
+108570	8	2	2026-04-24 21:55:27.569747	2026-04-24 22:55:27.569747	Log entry #8569
+108586	2	5	2026-04-18 21:55:27.596566	2026-04-19 00:55:27.596566	Log entry #8585
+108606	5	10	2026-04-18 21:55:27.626645	2026-04-19 00:55:27.626645	Log entry #8605
+108622	8	8	2026-04-22 21:55:27.647031	2026-04-22 23:55:27.647031	Log entry #8621
+108643	8	10	2026-04-23 21:55:27.672462	2026-04-23 22:55:27.672462	Log entry #8642
+108668	8	1	2026-04-11 21:55:27.702383	2026-04-11 22:55:27.702383	Log entry #8667
+108709	4	8	2026-04-25 21:55:27.749846	2026-04-25 22:55:27.749846	Log entry #8708
+108721	1	10	2026-04-17 21:55:27.766028	2026-04-18 00:55:27.766028	Log entry #8720
+108740	1	5	2026-04-21 21:55:27.785473	2026-04-21 23:55:27.785473	Log entry #8739
+108743	5	10	2026-04-22 21:55:27.789429	2026-04-23 00:55:27.789429	Log entry #8742
+108757	3	3	2026-04-19 21:55:27.806501	2026-04-19 22:55:27.806501	Log entry #8756
+108760	1	3	2026-04-18 21:55:27.81072	2026-04-19 00:55:27.81072	Log entry #8759
+108791	1	10	2026-04-16 21:55:27.851016	2026-04-16 23:55:27.851016	Log entry #8790
+108796	1	5	2026-04-25 21:55:27.855241	2026-04-25 22:55:27.855241	Log entry #8795
+108812	2	3	2026-04-22 21:55:27.872067	2026-04-23 00:55:27.872067	Log entry #8811
+108852	1	8	2026-04-21 21:55:27.91412	2026-04-21 22:55:27.91412	Log entry #8851
+108853	7	4	2026-04-16 21:55:27.914741	2026-04-17 00:55:27.914741	Log entry #8852
+108867	1	5	2026-04-12 21:55:27.927665	2026-04-13 00:55:27.927665	Log entry #8866
+108875	5	10	2026-04-27 21:55:27.933971	2026-04-28 00:55:27.933971	Log entry #8874
+108878	1	10	2026-04-19 21:55:27.936001	2026-04-19 22:55:27.936001	Log entry #8877
+108892	10	7	2026-04-11 21:55:27.948461	2026-04-12 00:55:27.948461	Log entry #8891
+108924	9	4	2026-04-20 21:55:27.979819	2026-04-21 00:55:27.979819	Log entry #8923
+108927	6	2	2026-04-11 21:55:27.982838	2026-04-11 23:55:27.982838	Log entry #8926
+108989	1	4	2026-04-20 21:55:28.039398	2026-04-21 00:55:28.039398	Log entry #8988
+109016	4	3	2026-04-24 21:55:28.063208	2026-04-24 23:55:28.063208	Log entry #9015
+109087	8	1	2026-04-19 21:55:28.141367	2026-04-19 22:55:28.141367	Log entry #9086
+109091	4	9	2026-04-14 21:55:28.146108	2026-04-15 00:55:28.146108	Log entry #9090
+109095	3	3	2026-04-17 21:55:28.150167	2026-04-18 00:55:28.150167	Log entry #9094
+109100	4	1	2026-04-17 21:55:28.154743	2026-04-18 00:55:28.154743	Log entry #9099
+109153	1	2	2026-04-24 21:55:28.210311	2026-04-25 00:55:28.210311	Log entry #9152
+109155	3	4	2026-04-15 21:55:28.211919	2026-04-15 23:55:28.211919	Log entry #9154
+109192	8	4	2026-04-12 21:55:28.242734	2026-04-13 00:55:28.242734	Log entry #9191
+109200	5	8	2026-04-10 21:55:28.249653	2026-04-11 00:55:28.249653	Log entry #9199
+109235	5	8	2026-04-25 21:55:28.27894	2026-04-25 22:55:28.27894	Log entry #9234
+109243	10	2	2026-04-27 21:55:28.286588	2026-04-27 22:55:28.286588	Log entry #9242
+109278	6	4	2026-04-23 21:55:28.315389	2026-04-24 00:55:28.315389	Log entry #9277
+109290	6	8	2026-04-26 21:55:28.325735	2026-04-26 23:55:28.325735	Log entry #9289
+109340	10	2	2026-04-13 21:55:28.378164	2026-04-14 00:55:28.378164	Log entry #9339
+109370	6	1	2026-04-11 21:55:28.416774	2026-04-12 00:55:28.416774	Log entry #9369
+109411	2	9	2026-04-24 21:55:28.460508	2026-04-24 22:55:28.460508	Log entry #9410
+109451	2	9	2026-04-13 21:55:28.497087	2026-04-13 22:55:28.497087	Log entry #9450
+109458	1	8	2026-04-11 21:55:28.502333	2026-04-11 22:55:28.502333	Log entry #9457
+109472	7	7	2026-04-24 21:55:28.513743	2026-04-24 22:55:28.513743	Log entry #9471
+109488	8	5	2026-04-10 21:55:28.530818	2026-04-11 00:55:28.530818	Log entry #9487
+109492	3	10	2026-04-11 21:55:28.535156	2026-04-11 23:55:28.535156	Log entry #9491
+109536	9	1	2026-04-18 21:55:28.58006	2026-04-19 00:55:28.58006	Log entry #9535
+109549	1	7	2026-04-27 21:55:28.597074	2026-04-27 22:55:28.597074	Log entry #9548
+109632	8	2	2026-04-10 21:55:28.665084	2026-04-10 23:55:28.665084	Log entry #9631
+109644	5	3	2026-04-27 21:55:28.677662	2026-04-28 00:55:28.677662	Log entry #9643
+109655	1	3	2026-04-13 21:55:28.687353	2026-04-13 22:55:28.687353	Log entry #9654
+109677	2	10	2026-04-22 21:55:28.704751	2026-04-22 23:55:28.704751	Log entry #9676
+109678	7	6	2026-04-15 21:55:28.705991	2026-04-15 23:55:28.705991	Log entry #9677
+109695	2	3	2026-04-22 21:55:28.717469	2026-04-22 22:55:28.717469	Log entry #9694
+109713	2	3	2026-04-27 21:55:28.733281	2026-04-27 23:55:28.733281	Log entry #9712
+109715	1	9	2026-04-24 21:55:28.7345	2026-04-25 00:55:28.7345	Log entry #9714
+109771	7	2	2026-04-21 21:55:28.77768	2026-04-22 00:55:28.77768	Log entry #9770
+109781	10	9	2026-04-12 21:55:28.786812	2026-04-13 00:55:28.786812	Log entry #9780
+109794	5	5	2026-04-11 21:55:28.797158	2026-04-11 22:55:28.797158	Log entry #9793
+109795	7	9	2026-04-18 21:55:28.798162	2026-04-18 23:55:28.798162	Log entry #9794
+109848	7	5	2026-04-10 21:55:28.837884	2026-04-11 00:55:28.837884	Log entry #9847
+109853	5	7	2026-04-12 21:55:28.842451	2026-04-12 23:55:28.842451	Log entry #9852
+109897	7	3	2026-04-10 21:55:28.874271	2026-04-11 00:55:28.874271	Log entry #9896
+109901	9	2	2026-04-10 21:55:28.877173	2026-04-11 00:55:28.877173	Log entry #9900
+109904	7	10	2026-04-10 21:55:28.879101	2026-04-10 22:55:28.879101	Log entry #9903
+109921	3	10	2026-04-21 21:55:28.896316	2026-04-22 00:55:28.896316	Log entry #9920
+109945	10	9	2026-04-20 21:55:28.913291	2026-04-20 22:55:28.913291	Log entry #9944
+109965	3	7	2026-04-13 21:55:28.926541	2026-04-13 22:55:28.926541	Log entry #9964
+109974	7	8	2026-04-15 21:55:28.933452	2026-04-16 00:55:28.933452	Log entry #9973
+110008	7	4	2026-04-24 21:55:28.955774	2026-04-25 00:55:28.955774	Log entry #10007
+110051	10	6	2026-04-13 21:55:28.994258	2026-04-13 22:55:28.994258	Log entry #10050
+110054	3	9	2026-04-16 21:55:28.996586	2026-04-16 22:55:28.996586	Log entry #10053
+110067	6	9	2026-04-23 21:55:29.004235	2026-04-23 23:55:29.004235	Log entry #10066
+110071	4	10	2026-04-14 21:55:29.007266	2026-04-14 23:55:29.007266	Log entry #10070
+110074	5	4	2026-04-14 21:55:29.009233	2026-04-14 23:55:29.009233	Log entry #10073
+110077	7	7	2026-04-20 21:55:29.011051	2026-04-21 00:55:29.011051	Log entry #10076
+110078	3	8	2026-04-14 21:55:29.011728	2026-04-14 22:55:29.011728	Log entry #10077
+110099	2	7	2026-04-12 21:55:29.027068	2026-04-12 22:55:29.027068	Log entry #10098
+110136	5	6	2026-04-20 21:55:29.05128	2026-04-20 22:55:29.05128	Log entry #10135
+110145	10	8	2026-04-22 21:55:29.056567	2026-04-22 22:55:29.056567	Log entry #10144
+110170	8	2	2026-04-20 21:55:29.078161	2026-04-20 22:55:29.078161	Log entry #10169
+110192	6	8	2026-04-20 21:55:29.094372	2026-04-20 22:55:29.094372	Log entry #10191
+110193	6	7	2026-04-20 21:55:29.095007	2026-04-21 00:55:29.095007	Log entry #10192
+110248	6	10	2026-04-23 21:55:29.129426	2026-04-23 22:55:29.129426	Log entry #10247
+110283	6	8	2026-04-12 21:55:29.150714	2026-04-13 00:55:29.150714	Log entry #10282
+110300	10	8	2026-04-20 21:55:29.162228	2026-04-20 22:55:29.162228	Log entry #10299
+110346	1	6	2026-04-10 21:55:29.197583	2026-04-10 22:55:29.197583	Log entry #10345
+110381	7	4	2026-04-25 21:55:29.237772	2026-04-26 00:55:29.237772	Log entry #10380
+110390	3	8	2026-04-13 21:55:29.246703	2026-04-14 00:55:29.246703	Log entry #10389
+110408	4	3	2026-04-20 21:55:29.261433	2026-04-20 23:55:29.261433	Log entry #10407
+110427	1	7	2026-04-20 21:55:29.272912	2026-04-21 00:55:29.272912	Log entry #10426
+110448	5	3	2026-04-24 21:55:29.286501	2026-04-25 00:55:29.286501	Log entry #10447
+110491	6	3	2026-04-21 21:55:29.314448	2026-04-21 23:55:29.314448	Log entry #10490
+110496	9	5	2026-04-14 21:55:29.317736	2026-04-15 00:55:29.317736	Log entry #10495
+110599	8	10	2026-04-15 21:55:29.389132	2026-04-16 00:55:29.389132	Log entry #10598
+110615	2	4	2026-04-25 21:55:29.401548	2026-04-25 22:55:29.401548	Log entry #10614
+110627	8	1	2026-04-20 21:55:29.413212	2026-04-20 22:55:29.413212	Log entry #10626
+110633	5	7	2026-04-17 21:55:29.41745	2026-04-17 22:55:29.41745	Log entry #10632
+110637	4	9	2026-04-18 21:55:29.420351	2026-04-19 00:55:29.420351	Log entry #10636
+110644	6	3	2026-04-14 21:55:29.427739	2026-04-15 00:55:29.427739	Log entry #10643
+110647	10	5	2026-04-25 21:55:29.429177	2026-04-25 23:55:29.429177	Log entry #10646
+110651	8	1	2026-04-26 21:55:29.431564	2026-04-26 22:55:29.431564	Log entry #10650
+110674	4	10	2026-04-17 21:55:29.448057	2026-04-17 23:55:29.448057	Log entry #10673
+110685	10	8	2026-04-19 21:55:29.454721	2026-04-19 23:55:29.454721	Log entry #10684
+110690	1	1	2026-04-25 21:55:29.459736	2026-04-25 22:55:29.459736	Log entry #10689
+110694	2	9	2026-04-18 21:55:29.462716	2026-04-18 22:55:29.462716	Log entry #10693
+110724	10	5	2026-04-22 21:55:29.486008	2026-04-23 00:55:29.486008	Log entry #10723
+110732	2	9	2026-04-26 21:55:29.493312	2026-04-26 22:55:29.493312	Log entry #10731
+110771	7	2	2026-04-25 21:55:29.51983	2026-04-25 23:55:29.51983	Log entry #10770
+110778	9	6	2026-04-22 21:55:29.526596	2026-04-22 22:55:29.526596	Log entry #10777
+110802	3	2	2026-04-18 21:55:29.543708	2026-04-18 23:55:29.543708	Log entry #10801
+110823	3	9	2026-04-10 21:55:29.563021	2026-04-10 22:55:29.563021	Log entry #10822
+110864	7	1	2026-04-17 21:55:29.607529	2026-04-17 22:55:29.607529	Log entry #10863
+110883	5	6	2026-04-11 21:55:29.627869	2026-04-12 00:55:29.627869	Log entry #10882
+110911	1	7	2026-04-18 21:55:29.652695	2026-04-18 23:55:29.652695	Log entry #10910
+110920	10	8	2026-04-24 21:55:29.663892	2026-04-25 00:55:29.663892	Log entry #10919
+110959	7	10	2026-04-20 21:55:29.702631	2026-04-21 00:55:29.702631	Log entry #10958
+111001	6	4	2026-04-11 21:55:29.737908	2026-04-11 23:55:29.737908	Log entry #11000
+111017	7	7	2026-04-22 21:55:29.750581	2026-04-22 22:55:29.750581	Log entry #11016
+111034	2	4	2026-04-26 21:55:29.763598	2026-04-26 23:55:29.763598	Log entry #11033
+111035	2	4	2026-04-13 21:55:29.764268	2026-04-14 00:55:29.764268	Log entry #11034
+111047	9	3	2026-04-17 21:55:29.772782	2026-04-17 22:55:29.772782	Log entry #11046
+111050	8	4	2026-04-26 21:55:29.774622	2026-04-26 23:55:29.774622	Log entry #11049
+111066	4	6	2026-04-25 21:55:29.787238	2026-04-26 00:55:29.787238	Log entry #11065
+111076	6	8	2026-04-24 21:55:29.795979	2026-04-25 00:55:29.795979	Log entry #11075
+111077	6	2	2026-04-25 21:55:29.796608	2026-04-25 22:55:29.796608	Log entry #11076
+111085	8	8	2026-04-15 21:55:29.80157	2026-04-15 22:55:29.80157	Log entry #11084
+111086	6	9	2026-04-10 21:55:29.802144	2026-04-10 23:55:29.802144	Log entry #11085
+111107	8	9	2026-04-25 21:55:29.816622	2026-04-25 23:55:29.816622	Log entry #11106
+111131	3	3	2026-04-17 21:55:29.832454	2026-04-17 22:55:29.832454	Log entry #11130
+111156	3	1	2026-04-14 21:55:29.849476	2026-04-14 23:55:29.849476	Log entry #11155
+111184	7	5	2026-04-18 21:55:29.868615	2026-04-19 00:55:29.868615	Log entry #11183
+111185	4	10	2026-04-26 21:55:29.869306	2026-04-26 22:55:29.869306	Log entry #11184
+111187	4	2	2026-04-25 21:55:29.870346	2026-04-25 22:55:29.870346	Log entry #11186
+111189	10	10	2026-04-13 21:55:29.872157	2026-04-13 22:55:29.872157	Log entry #11188
+111199	9	3	2026-04-14 21:55:29.879205	2026-04-14 22:55:29.879205	Log entry #11198
+111247	6	5	2026-04-11 21:55:29.914199	2026-04-12 00:55:29.914199	Log entry #11246
+111252	5	2	2026-04-20 21:55:29.917271	2026-04-20 23:55:29.917271	Log entry #11251
+111280	1	8	2026-04-12 21:55:29.935927	2026-04-12 23:55:29.935927	Log entry #11279
+111302	7	8	2026-04-24 21:55:29.950286	2026-04-24 22:55:29.950286	Log entry #11301
+111315	3	2	2026-04-14 21:55:29.959142	2026-04-14 22:55:29.959142	Log entry #11314
+111329	5	7	2026-04-14 21:55:29.974384	2026-04-14 22:55:29.974384	Log entry #11328
+111334	2	1	2026-04-14 21:55:29.979491	2026-04-15 00:55:29.979491	Log entry #11333
+111344	10	2	2026-04-22 21:55:29.98671	2026-04-23 00:55:29.98671	Log entry #11343
+111352	3	4	2026-04-19 21:55:29.992205	2026-04-19 23:55:29.992205	Log entry #11351
+111353	2	6	2026-04-27 21:55:29.992701	2026-04-28 00:55:29.992701	Log entry #11352
+111359	5	1	2026-04-22 21:55:29.996048	2026-04-23 00:55:29.996048	Log entry #11358
+111368	2	2	2026-04-24 21:55:30.001861	2026-04-25 00:55:30.001861	Log entry #11367
+111375	2	8	2026-04-15 21:55:30.00758	2026-04-16 00:55:30.00758	Log entry #11374
+111412	7	3	2026-04-27 21:55:30.032325	2026-04-27 23:55:30.032325	Log entry #11411
+111431	8	6	2026-04-13 21:55:30.047467	2026-04-13 23:55:30.047467	Log entry #11430
+111461	4	2	2026-04-13 21:55:30.073361	2026-04-13 23:55:30.073361	Log entry #11460
+111471	5	2	2026-04-17 21:55:30.079924	2026-04-17 23:55:30.079924	Log entry #11470
+111513	2	5	2026-04-14 21:55:30.109666	2026-04-15 00:55:30.109666	Log entry #11512
+111530	7	8	2026-04-22 21:55:30.12113	2026-04-22 23:55:30.12113	Log entry #11529
+111559	7	10	2026-04-14 21:55:30.139723	2026-04-14 23:55:30.139723	Log entry #11558
+111562	5	4	2026-04-10 21:55:30.141705	2026-04-10 23:55:30.141705	Log entry #11561
+111618	4	6	2026-04-10 21:55:30.178463	2026-04-10 23:55:30.178463	Log entry #11617
+111620	3	5	2026-04-27 21:55:30.179791	2026-04-27 22:55:30.179791	Log entry #11619
+111623	5	3	2026-04-16 21:55:30.182347	2026-04-16 23:55:30.182347	Log entry #11622
+111647	1	7	2026-04-21 21:55:30.200092	2026-04-21 22:55:30.200092	Log entry #11646
+111682	8	7	2026-04-11 21:55:30.221443	2026-04-11 23:55:30.221443	Log entry #11681
+111701	9	7	2026-04-17 21:55:30.23491	2026-04-18 00:55:30.23491	Log entry #11700
+111703	2	9	2026-04-12 21:55:30.236388	2026-04-12 23:55:30.236388	Log entry #11702
+111714	4	5	2026-04-16 21:55:30.245631	2026-04-16 23:55:30.245631	Log entry #11713
+111718	8	3	2026-04-10 21:55:30.248361	2026-04-11 00:55:30.248361	Log entry #11717
+111731	3	9	2026-04-10 21:55:30.256288	2026-04-10 22:55:30.256288	Log entry #11730
+111767	7	7	2026-04-10 21:55:30.283432	2026-04-10 22:55:30.283432	Log entry #11766
+111768	2	8	2026-04-14 21:55:30.284263	2026-04-15 00:55:30.284263	Log entry #11767
+111769	2	1	2026-04-20 21:55:30.285093	2026-04-20 23:55:30.285093	Log entry #11768
+111783	5	6	2026-04-12 21:55:30.296659	2026-04-12 22:55:30.296659	Log entry #11782
+111795	10	3	2026-04-14 21:55:30.306036	2026-04-14 23:55:30.306036	Log entry #11794
+111817	3	4	2026-04-22 21:55:30.322671	2026-04-23 00:55:30.322671	Log entry #11816
+111837	9	9	2026-04-24 21:55:30.340508	2026-04-24 23:55:30.340508	Log entry #11836
+111867	9	2	2026-04-13 21:55:30.362155	2026-04-13 22:55:30.362155	Log entry #11866
+111884	4	9	2026-04-19 21:55:30.372149	2026-04-20 00:55:30.372149	Log entry #11883
+111887	10	10	2026-04-22 21:55:30.374238	2026-04-22 22:55:30.374238	Log entry #11886
+111918	2	1	2026-04-10 21:55:30.39593	2026-04-10 22:55:30.39593	Log entry #11917
+111948	8	5	2026-04-13 21:55:30.41572	2026-04-14 00:55:30.41572	Log entry #11947
+111955	5	7	2026-04-20 21:55:30.421315	2026-04-20 23:55:30.421315	Log entry #11954
+111963	9	7	2026-04-15 21:55:30.425819	2026-04-15 22:55:30.425819	Log entry #11962
+111971	10	1	2026-04-22 21:55:30.430992	2026-04-22 23:55:30.430992	Log entry #11970
+111993	3	3	2026-04-14 21:55:30.444914	2026-04-14 23:55:30.444914	Log entry #11992
+112007	8	3	2026-04-18 21:55:30.456497	2026-04-18 23:55:30.456497	Log entry #12006
+112032	6	8	2026-04-11 21:55:30.473455	2026-04-11 23:55:30.473455	Log entry #12031
+112041	4	5	2026-04-11 21:55:30.481609	2026-04-11 22:55:30.481609	Log entry #12040
+112089	7	5	2026-04-21 21:55:30.523534	2026-04-21 23:55:30.523534	Log entry #12088
+112100	5	7	2026-04-17 21:55:30.532408	2026-04-18 00:55:30.532408	Log entry #12099
+112105	3	4	2026-04-10 21:55:30.536336	2026-04-10 23:55:30.536336	Log entry #12104
+112106	8	1	2026-04-25 21:55:30.537191	2026-04-25 23:55:30.537191	Log entry #12105
+112114	1	8	2026-04-11 21:55:30.544149	2026-04-12 00:55:30.544149	Log entry #12113
+112125	5	5	2026-04-26 21:55:30.551733	2026-04-26 22:55:30.551733	Log entry #12124
+112128	1	8	2026-04-12 21:55:30.553546	2026-04-12 22:55:30.553546	Log entry #12127
+112142	4	7	2026-04-14 21:55:30.562439	2026-04-14 23:55:30.562439	Log entry #12141
+112147	6	7	2026-04-24 21:55:30.565632	2026-04-25 00:55:30.565632	Log entry #12146
+112163	2	2	2026-04-18 21:55:30.575626	2026-04-19 00:55:30.575626	Log entry #12162
+112182	9	1	2026-04-10 21:55:30.590577	2026-04-10 22:55:30.590577	Log entry #12181
+112200	3	8	2026-04-24 21:55:30.602779	2026-04-24 22:55:30.602779	Log entry #12199
+112208	6	5	2026-04-16 21:55:30.608409	2026-04-16 22:55:30.608409	Log entry #12207
+112229	6	10	2026-04-15 21:55:30.625031	2026-04-15 22:55:30.625031	Log entry #12228
+112235	6	4	2026-04-26 21:55:30.629846	2026-04-27 00:55:30.629846	Log entry #12234
+112257	10	8	2026-04-25 21:55:30.656227	2026-04-25 22:55:30.656227	Log entry #12256
+112259	4	2	2026-04-14 21:55:30.659141	2026-04-15 00:55:30.659141	Log entry #12258
+112320	10	4	2026-04-24 21:55:30.747765	2026-04-24 22:55:30.747765	Log entry #12319
+112340	8	2	2026-04-11 21:55:30.773061	2026-04-11 23:55:30.773061	Log entry #12339
+112351	6	6	2026-04-18 21:55:30.790357	2026-04-18 23:55:30.790357	Log entry #12350
+112384	3	6	2026-04-25 21:55:30.821604	2026-04-26 00:55:30.821604	Log entry #12383
+112393	7	8	2026-04-23 21:55:30.827799	2026-04-24 00:55:30.827799	Log entry #12392
+112479	3	4	2026-04-10 21:55:30.899284	2026-04-10 23:55:30.899284	Log entry #12478
+112505	2	1	2026-04-27 21:55:30.91947	2026-04-28 00:55:30.91947	Log entry #12504
+112543	6	10	2026-04-15 21:55:30.949459	2026-04-15 22:55:30.949459	Log entry #12542
+112557	3	7	2026-04-12 21:55:30.959063	2026-04-12 23:55:30.959063	Log entry #12556
+112583	1	10	2026-04-16 21:55:30.978063	2026-04-17 00:55:30.978063	Log entry #12582
+112592	4	6	2026-04-14 21:55:30.98524	2026-04-15 00:55:30.98524	Log entry #12591
+112594	2	5	2026-04-20 21:55:30.986837	2026-04-21 00:55:30.986837	Log entry #12593
+112614	8	1	2026-04-17 21:55:31.002118	2026-04-18 00:55:31.002118	Log entry #12613
+112615	9	2	2026-04-15 21:55:31.002686	2026-04-15 22:55:31.002686	Log entry #12614
+112638	4	8	2026-04-18 21:55:31.018018	2026-04-18 22:55:31.018018	Log entry #12637
+112671	8	3	2026-04-13 21:55:31.03977	2026-04-14 00:55:31.03977	Log entry #12670
+112690	5	5	2026-04-23 21:55:31.055072	2026-04-23 22:55:31.055072	Log entry #12689
+112704	8	4	2026-04-17 21:55:31.067365	2026-04-17 22:55:31.067365	Log entry #12703
+112716	5	3	2026-04-27 21:55:31.078386	2026-04-27 22:55:31.078386	Log entry #12715
+112733	6	5	2026-04-21 21:55:31.0925	2026-04-22 00:55:31.0925	Log entry #12732
+112740	5	8	2026-04-18 21:55:31.096672	2026-04-18 23:55:31.096672	Log entry #12739
+112771	7	5	2026-04-12 21:55:31.117098	2026-04-12 23:55:31.117098	Log entry #12770
+112802	5	1	2026-04-16 21:55:31.138732	2026-04-16 22:55:31.138732	Log entry #12801
+112808	1	1	2026-04-20 21:55:31.142319	2026-04-20 23:55:31.142319	Log entry #12807
+112826	5	9	2026-04-25 21:55:31.154371	2026-04-25 23:55:31.154371	Log entry #12825
+112834	4	9	2026-04-25 21:55:31.159495	2026-04-26 00:55:31.159495	Log entry #12833
+112861	7	7	2026-04-27 21:55:31.177868	2026-04-27 23:55:31.177868	Log entry #12860
+112900	6	2	2026-04-14 21:55:31.205386	2026-04-15 00:55:31.205386	Log entry #12899
+112919	6	6	2026-04-20 21:55:31.217012	2026-04-20 22:55:31.217012	Log entry #12918
+112944	2	7	2026-04-18 21:55:31.233001	2026-04-19 00:55:31.233001	Log entry #12943
+112958	1	4	2026-04-11 21:55:31.244976	2026-04-11 22:55:31.244976	Log entry #12957
+113003	6	1	2026-04-10 21:55:31.27383	2026-04-11 00:55:31.27383	Log entry #13002
+113027	10	6	2026-04-16 21:55:31.290491	2026-04-16 22:55:31.290491	Log entry #13026
+113039	5	8	2026-04-20 21:55:31.299179	2026-04-21 00:55:31.299179	Log entry #13038
+113092	9	5	2026-04-10 21:55:31.338381	2026-04-10 23:55:31.338381	Log entry #13091
+113094	3	5	2026-04-26 21:55:31.339504	2026-04-27 00:55:31.339504	Log entry #13093
+113141	7	8	2026-04-13 21:55:31.371089	2026-04-14 00:55:31.371089	Log entry #13140
+113173	3	3	2026-04-12 21:55:31.401632	2026-04-12 22:55:31.401632	Log entry #13172
+113217	3	8	2026-04-11 21:55:31.445656	2026-04-12 00:55:31.445656	Log entry #13216
+113220	2	7	2026-04-12 21:55:31.448252	2026-04-12 23:55:31.448252	Log entry #13219
+113245	3	2	2026-04-22 21:55:31.465939	2026-04-22 23:55:31.465939	Log entry #13244
+113250	7	4	2026-04-19 21:55:31.46995	2026-04-20 00:55:31.46995	Log entry #13249
+113253	3	7	2026-04-17 21:55:31.472491	2026-04-17 22:55:31.472491	Log entry #13252
+113254	6	1	2026-04-22 21:55:31.473366	2026-04-22 22:55:31.473366	Log entry #13253
+113282	1	7	2026-04-16 21:55:31.494267	2026-04-16 22:55:31.494267	Log entry #13281
+113287	2	1	2026-04-16 21:55:31.498278	2026-04-16 23:55:31.498278	Log entry #13286
+113298	7	4	2026-04-21 21:55:31.505772	2026-04-22 00:55:31.505772	Log entry #13297
+113306	1	8	2026-04-27 21:55:31.510506	2026-04-28 00:55:31.510506	Log entry #13305
+113321	1	1	2026-04-11 21:55:31.519604	2026-04-12 00:55:31.519604	Log entry #13320
+113323	1	7	2026-04-26 21:55:31.52114	2026-04-26 23:55:31.52114	Log entry #13322
+113333	10	7	2026-04-24 21:55:31.527976	2026-04-25 00:55:31.527976	Log entry #13332
+113336	1	4	2026-04-10 21:55:31.530121	2026-04-10 22:55:31.530121	Log entry #13335
+113341	6	6	2026-04-10 21:55:31.533074	2026-04-10 22:55:31.533074	Log entry #13340
+113369	10	3	2026-04-17 21:55:31.556547	2026-04-17 23:55:31.556547	Log entry #13368
+113376	9	2	2026-04-21 21:55:31.56214	2026-04-21 23:55:31.56214	Log entry #13375
+113430	2	10	2026-04-20 21:55:31.615566	2026-04-20 22:55:31.615566	Log entry #13429
+113437	5	9	2026-04-11 21:55:31.620685	2026-04-11 23:55:31.620685	Log entry #13436
+113450	1	6	2026-04-20 21:55:31.63342	2026-04-20 22:55:31.63342	Log entry #13449
+113459	5	9	2026-04-18 21:55:31.640412	2026-04-18 23:55:31.640412	Log entry #13458
+113467	9	7	2026-04-17 21:55:31.649787	2026-04-18 00:55:31.649787	Log entry #13466
+113494	2	9	2026-04-20 21:55:31.677599	2026-04-21 00:55:31.677599	Log entry #13493
+113535	6	9	2026-04-21 21:55:31.717502	2026-04-21 23:55:31.717502	Log entry #13534
+113549	5	9	2026-04-10 21:55:31.743018	2026-04-11 00:55:31.743018	Log entry #13548
+113560	7	8	2026-04-20 21:55:31.759457	2026-04-21 00:55:31.759457	Log entry #13559
+113563	7	7	2026-04-24 21:55:31.763791	2026-04-24 22:55:31.763791	Log entry #13562
+113579	2	3	2026-04-19 21:55:31.792201	2026-04-19 22:55:31.792201	Log entry #13578
+113585	8	4	2026-04-13 21:55:31.804274	2026-04-13 22:55:31.804274	Log entry #13584
+113636	1	5	2026-04-12 21:55:31.875341	2026-04-13 00:55:31.875341	Log entry #13635
+113667	9	2	2026-04-24 21:55:31.907012	2026-04-24 23:55:31.907012	Log entry #13666
+113678	8	7	2026-04-21 21:55:31.916894	2026-04-22 00:55:31.916894	Log entry #13677
+113692	8	4	2026-04-27 21:55:31.931604	2026-04-28 00:55:31.931604	Log entry #13691
+113693	1	8	2026-04-20 21:55:31.932407	2026-04-20 22:55:31.932407	Log entry #13692
+113694	4	1	2026-04-15 21:55:31.933313	2026-04-15 22:55:31.933313	Log entry #13693
+113700	2	6	2026-04-24 21:55:31.93956	2026-04-24 23:55:31.93956	Log entry #13699
+113713	7	9	2026-04-18 21:55:31.950215	2026-04-18 22:55:31.950215	Log entry #13712
+113738	1	5	2026-04-24 21:55:31.977856	2026-04-24 22:55:31.977856	Log entry #13737
+113739	8	5	2026-04-19 21:55:31.979195	2026-04-19 23:55:31.979195	Log entry #13738
+113749	7	9	2026-04-13 21:55:31.989447	2026-04-13 22:55:31.989447	Log entry #13748
+113778	3	3	2026-04-16 21:55:32.015913	2026-04-16 23:55:32.015913	Log entry #13777
+113805	8	4	2026-04-25 21:55:32.041236	2026-04-25 23:55:32.041236	Log entry #13804
+113844	8	9	2026-04-24 21:55:32.07598	2026-04-25 00:55:32.07598	Log entry #13843
+113853	6	9	2026-04-14 21:55:32.087085	2026-04-15 00:55:32.087085	Log entry #13852
+113957	10	4	2026-04-12 21:55:32.215548	2026-04-12 23:55:32.215548	Log entry #13956
+113971	7	9	2026-04-19 21:55:32.229935	2026-04-19 22:55:32.229935	Log entry #13970
+113981	9	10	2026-04-20 21:55:32.237994	2026-04-20 23:55:32.237994	Log entry #13980
+114014	1	4	2026-04-22 21:55:32.274389	2026-04-22 22:55:32.274389	Log entry #14013
+114016	10	8	2026-04-17 21:55:32.27612	2026-04-18 00:55:32.27612	Log entry #14015
+114017	6	3	2026-04-25 21:55:32.277436	2026-04-25 22:55:32.277436	Log entry #14016
+114033	6	3	2026-04-24 21:55:32.29666	2026-04-24 22:55:32.29666	Log entry #14032
+114035	7	4	2026-04-18 21:55:32.299037	2026-04-18 23:55:32.299037	Log entry #14034
+114037	7	6	2026-04-24 21:55:32.300988	2026-04-25 00:55:32.300988	Log entry #14036
+114049	2	6	2026-04-23 21:55:32.312808	2026-04-24 00:55:32.312808	Log entry #14048
+114052	3	5	2026-04-26 21:55:32.315327	2026-04-27 00:55:32.315327	Log entry #14051
+114083	6	8	2026-04-12 21:55:32.349106	2026-04-13 00:55:32.349106	Log entry #14082
+114103	4	6	2026-04-22 21:55:32.374519	2026-04-23 00:55:32.374519	Log entry #14102
+114140	6	7	2026-04-23 21:55:32.425239	2026-04-24 00:55:32.425239	Log entry #14139
+114149	5	2	2026-04-16 21:55:32.434478	2026-04-16 23:55:32.434478	Log entry #14148
+114150	6	10	2026-04-20 21:55:32.436112	2026-04-21 00:55:32.436112	Log entry #14149
+114203	2	5	2026-04-13 21:55:32.499665	2026-04-13 23:55:32.499665	Log entry #14202
+114205	10	3	2026-04-22 21:55:32.501884	2026-04-23 00:55:32.501884	Log entry #14204
+114207	5	6	2026-04-12 21:55:32.50439	2026-04-13 00:55:32.50439	Log entry #14206
+114216	6	10	2026-04-19 21:55:32.515088	2026-04-19 22:55:32.515088	Log entry #14215
+114243	7	1	2026-04-25 21:55:32.542324	2026-04-25 22:55:32.542324	Log entry #14242
+114297	9	8	2026-04-10 21:55:32.606531	2026-04-10 22:55:32.606531	Log entry #14296
+114321	2	4	2026-04-26 21:55:32.641705	2026-04-27 00:55:32.641705	Log entry #14320
+114322	9	8	2026-04-25 21:55:32.643032	2026-04-25 22:55:32.643032	Log entry #14321
+114323	5	6	2026-04-23 21:55:32.644118	2026-04-24 00:55:32.644118	Log entry #14322
+114339	7	6	2026-04-13 21:55:32.667413	2026-04-13 23:55:32.667413	Log entry #14338
+114344	9	3	2026-04-26 21:55:32.674211	2026-04-26 23:55:32.674211	Log entry #14343
+114354	6	3	2026-04-14 21:55:32.684737	2026-04-15 00:55:32.684737	Log entry #14353
+114357	6	9	2026-04-15 21:55:32.689828	2026-04-16 00:55:32.689828	Log entry #14356
+114364	1	7	2026-04-24 21:55:32.695977	2026-04-25 00:55:32.695977	Log entry #14363
+114434	8	3	2026-04-23 21:55:32.779872	2026-04-23 22:55:32.779872	Log entry #14433
+114445	10	10	2026-04-24 21:55:32.796232	2026-04-24 22:55:32.796232	Log entry #14444
+114447	9	7	2026-04-24 21:55:32.798778	2026-04-24 23:55:32.798778	Log entry #14446
+114453	2	3	2026-04-27 21:55:32.808003	2026-04-28 00:55:32.808003	Log entry #14452
+114466	5	2	2026-04-26 21:55:32.826652	2026-04-26 23:55:32.826652	Log entry #14465
+114537	4	6	2026-04-15 21:55:32.898653	2026-04-15 23:55:32.898653	Log entry #14536
+114549	9	3	2026-04-27 21:55:32.90801	2026-04-28 00:55:32.90801	Log entry #14548
+114557	9	7	2026-04-25 21:55:32.913791	2026-04-25 23:55:32.913791	Log entry #14556
+114574	4	4	2026-04-11 21:55:32.927756	2026-04-11 22:55:32.927756	Log entry #14573
+114616	8	3	2026-04-22 21:55:32.963046	2026-04-22 22:55:32.963046	Log entry #14615
+114633	6	9	2026-04-22 21:55:32.976704	2026-04-22 23:55:32.976704	Log entry #14632
+114653	3	8	2026-04-25 21:55:32.995205	2026-04-25 23:55:32.995205	Log entry #14652
+114706	9	10	2026-04-17 21:55:33.054827	2026-04-17 23:55:33.054827	Log entry #14705
+114721	5	5	2026-04-13 21:55:33.070714	2026-04-14 00:55:33.070714	Log entry #14720
+114723	2	7	2026-04-20 21:55:33.073114	2026-04-20 22:55:33.073114	Log entry #14722
+114726	7	7	2026-04-25 21:55:33.076146	2026-04-25 22:55:33.076146	Log entry #14725
+114779	3	8	2026-04-15 21:55:33.139358	2026-04-15 23:55:33.139358	Log entry #14778
+114788	6	5	2026-04-26 21:55:33.147883	2026-04-27 00:55:33.147883	Log entry #14787
+114831	3	10	2026-04-24 21:55:33.18843	2026-04-25 00:55:33.18843	Log entry #14830
+114852	1	1	2026-04-13 21:55:33.209994	2026-04-13 22:55:33.209994	Log entry #14851
+114855	1	1	2026-04-22 21:55:33.212355	2026-04-23 00:55:33.212355	Log entry #14854
+114860	7	8	2026-04-27 21:55:33.215662	2026-04-27 22:55:33.215662	Log entry #14859
+114870	6	4	2026-04-13 21:55:33.224576	2026-04-13 22:55:33.224576	Log entry #14869
+114879	9	1	2026-04-14 21:55:33.232707	2026-04-15 00:55:33.232707	Log entry #14878
+114895	4	10	2026-04-20 21:55:33.247921	2026-04-21 00:55:33.247921	Log entry #14894
+114916	10	3	2026-04-19 21:55:33.268971	2026-04-19 23:55:33.268971	Log entry #14915
+114957	9	7	2026-04-26 21:55:33.304337	2026-04-26 23:55:33.304337	Log entry #14956
+114967	2	3	2026-04-15 21:55:33.312165	2026-04-15 23:55:33.312165	Log entry #14966
+114970	3	7	2026-04-23 21:55:33.314643	2026-04-23 22:55:33.314643	Log entry #14969
+114983	8	6	2026-04-24 21:55:33.326479	2026-04-24 22:55:33.326479	Log entry #14982
+115010	9	5	2026-04-19 21:55:33.350066	2026-04-19 23:55:33.350066	Log entry #15009
+115027	10	4	2026-04-27 21:55:33.36554	2026-04-28 00:55:33.36554	Log entry #15026
+115063	1	5	2026-04-16 21:55:33.398957	2026-04-17 00:55:33.398957	Log entry #15062
+115067	4	4	2026-04-20 21:55:33.4023	2026-04-20 23:55:33.4023	Log entry #15066
+115092	6	9	2026-04-14 21:55:33.424987	2026-04-14 22:55:33.424987	Log entry #15091
+115115	10	1	2026-04-23 21:55:33.441992	2026-04-23 23:55:33.441992	Log entry #15114
+115116	6	4	2026-04-26 21:55:33.442686	2026-04-26 22:55:33.442686	Log entry #15115
+115158	4	9	2026-04-15 21:55:33.499622	2026-04-15 23:55:33.499622	Log entry #15157
+115162	2	8	2026-04-26 21:55:33.506434	2026-04-26 22:55:33.506434	Log entry #15161
+115173	1	5	2026-04-19 21:55:33.524603	2026-04-19 23:55:33.524603	Log entry #15172
+115265	3	3	2026-04-23 21:55:33.723132	2026-04-23 23:55:33.723132	Log entry #15264
+115288	9	4	2026-04-10 21:55:33.764077	2026-04-10 22:55:33.764077	Log entry #15287
+115299	4	7	2026-04-27 21:55:33.780738	2026-04-27 22:55:33.780738	Log entry #15298
+115316	3	7	2026-04-19 21:55:33.809235	2026-04-19 22:55:33.809235	Log entry #15315
+115333	4	9	2026-04-21 21:55:33.833279	2026-04-22 00:55:33.833279	Log entry #15332
+115358	7	8	2026-04-15 21:55:33.872612	2026-04-15 22:55:33.872612	Log entry #15357
+115366	1	2	2026-04-20 21:55:33.883174	2026-04-21 00:55:33.883174	Log entry #15365
+115404	4	9	2026-04-14 21:55:33.940434	2026-04-15 00:55:33.940434	Log entry #15403
+115411	8	8	2026-04-18 21:55:33.947698	2026-04-18 23:55:33.947698	Log entry #15410
+115424	3	5	2026-04-23 21:55:33.961076	2026-04-24 00:55:33.961076	Log entry #15423
+115430	3	2	2026-04-25 21:55:33.966596	2026-04-26 00:55:33.966596	Log entry #15429
+115443	10	9	2026-04-21 21:55:33.985773	2026-04-22 00:55:33.985773	Log entry #15442
+115461	5	5	2026-04-23 21:55:34.012998	2026-04-24 00:55:34.012998	Log entry #15460
+115464	2	4	2026-04-14 21:55:34.016254	2026-04-14 22:55:34.016254	Log entry #15463
+115473	7	3	2026-04-22 21:55:34.029783	2026-04-22 23:55:34.029783	Log entry #15472
+115483	1	9	2026-04-14 21:55:34.043062	2026-04-15 00:55:34.043062	Log entry #15482
+115514	10	2	2026-04-26 21:55:34.080958	2026-04-26 22:55:34.080958	Log entry #15513
+115520	2	6	2026-04-27 21:55:34.090301	2026-04-28 00:55:34.090301	Log entry #15519
+115531	4	8	2026-04-22 21:55:34.102481	2026-04-23 00:55:34.102481	Log entry #15530
+115543	8	4	2026-04-13 21:55:34.115149	2026-04-13 23:55:34.115149	Log entry #15542
+115548	1	8	2026-04-13 21:55:34.120378	2026-04-13 23:55:34.120378	Log entry #15547
+115573	7	6	2026-04-27 21:55:34.14326	2026-04-27 22:55:34.14326	Log entry #15572
+115579	4	10	2026-04-13 21:55:34.148923	2026-04-14 00:55:34.148923	Log entry #15578
+115623	2	5	2026-04-17 21:55:34.190377	2026-04-18 00:55:34.190377	Log entry #15622
+115653	5	8	2026-04-20 21:55:34.216668	2026-04-20 22:55:34.216668	Log entry #15652
+115655	4	2	2026-04-12 21:55:34.219215	2026-04-13 00:55:34.219215	Log entry #15654
+115656	8	10	2026-04-12 21:55:34.220122	2026-04-13 00:55:34.220122	Log entry #15655
+115659	5	5	2026-04-18 21:55:34.223182	2026-04-18 22:55:34.223182	Log entry #15658
+115677	1	9	2026-04-14 21:55:34.240163	2026-04-14 22:55:34.240163	Log entry #15676
+115757	10	10	2026-04-25 21:55:34.30739	2026-04-25 22:55:34.30739	Log entry #15756
+115781	4	3	2026-04-25 21:55:34.32561	2026-04-25 22:55:34.32561	Log entry #15780
+115814	6	3	2026-04-13 21:55:34.352617	2026-04-14 00:55:34.352617	Log entry #15813
+115832	4	3	2026-04-25 21:55:34.36579	2026-04-25 23:55:34.36579	Log entry #15831
+115863	7	5	2026-04-26 21:55:34.389518	2026-04-26 23:55:34.389518	Log entry #15862
+115878	10	1	2026-04-24 21:55:34.402968	2026-04-24 23:55:34.402968	Log entry #15877
+115883	3	10	2026-04-20 21:55:34.407244	2026-04-21 00:55:34.407244	Log entry #15882
+115891	3	2	2026-04-11 21:55:34.413416	2026-04-12 00:55:34.413416	Log entry #15890
+115908	5	2	2026-04-10 21:55:34.426542	2026-04-10 22:55:34.426542	Log entry #15907
+115922	7	6	2026-04-24 21:55:34.436437	2026-04-24 22:55:34.436437	Log entry #15921
+115974	10	1	2026-04-10 21:55:34.473108	2026-04-11 00:55:34.473108	Log entry #15973
+115989	9	3	2026-04-26 21:55:34.485227	2026-04-26 22:55:34.485227	Log entry #15988
+116008	1	1	2026-04-14 21:55:34.501708	2026-04-14 23:55:34.501708	Log entry #16007
+116020	10	4	2026-04-27 21:55:34.509434	2026-04-27 22:55:34.509434	Log entry #16019
+116034	7	1	2026-04-27 21:55:34.520141	2026-04-27 23:55:34.520141	Log entry #16033
+116035	6	9	2026-04-23 21:55:34.520921	2026-04-23 23:55:34.520921	Log entry #16034
+116043	1	4	2026-04-15 21:55:34.525856	2026-04-15 22:55:34.525856	Log entry #16042
+116110	2	8	2026-04-11 21:55:34.615207	2026-04-11 23:55:34.615207	Log entry #16109
+116117	7	8	2026-04-15 21:55:34.627053	2026-04-15 22:55:34.627053	Log entry #16116
+116138	10	3	2026-04-25 21:55:34.656231	2026-04-25 23:55:34.656231	Log entry #16137
+116145	6	8	2026-04-20 21:55:34.663842	2026-04-20 22:55:34.663842	Log entry #16144
+116158	6	3	2026-04-15 21:55:34.687757	2026-04-16 00:55:34.687757	Log entry #16157
+116248	2	9	2026-04-18 21:55:34.812198	2026-04-18 22:55:34.812198	Log entry #16247
+116250	1	4	2026-04-18 21:55:34.81377	2026-04-18 23:55:34.81377	Log entry #16249
+116281	7	9	2026-04-26 21:55:34.843461	2026-04-26 23:55:34.843461	Log entry #16280
+116298	7	2	2026-04-26 21:55:34.859474	2026-04-27 00:55:34.859474	Log entry #16297
+116303	5	6	2026-04-27 21:55:34.863462	2026-04-28 00:55:34.863462	Log entry #16302
+116316	9	1	2026-04-15 21:55:34.878626	2026-04-16 00:55:34.878626	Log entry #16315
+116325	7	2	2026-04-11 21:55:34.891413	2026-04-11 22:55:34.891413	Log entry #16324
+116331	10	3	2026-04-19 21:55:34.898989	2026-04-20 00:55:34.898989	Log entry #16330
+116336	4	10	2026-04-10 21:55:34.905244	2026-04-10 22:55:34.905244	Log entry #16335
+116337	2	6	2026-04-26 21:55:34.90649	2026-04-26 22:55:34.90649	Log entry #16336
+116341	6	5	2026-04-14 21:55:34.910967	2026-04-14 23:55:34.910967	Log entry #16340
+116386	6	8	2026-04-13 21:55:34.965768	2026-04-14 00:55:34.965768	Log entry #16385
+116391	2	9	2026-04-10 21:55:34.971236	2026-04-11 00:55:34.971236	Log entry #16390
+116402	1	2	2026-04-16 21:55:34.98296	2026-04-16 22:55:34.98296	Log entry #16401
+116431	9	6	2026-04-14 21:55:35.014875	2026-04-14 22:55:35.014875	Log entry #16430
+116443	3	3	2026-04-11 21:55:35.027716	2026-04-11 23:55:35.027716	Log entry #16442
+116451	10	8	2026-04-26 21:55:35.035711	2026-04-27 00:55:35.035711	Log entry #16450
+116475	2	9	2026-04-23 21:55:35.061409	2026-04-23 22:55:35.061409	Log entry #16474
+116518	3	5	2026-04-14 21:55:35.113588	2026-04-14 22:55:35.113588	Log entry #16517
+116563	1	5	2026-04-15 21:55:35.15993	2026-04-15 23:55:35.15993	Log entry #16562
+116593	2	9	2026-04-25 21:55:35.199126	2026-04-26 00:55:35.199126	Log entry #16592
+116608	1	10	2026-04-15 21:55:35.219432	2026-04-15 23:55:35.219432	Log entry #16607
+116612	9	5	2026-04-26 21:55:35.224438	2026-04-26 23:55:35.224438	Log entry #16611
+116651	1	5	2026-04-18 21:55:35.268546	2026-04-19 00:55:35.268546	Log entry #16650
+116657	8	4	2026-04-26 21:55:35.2745	2026-04-27 00:55:35.2745	Log entry #16656
+116660	8	9	2026-04-10 21:55:35.27654	2026-04-10 22:55:35.27654	Log entry #16659
+116679	1	8	2026-04-11 21:55:35.29497	2026-04-11 23:55:35.29497	Log entry #16678
+116687	10	8	2026-04-12 21:55:35.302115	2026-04-12 22:55:35.302115	Log entry #16686
+116699	9	3	2026-04-21 21:55:35.310776	2026-04-21 22:55:35.310776	Log entry #16698
+116708	5	9	2026-04-18 21:55:35.318484	2026-04-18 22:55:35.318484	Log entry #16707
+116719	3	4	2026-04-26 21:55:35.329226	2026-04-26 22:55:35.329226	Log entry #16718
+116739	5	10	2026-04-25 21:55:35.347008	2026-04-26 00:55:35.347008	Log entry #16738
+116772	4	3	2026-04-17 21:55:35.375018	2026-04-17 22:55:35.375018	Log entry #16771
+116779	8	5	2026-04-14 21:55:35.379854	2026-04-15 00:55:35.379854	Log entry #16778
+116784	7	6	2026-04-21 21:55:35.385205	2026-04-21 22:55:35.385205	Log entry #16783
+116785	1	8	2026-04-14 21:55:35.386205	2026-04-14 22:55:35.386205	Log entry #16784
+116795	2	10	2026-04-22 21:55:35.393878	2026-04-22 23:55:35.393878	Log entry #16794
+116798	3	7	2026-04-16 21:55:35.396141	2026-04-16 22:55:35.396141	Log entry #16797
+116816	9	4	2026-04-17 21:55:35.414636	2026-04-17 23:55:35.414636	Log entry #16815
+116830	1	8	2026-04-10 21:55:35.426274	2026-04-10 23:55:35.426274	Log entry #16829
+116841	3	2	2026-04-11 21:55:35.435464	2026-04-11 22:55:35.435464	Log entry #16840
+116851	5	9	2026-04-19 21:55:35.442981	2026-04-19 22:55:35.442981	Log entry #16850
+116882	6	5	2026-04-14 21:55:35.468517	2026-04-14 22:55:35.468517	Log entry #16881
+116899	3	6	2026-04-10 21:55:35.483686	2026-04-11 00:55:35.483686	Log entry #16898
+116914	6	3	2026-04-17 21:55:35.495686	2026-04-17 23:55:35.495686	Log entry #16913
+116990	4	7	2026-04-26 21:55:35.565119	2026-04-26 22:55:35.565119	Log entry #16989
+117039	7	4	2026-04-16 21:55:35.620628	2026-04-17 00:55:35.620628	Log entry #17038
+117069	7	10	2026-04-15 21:55:35.650115	2026-04-16 00:55:35.650115	Log entry #17068
+117081	2	9	2026-04-18 21:55:35.661072	2026-04-18 22:55:35.661072	Log entry #17080
+117092	9	5	2026-04-14 21:55:35.672761	2026-04-14 23:55:35.672761	Log entry #17091
+117113	7	2	2026-04-20 21:55:35.699215	2026-04-20 22:55:35.699215	Log entry #17112
+117142	7	7	2026-04-21 21:55:35.735439	2026-04-22 00:55:35.735439	Log entry #17141
+117153	6	3	2026-04-25 21:55:35.748904	2026-04-25 22:55:35.748904	Log entry #17152
+117166	3	3	2026-04-24 21:55:35.7627	2026-04-24 22:55:35.7627	Log entry #17165
+117170	9	1	2026-04-19 21:55:35.768198	2026-04-19 22:55:35.768198	Log entry #17169
+117194	6	4	2026-04-26 21:55:35.792487	2026-04-26 23:55:35.792487	Log entry #17193
+117244	3	9	2026-04-16 21:55:35.835189	2026-04-17 00:55:35.835189	Log entry #17243
+117257	8	6	2026-04-18 21:55:35.852953	2026-04-18 22:55:35.852953	Log entry #17256
+117281	6	1	2026-04-13 21:55:35.878821	2026-04-14 00:55:35.878821	Log entry #17280
+117282	9	7	2026-04-27 21:55:35.879519	2026-04-28 00:55:35.879519	Log entry #17281
+117303	5	9	2026-04-13 21:55:35.899835	2026-04-13 22:55:35.899835	Log entry #17302
+117306	7	5	2026-04-19 21:55:35.903976	2026-04-19 23:55:35.903976	Log entry #17305
+117324	6	10	2026-04-19 21:55:35.920208	2026-04-20 00:55:35.920208	Log entry #17323
+117353	5	4	2026-04-22 21:55:35.951202	2026-04-23 00:55:35.951202	Log entry #17352
+117357	3	6	2026-04-13 21:55:35.95575	2026-04-13 22:55:35.95575	Log entry #17356
+117376	7	9	2026-04-19 21:55:35.97422	2026-04-20 00:55:35.97422	Log entry #17375
+117418	1	10	2026-04-17 21:55:36.023051	2026-04-17 23:55:36.023051	Log entry #17417
+117420	1	1	2026-04-17 21:55:36.024625	2026-04-18 00:55:36.024625	Log entry #17419
+117465	9	4	2026-04-15 21:55:36.06967	2026-04-15 23:55:36.06967	Log entry #17464
+117482	6	8	2026-04-22 21:55:36.084531	2026-04-22 22:55:36.084531	Log entry #17481
+117513	2	5	2026-04-22 21:55:36.118391	2026-04-22 22:55:36.118391	Log entry #17512
+117544	6	8	2026-04-26 21:55:36.14264	2026-04-26 23:55:36.14264	Log entry #17543
+117556	3	1	2026-04-19 21:55:36.152289	2026-04-19 23:55:36.152289	Log entry #17555
+117571	2	3	2026-04-19 21:55:36.162957	2026-04-19 23:55:36.162957	Log entry #17570
+117624	9	3	2026-04-16 21:55:36.2096	2026-04-16 23:55:36.2096	Log entry #17623
+117680	5	4	2026-04-27 21:55:36.263034	2026-04-27 23:55:36.263034	Log entry #17679
+117683	7	6	2026-04-12 21:55:36.26616	2026-04-13 00:55:36.26616	Log entry #17682
+117710	6	5	2026-04-16 21:55:36.291782	2026-04-16 23:55:36.291782	Log entry #17709
+117734	10	5	2026-04-15 21:55:36.317043	2026-04-15 22:55:36.317043	Log entry #17733
+117807	5	8	2026-04-27 21:55:36.387188	2026-04-27 23:55:36.387188	Log entry #17806
+117811	9	4	2026-04-23 21:55:36.390025	2026-04-23 23:55:36.390025	Log entry #17810
+117826	3	8	2026-04-23 21:55:36.404232	2026-04-24 00:55:36.404232	Log entry #17825
+117831	7	7	2026-04-25 21:55:36.408511	2026-04-26 00:55:36.408511	Log entry #17830
+117871	3	6	2026-04-24 21:55:36.440176	2026-04-24 23:55:36.440176	Log entry #17870
+117872	4	1	2026-04-12 21:55:36.4408	2026-04-12 23:55:36.4408	Log entry #17871
+117892	4	6	2026-04-14 21:55:36.458111	2026-04-14 22:55:36.458111	Log entry #17891
+117906	6	9	2026-04-23 21:55:36.472276	2026-04-23 23:55:36.472276	Log entry #17905
+117908	2	8	2026-04-26 21:55:36.473683	2026-04-26 22:55:36.473683	Log entry #17907
+117910	3	1	2026-04-14 21:55:36.475818	2026-04-15 00:55:36.475818	Log entry #17909
+117936	2	3	2026-04-20 21:55:36.502562	2026-04-21 00:55:36.502562	Log entry #17935
+117939	3	3	2026-04-14 21:55:36.505004	2026-04-14 23:55:36.505004	Log entry #17938
+117979	6	5	2026-04-20 21:55:36.539269	2026-04-20 23:55:36.539269	Log entry #17978
+118016	5	1	2026-04-27 21:55:36.569449	2026-04-27 23:55:36.569449	Log entry #18015
+118026	9	4	2026-04-19 21:55:36.576537	2026-04-19 23:55:36.576537	Log entry #18025
+118027	2	10	2026-04-18 21:55:36.577238	2026-04-18 22:55:36.577238	Log entry #18026
+118030	6	3	2026-04-14 21:55:36.579417	2026-04-15 00:55:36.579417	Log entry #18029
+118031	10	9	2026-04-21 21:55:36.580116	2026-04-22 00:55:36.580116	Log entry #18030
+118035	2	2	2026-04-18 21:55:36.583278	2026-04-18 22:55:36.583278	Log entry #18034
+118045	4	4	2026-04-11 21:55:36.590282	2026-04-11 23:55:36.590282	Log entry #18044
+118047	5	8	2026-04-21 21:55:36.591653	2026-04-21 23:55:36.591653	Log entry #18046
+118050	3	10	2026-04-23 21:55:36.593646	2026-04-24 00:55:36.593646	Log entry #18049
+118054	8	7	2026-04-25 21:55:36.596187	2026-04-25 23:55:36.596187	Log entry #18053
+118057	3	5	2026-04-27 21:55:36.600255	2026-04-28 00:55:36.600255	Log entry #18056
+118094	10	10	2026-04-12 21:55:36.630784	2026-04-13 00:55:36.630784	Log entry #18093
+118099	10	5	2026-04-19 21:55:36.634727	2026-04-20 00:55:36.634727	Log entry #18098
+118138	6	3	2026-04-21 21:55:36.663406	2026-04-21 22:55:36.663406	Log entry #18137
+118175	9	8	2026-04-11 21:55:36.714118	2026-04-11 22:55:36.714118	Log entry #18174
+118209	6	9	2026-04-16 21:55:36.765726	2026-04-17 00:55:36.765726	Log entry #18208
+118226	6	1	2026-04-26 21:55:36.790565	2026-04-27 00:55:36.790565	Log entry #18225
+118231	3	4	2026-04-12 21:55:36.800192	2026-04-12 23:55:36.800192	Log entry #18230
+118237	9	3	2026-04-26 21:55:36.810446	2026-04-27 00:55:36.810446	Log entry #18236
+118258	8	1	2026-04-24 21:55:36.841399	2026-04-25 00:55:36.841399	Log entry #18257
+118267	1	3	2026-04-17 21:55:36.853799	2026-04-18 00:55:36.853799	Log entry #18266
+118271	4	3	2026-04-17 21:55:36.85841	2026-04-17 22:55:36.85841	Log entry #18270
+118286	3	7	2026-04-27 21:55:36.876185	2026-04-27 22:55:36.876185	Log entry #18285
+118308	3	3	2026-04-16 21:55:36.904696	2026-04-16 23:55:36.904696	Log entry #18307
+118319	9	1	2026-04-21 21:55:36.917448	2026-04-21 23:55:36.917448	Log entry #18318
+118329	4	7	2026-04-13 21:55:36.927257	2026-04-13 22:55:36.927257	Log entry #18328
+118346	8	6	2026-04-11 21:55:36.947024	2026-04-11 23:55:36.947024	Log entry #18345
+118358	9	3	2026-04-16 21:55:36.958192	2026-04-16 22:55:36.958192	Log entry #18357
+118366	3	9	2026-04-16 21:55:36.965774	2026-04-16 23:55:36.965774	Log entry #18365
+118456	8	10	2026-04-15 21:55:37.072981	2026-04-15 22:55:37.072981	Log entry #18455
+118469	8	5	2026-04-10 21:55:37.08885	2026-04-11 00:55:37.08885	Log entry #18468
+118500	9	8	2026-04-10 21:55:37.124646	2026-04-11 00:55:37.124646	Log entry #18499
+118509	10	4	2026-04-24 21:55:37.132592	2026-04-24 22:55:37.132592	Log entry #18508
+118528	7	4	2026-04-25 21:55:37.146764	2026-04-26 00:55:37.146764	Log entry #18527
+118539	10	6	2026-04-11 21:55:37.15638	2026-04-12 00:55:37.15638	Log entry #18538
+118558	10	1	2026-04-10 21:55:37.171587	2026-04-11 00:55:37.171587	Log entry #18557
+118568	4	6	2026-04-10 21:55:37.179395	2026-04-11 00:55:37.179395	Log entry #18567
+118601	2	10	2026-04-25 21:55:37.210485	2026-04-26 00:55:37.210485	Log entry #18600
+118617	6	4	2026-04-13 21:55:37.223035	2026-04-13 23:55:37.223035	Log entry #18616
+118646	3	2	2026-04-15 21:55:37.244462	2026-04-16 00:55:37.244462	Log entry #18645
+118654	1	8	2026-04-10 21:55:37.25036	2026-04-10 22:55:37.25036	Log entry #18653
+118655	6	2	2026-04-14 21:55:37.251013	2026-04-14 22:55:37.251013	Log entry #18654
+118686	9	6	2026-04-24 21:55:37.273744	2026-04-25 00:55:37.273744	Log entry #18685
+118768	9	8	2026-04-17 21:55:37.389441	2026-04-18 00:55:37.389441	Log entry #18767
+118774	7	9	2026-04-26 21:55:37.402709	2026-04-26 22:55:37.402709	Log entry #18773
+118855	1	8	2026-04-10 21:55:37.523036	2026-04-10 22:55:37.523036	Log entry #18854
+118881	6	1	2026-04-17 21:55:37.559024	2026-04-17 22:55:37.559024	Log entry #18880
+118894	9	6	2026-04-24 21:55:37.577595	2026-04-24 23:55:37.577595	Log entry #18893
+118899	5	5	2026-04-17 21:55:37.585894	2026-04-17 23:55:37.585894	Log entry #18898
+118908	7	7	2026-04-18 21:55:37.602233	2026-04-18 23:55:37.602233	Log entry #18907
+118922	3	10	2026-04-15 21:55:37.623324	2026-04-15 22:55:37.623324	Log entry #18921
+118975	4	6	2026-04-25 21:55:37.694645	2026-04-25 23:55:37.694645	Log entry #18974
+119005	2	7	2026-04-17 21:55:37.736376	2026-04-17 23:55:37.736376	Log entry #19004
+119018	7	7	2026-04-19 21:55:37.752573	2026-04-19 23:55:37.752573	Log entry #19017
+119070	6	2	2026-04-24 21:55:37.81132	2026-04-24 23:55:37.81132	Log entry #19069
+119074	8	8	2026-04-19 21:55:37.816398	2026-04-19 22:55:37.816398	Log entry #19073
+119088	2	10	2026-04-22 21:55:37.835365	2026-04-22 23:55:37.835365	Log entry #19087
+119095	5	7	2026-04-14 21:55:37.844012	2026-04-15 00:55:37.844012	Log entry #19094
+119159	10	10	2026-04-13 21:55:37.925179	2026-04-13 22:55:37.925179	Log entry #19158
+119162	5	2	2026-04-12 21:55:37.92894	2026-04-13 00:55:37.92894	Log entry #19161
+119193	9	7	2026-04-13 21:55:37.96098	2026-04-13 23:55:37.96098	Log entry #19192
+119239	5	4	2026-04-19 21:55:38.005019	2026-04-19 23:55:38.005019	Log entry #19238
+119259	3	9	2026-04-15 21:55:38.022866	2026-04-15 23:55:38.022866	Log entry #19258
+119312	4	2	2026-04-21 21:55:38.07812	2026-04-21 22:55:38.07812	Log entry #19311
+119324	8	9	2026-04-19 21:55:38.089032	2026-04-20 00:55:38.089032	Log entry #19323
+119325	8	10	2026-04-25 21:55:38.089713	2026-04-25 22:55:38.089713	Log entry #19324
+119351	2	4	2026-04-19 21:55:38.115436	2026-04-20 00:55:38.115436	Log entry #19350
+119415	3	1	2026-04-14 21:55:38.171659	2026-04-15 00:55:38.171659	Log entry #19414
+119419	5	10	2026-04-10 21:55:38.174412	2026-04-11 00:55:38.174412	Log entry #19418
+119435	8	3	2026-04-19 21:55:38.186924	2026-04-19 22:55:38.186924	Log entry #19434
+119449	5	3	2026-04-22 21:55:38.198793	2026-04-22 22:55:38.198793	Log entry #19448
+119454	5	6	2026-04-23 21:55:38.204495	2026-04-23 23:55:38.204495	Log entry #19453
+119491	3	9	2026-04-11 21:55:38.234191	2026-04-11 22:55:38.234191	Log entry #19490
+119508	4	10	2026-04-15 21:55:38.245983	2026-04-16 00:55:38.245983	Log entry #19507
+119548	9	6	2026-04-23 21:55:38.273109	2026-04-23 23:55:38.273109	Log entry #19547
+119561	8	5	2026-04-16 21:55:38.2832	2026-04-16 23:55:38.2832	Log entry #19560
+119605	10	3	2026-04-26 21:55:38.317635	2026-04-27 00:55:38.317635	Log entry #19604
+119625	4	10	2026-04-11 21:55:38.336544	2026-04-11 22:55:38.336544	Log entry #19624
+119627	2	9	2026-04-19 21:55:38.338082	2026-04-19 22:55:38.338082	Log entry #19626
+119634	10	8	2026-04-19 21:55:38.342221	2026-04-20 00:55:38.342221	Log entry #19633
+119641	10	6	2026-04-23 21:55:38.346958	2026-04-23 23:55:38.346958	Log entry #19640
+119718	2	1	2026-04-20 21:55:38.400648	2026-04-20 22:55:38.400648	Log entry #19717
+119724	10	5	2026-04-27 21:55:38.405008	2026-04-27 23:55:38.405008	Log entry #19723
+119730	4	8	2026-04-12 21:55:38.409756	2026-04-13 00:55:38.409756	Log entry #19729
+119737	9	3	2026-04-26 21:55:38.414287	2026-04-27 00:55:38.414287	Log entry #19736
+119757	1	10	2026-04-16 21:55:38.427131	2026-04-16 23:55:38.427131	Log entry #19756
+119777	8	1	2026-04-12 21:55:38.440777	2026-04-13 00:55:38.440777	Log entry #19776
+119796	6	4	2026-04-27 21:55:38.455783	2026-04-27 22:55:38.455783	Log entry #19795
+119823	10	1	2026-04-10 21:55:38.4772	2026-04-11 00:55:38.4772	Log entry #19822
+119888	2	8	2026-04-18 21:55:38.541868	2026-04-18 23:55:38.541868	Log entry #19887
+119903	1	8	2026-04-25 21:55:38.555801	2026-04-26 00:55:38.555801	Log entry #19902
+119954	9	3	2026-04-14 21:55:38.60728	2026-04-14 23:55:38.60728	Log entry #19953
+119987	8	1	2026-04-24 21:55:38.631669	2026-04-25 00:55:38.631669	Log entry #19986
+119996	3	9	2026-04-18 21:55:38.637147	2026-04-18 22:55:38.637147	Log entry #19995
+\.
+
+
+--
+-- TOC entry 3464 (class 0 OID 32857)
+-- Dependencies: 232
+-- Data for Name: cleaningsupplies; Type: TABLE DATA; Schema: public; Owner: myUser
+--
+
+COPY public.cleaningsupplies (suppliesid, name, quantity) FROM stdin;
+1	Supply_Item_1	268
+2	Supply_Item_2	743
+3	Supply_Item_3	193
+4	Supply_Item_4	672
+5	Supply_Item_5	528
+6	Supply_Item_6	977
+7	Supply_Item_7	931
+8	Supply_Item_8	571
+9	Supply_Item_9	238
+10	Supply_Item_10	133
+11	Supply_Item_11	992
+12	Supply_Item_12	288
+13	Supply_Item_13	595
+14	Supply_Item_14	533
+15	Supply_Item_15	122
+16	Supply_Item_16	1089
+17	Supply_Item_17	640
+18	Supply_Item_18	147
+19	Supply_Item_19	969
+20	Supply_Item_20	830
+21	Supply_Item_21	998
+22	Supply_Item_22	394
+23	Supply_Item_23	251
+24	Supply_Item_24	291
+25	Supply_Item_25	224
+26	Supply_Item_26	820
+27	Supply_Item_27	1074
+28	Supply_Item_28	722
+29	Supply_Item_29	678
+30	Supply_Item_30	887
+31	Supply_Item_31	106
+32	Supply_Item_32	783
+33	Supply_Item_33	1073
+34	Supply_Item_34	276
+35	Supply_Item_35	699
+36	Supply_Item_36	291
+37	Supply_Item_37	952
+38	Supply_Item_38	889
+39	Supply_Item_39	805
+40	Supply_Item_40	502
+41	Supply_Item_41	861
+42	Supply_Item_42	608
+43	Supply_Item_43	447
+44	Supply_Item_44	124
+45	Supply_Item_45	748
+46	Supply_Item_46	134
+47	Supply_Item_47	1093
+48	Supply_Item_48	376
+49	Supply_Item_49	668
+50	Supply_Item_50	500
+51	Supply_Item_51	373
+52	Supply_Item_52	639
+53	Supply_Item_53	844
+54	Supply_Item_54	928
+55	Supply_Item_55	530
+56	Supply_Item_56	620
+57	Supply_Item_57	255
+58	Supply_Item_58	1069
+59	Supply_Item_59	503
+60	Supply_Item_60	587
+61	Supply_Item_61	796
+62	Supply_Item_62	853
+63	Supply_Item_63	617
+64	Supply_Item_64	568
+65	Supply_Item_65	552
+66	Supply_Item_66	281
+67	Supply_Item_67	438
+68	Supply_Item_68	995
+69	Supply_Item_69	893
+70	Supply_Item_70	212
+71	Supply_Item_71	108
+72	Supply_Item_72	221
+73	Supply_Item_73	366
+74	Supply_Item_74	858
+75	Supply_Item_75	906
+76	Supply_Item_76	856
+77	Supply_Item_77	697
+78	Supply_Item_78	741
+79	Supply_Item_79	284
+80	Supply_Item_80	682
+81	Supply_Item_81	391
+82	Supply_Item_82	967
+83	Supply_Item_83	229
+84	Supply_Item_84	197
+85	Supply_Item_85	951
+86	Supply_Item_86	174
+87	Supply_Item_87	681
+88	Supply_Item_88	458
+89	Supply_Item_89	309
+90	Supply_Item_90	669
+91	Supply_Item_91	118
+92	Supply_Item_92	642
+93	Supply_Item_93	480
+94	Supply_Item_94	435
+95	Supply_Item_95	406
+96	Supply_Item_96	315
+97	Supply_Item_97	681
+98	Supply_Item_98	861
+99	Supply_Item_99	838
+100	Supply_Item_100	919
+101	Supply_Item_101	392
+102	Supply_Item_102	259
+103	Supply_Item_103	398
+104	Supply_Item_104	381
+105	Supply_Item_105	452
+106	Supply_Item_106	815
+107	Supply_Item_107	1027
+108	Supply_Item_108	160
+109	Supply_Item_109	941
+110	Supply_Item_110	134
+111	Supply_Item_111	444
+112	Supply_Item_112	238
+113	Supply_Item_113	248
+114	Supply_Item_114	1023
+115	Supply_Item_115	1002
+116	Supply_Item_116	434
+117	Supply_Item_117	612
+118	Supply_Item_118	627
+119	Supply_Item_119	701
+120	Supply_Item_120	237
+121	Supply_Item_121	1081
+122	Supply_Item_122	495
+123	Supply_Item_123	806
+124	Supply_Item_124	782
+125	Supply_Item_125	516
+126	Supply_Item_126	752
+127	Supply_Item_127	417
+128	Supply_Item_128	713
+129	Supply_Item_129	666
+130	Supply_Item_130	332
+131	Supply_Item_131	1045
+132	Supply_Item_132	188
+133	Supply_Item_133	475
+134	Supply_Item_134	396
+135	Supply_Item_135	262
+136	Supply_Item_136	924
+137	Supply_Item_137	375
+138	Supply_Item_138	983
+139	Supply_Item_139	632
+140	Supply_Item_140	1098
+141	Supply_Item_141	255
+142	Supply_Item_142	1061
+143	Supply_Item_143	727
+144	Supply_Item_144	509
+145	Supply_Item_145	451
+146	Supply_Item_146	703
+147	Supply_Item_147	321
+148	Supply_Item_148	370
+149	Supply_Item_149	593
+150	Supply_Item_150	534
+151	Supply_Item_151	930
+152	Supply_Item_152	998
+153	Supply_Item_153	950
+154	Supply_Item_154	203
+155	Supply_Item_155	774
+156	Supply_Item_156	910
+157	Supply_Item_157	295
+158	Supply_Item_158	264
+159	Supply_Item_159	898
+160	Supply_Item_160	324
+161	Supply_Item_161	928
+162	Supply_Item_162	413
+163	Supply_Item_163	792
+164	Supply_Item_164	1089
+165	Supply_Item_165	780
+166	Supply_Item_166	315
+167	Supply_Item_167	296
+168	Supply_Item_168	491
+169	Supply_Item_169	342
+170	Supply_Item_170	449
+171	Supply_Item_171	386
+172	Supply_Item_172	884
+173	Supply_Item_173	276
+174	Supply_Item_174	899
+175	Supply_Item_175	267
+176	Supply_Item_176	528
+177	Supply_Item_177	764
+178	Supply_Item_178	115
+179	Supply_Item_179	288
+180	Supply_Item_180	387
+181	Supply_Item_181	459
+182	Supply_Item_182	905
+183	Supply_Item_183	238
+184	Supply_Item_184	259
+185	Supply_Item_185	627
+186	Supply_Item_186	239
+187	Supply_Item_187	862
+188	Supply_Item_188	625
+189	Supply_Item_189	383
+190	Supply_Item_190	499
+191	Supply_Item_191	965
+192	Supply_Item_192	229
+193	Supply_Item_193	1084
+194	Supply_Item_194	895
+195	Supply_Item_195	161
+196	Supply_Item_196	866
+197	Supply_Item_197	284
+198	Supply_Item_198	335
+199	Supply_Item_199	271
+200	Supply_Item_200	871
+201	Supply_Item_201	828
+202	Supply_Item_202	434
+203	Supply_Item_203	435
+204	Supply_Item_204	501
+205	Supply_Item_205	601
+206	Supply_Item_206	1032
+207	Supply_Item_207	918
+208	Supply_Item_208	1007
+209	Supply_Item_209	850
+210	Supply_Item_210	925
+211	Supply_Item_211	707
+212	Supply_Item_212	212
+213	Supply_Item_213	101
+214	Supply_Item_214	999
+215	Supply_Item_215	499
+216	Supply_Item_216	646
+217	Supply_Item_217	637
+218	Supply_Item_218	498
+219	Supply_Item_219	231
+220	Supply_Item_220	1044
+221	Supply_Item_221	615
+222	Supply_Item_222	580
+223	Supply_Item_223	912
+224	Supply_Item_224	126
+225	Supply_Item_225	798
+226	Supply_Item_226	660
+227	Supply_Item_227	398
+228	Supply_Item_228	889
+229	Supply_Item_229	282
+230	Supply_Item_230	865
+231	Supply_Item_231	589
+232	Supply_Item_232	739
+233	Supply_Item_233	523
+234	Supply_Item_234	256
+235	Supply_Item_235	518
+236	Supply_Item_236	245
+237	Supply_Item_237	898
+238	Supply_Item_238	476
+239	Supply_Item_239	337
+240	Supply_Item_240	1078
+241	Supply_Item_241	211
+242	Supply_Item_242	933
+243	Supply_Item_243	603
+244	Supply_Item_244	437
+245	Supply_Item_245	1073
+246	Supply_Item_246	470
+247	Supply_Item_247	769
+248	Supply_Item_248	639
+249	Supply_Item_249	570
+250	Supply_Item_250	756
+251	Supply_Item_251	824
+252	Supply_Item_252	223
+253	Supply_Item_253	550
+254	Supply_Item_254	1076
+255	Supply_Item_255	769
+256	Supply_Item_256	662
+257	Supply_Item_257	1096
+258	Supply_Item_258	564
+259	Supply_Item_259	281
+260	Supply_Item_260	961
+261	Supply_Item_261	277
+262	Supply_Item_262	788
+263	Supply_Item_263	350
+264	Supply_Item_264	320
+265	Supply_Item_265	344
+266	Supply_Item_266	376
+267	Supply_Item_267	713
+268	Supply_Item_268	123
+269	Supply_Item_269	758
+270	Supply_Item_270	191
+271	Supply_Item_271	859
+272	Supply_Item_272	970
+273	Supply_Item_273	414
+274	Supply_Item_274	614
+275	Supply_Item_275	118
+276	Supply_Item_276	226
+277	Supply_Item_277	140
+278	Supply_Item_278	253
+279	Supply_Item_279	552
+280	Supply_Item_280	687
+281	Supply_Item_281	717
+282	Supply_Item_282	251
+283	Supply_Item_283	396
+284	Supply_Item_284	837
+285	Supply_Item_285	849
+286	Supply_Item_286	365
+287	Supply_Item_287	643
+288	Supply_Item_288	1052
+289	Supply_Item_289	493
+290	Supply_Item_290	737
+291	Supply_Item_291	762
+292	Supply_Item_292	487
+293	Supply_Item_293	276
+294	Supply_Item_294	793
+295	Supply_Item_295	983
+296	Supply_Item_296	661
+297	Supply_Item_297	514
+298	Supply_Item_298	112
+299	Supply_Item_299	1016
+300	Supply_Item_300	411
+301	Supply_Item_301	1002
+302	Supply_Item_302	320
+303	Supply_Item_303	689
+304	Supply_Item_304	640
+305	Supply_Item_305	604
+306	Supply_Item_306	734
+307	Supply_Item_307	1026
+308	Supply_Item_308	791
+309	Supply_Item_309	778
+310	Supply_Item_310	416
+311	Supply_Item_311	191
+312	Supply_Item_312	993
+313	Supply_Item_313	474
+314	Supply_Item_314	799
+315	Supply_Item_315	977
+316	Supply_Item_316	492
+317	Supply_Item_317	283
+318	Supply_Item_318	812
+319	Supply_Item_319	1024
+320	Supply_Item_320	680
+321	Supply_Item_321	655
+322	Supply_Item_322	525
+323	Supply_Item_323	1086
+324	Supply_Item_324	311
+325	Supply_Item_325	770
+326	Supply_Item_326	957
+327	Supply_Item_327	124
+328	Supply_Item_328	694
+329	Supply_Item_329	846
+330	Supply_Item_330	491
+331	Supply_Item_331	221
+332	Supply_Item_332	663
+333	Supply_Item_333	283
+334	Supply_Item_334	351
+335	Supply_Item_335	194
+336	Supply_Item_336	474
+337	Supply_Item_337	949
+338	Supply_Item_338	1021
+339	Supply_Item_339	174
+340	Supply_Item_340	1066
+341	Supply_Item_341	497
+342	Supply_Item_342	945
+343	Supply_Item_343	1033
+344	Supply_Item_344	798
+345	Supply_Item_345	770
+346	Supply_Item_346	1045
+347	Supply_Item_347	328
+348	Supply_Item_348	644
+349	Supply_Item_349	565
+350	Supply_Item_350	956
+351	Supply_Item_351	474
+352	Supply_Item_352	509
+353	Supply_Item_353	745
+354	Supply_Item_354	1025
+355	Supply_Item_355	449
+356	Supply_Item_356	919
+357	Supply_Item_357	226
+358	Supply_Item_358	839
+359	Supply_Item_359	112
+360	Supply_Item_360	469
+361	Supply_Item_361	999
+362	Supply_Item_362	293
+363	Supply_Item_363	407
+364	Supply_Item_364	112
+365	Supply_Item_365	569
+366	Supply_Item_366	419
+367	Supply_Item_367	922
+368	Supply_Item_368	711
+369	Supply_Item_369	470
+370	Supply_Item_370	580
+371	Supply_Item_371	1069
+372	Supply_Item_372	438
+373	Supply_Item_373	420
+374	Supply_Item_374	624
+375	Supply_Item_375	980
+376	Supply_Item_376	966
+377	Supply_Item_377	1011
+378	Supply_Item_378	385
+379	Supply_Item_379	336
+380	Supply_Item_380	168
+381	Supply_Item_381	730
+382	Supply_Item_382	1060
+383	Supply_Item_383	900
+384	Supply_Item_384	1076
+385	Supply_Item_385	824
+386	Supply_Item_386	660
+387	Supply_Item_387	882
+388	Supply_Item_388	291
+389	Supply_Item_389	650
+390	Supply_Item_390	415
+391	Supply_Item_391	863
+392	Supply_Item_392	838
+393	Supply_Item_393	623
+394	Supply_Item_394	525
+395	Supply_Item_395	701
+396	Supply_Item_396	344
+397	Supply_Item_397	299
+398	Supply_Item_398	233
+399	Supply_Item_399	783
+400	Supply_Item_400	754
+401	Supply_Item_401	358
+402	Supply_Item_402	847
+403	Supply_Item_403	394
+404	Supply_Item_404	898
+405	Supply_Item_405	943
+406	Supply_Item_406	948
+407	Supply_Item_407	551
+408	Supply_Item_408	242
+409	Supply_Item_409	563
+410	Supply_Item_410	553
+411	Supply_Item_411	1048
+412	Supply_Item_412	991
+413	Supply_Item_413	808
+414	Supply_Item_414	434
+415	Supply_Item_415	934
+416	Supply_Item_416	751
+417	Supply_Item_417	745
+418	Supply_Item_418	868
+419	Supply_Item_419	604
+420	Supply_Item_420	303
+421	Supply_Item_421	304
+422	Supply_Item_422	123
+423	Supply_Item_423	746
+424	Supply_Item_424	524
+425	Supply_Item_425	673
+426	Supply_Item_426	785
+427	Supply_Item_427	227
+428	Supply_Item_428	166
+429	Supply_Item_429	566
+430	Supply_Item_430	822
+431	Supply_Item_431	334
+432	Supply_Item_432	207
+433	Supply_Item_433	1015
+434	Supply_Item_434	112
+435	Supply_Item_435	849
+436	Supply_Item_436	903
+437	Supply_Item_437	1093
+438	Supply_Item_438	1084
+439	Supply_Item_439	957
+440	Supply_Item_440	568
+441	Supply_Item_441	515
+442	Supply_Item_442	874
+443	Supply_Item_443	538
+444	Supply_Item_444	254
+445	Supply_Item_445	179
+446	Supply_Item_446	946
+447	Supply_Item_447	153
+448	Supply_Item_448	153
+449	Supply_Item_449	294
+450	Supply_Item_450	217
+451	Supply_Item_451	202
+452	Supply_Item_452	420
+453	Supply_Item_453	693
+454	Supply_Item_454	235
+455	Supply_Item_455	248
+456	Supply_Item_456	892
+457	Supply_Item_457	624
+458	Supply_Item_458	576
+459	Supply_Item_459	647
+460	Supply_Item_460	262
+461	Supply_Item_461	727
+462	Supply_Item_462	275
+463	Supply_Item_463	824
+464	Supply_Item_464	769
+465	Supply_Item_465	727
+466	Supply_Item_466	210
+467	Supply_Item_467	978
+468	Supply_Item_468	891
+469	Supply_Item_469	553
+470	Supply_Item_470	493
+471	Supply_Item_471	677
+472	Supply_Item_472	186
+473	Supply_Item_473	197
+474	Supply_Item_474	231
+475	Supply_Item_475	377
+476	Supply_Item_476	502
+477	Supply_Item_477	152
+478	Supply_Item_478	850
+479	Supply_Item_479	162
+480	Supply_Item_480	599
+481	Supply_Item_481	915
+482	Supply_Item_482	136
+483	Supply_Item_483	860
+484	Supply_Item_484	439
+485	Supply_Item_485	884
+486	Supply_Item_486	531
+487	Supply_Item_487	195
+488	Supply_Item_488	327
+489	Supply_Item_489	292
+490	Supply_Item_490	902
+491	Supply_Item_491	434
+492	Supply_Item_492	812
+493	Supply_Item_493	239
+494	Supply_Item_494	505
+495	Supply_Item_495	484
+496	Supply_Item_496	882
+497	Supply_Item_497	262
+498	Supply_Item_498	201
+499	Supply_Item_499	307
+500	Supply_Item_500	338
+\.
+
+
+--
+-- TOC entry 3458 (class 0 OID 32812)
+-- Dependencies: 226
+-- Data for Name: housekeepingemployee; Type: TABLE DATA; Schema: public; Owner: myUser
+--
+
+COPY public.housekeepingemployee (employeeid, name, shiftid) FROM stdin;
+1	Employee_1	3
+2	Employee_2	3
+3	Employee_3	3
+4	Employee_4	1
+5	Employee_5	3
+6	Employee_6	2
+7	Employee_7	2
+8	Employee_8	2
+9	Employee_9	2
+10	Employee_10	3
+11	Employee_11	3
+12	Employee_12	2
+13	Employee_13	1
+14	Employee_14	3
+15	Employee_15	1
+16	Employee_16	3
+17	Employee_17	3
+18	Employee_18	3
+19	Employee_19	3
+20	Employee_20	1
+21	Employee_21	3
+22	Employee_22	1
+23	Employee_23	1
+24	Employee_24	2
+25	Employee_25	3
+26	Employee_26	1
+27	Employee_27	3
+28	Employee_28	2
+29	Employee_29	2
+30	Employee_30	3
+31	Employee_31	2
+32	Employee_32	2
+33	Employee_33	1
+34	Employee_34	3
+35	Employee_35	1
+36	Employee_36	1
+37	Employee_37	3
+38	Employee_38	1
+39	Employee_39	3
+40	Employee_40	3
+41	Employee_41	3
+42	Employee_42	1
+43	Employee_43	3
+44	Employee_44	3
+45	Employee_45	1
+46	Employee_46	1
+47	Employee_47	3
+48	Employee_48	2
+49	Employee_49	2
+50	Employee_50	1
+51	Employee_51	3
+52	Employee_52	1
+53	Employee_53	1
+54	Employee_54	1
+55	Employee_55	3
+56	Employee_56	1
+57	Employee_57	1
+58	Employee_58	2
+59	Employee_59	2
+60	Employee_60	2
+61	Employee_61	3
+62	Employee_62	3
+63	Employee_63	2
+64	Employee_64	1
+65	Employee_65	3
+66	Employee_66	3
+67	Employee_67	2
+68	Employee_68	3
+69	Employee_69	1
+70	Employee_70	1
+71	Employee_71	3
+72	Employee_72	2
+73	Employee_73	3
+74	Employee_74	2
+75	Employee_75	2
+76	Employee_76	1
+77	Employee_77	2
+78	Employee_78	1
+79	Employee_79	2
+80	Employee_80	1
+81	Employee_81	2
+82	Employee_82	1
+83	Employee_83	3
+84	Employee_84	3
+85	Employee_85	3
+86	Employee_86	2
+87	Employee_87	3
+88	Employee_88	3
+89	Employee_89	1
+90	Employee_90	2
+91	Employee_91	2
+92	Employee_92	2
+93	Employee_93	3
+94	Employee_94	3
+95	Employee_95	3
+96	Employee_96	3
+97	Employee_97	1
+98	Employee_98	3
+99	Employee_99	1
+100	Employee_100	2
+101	Employee_101	1
+102	Employee_102	3
+103	Employee_103	1
+104	Employee_104	1
+105	Employee_105	1
+106	Employee_106	1
+107	Employee_107	3
+108	Employee_108	1
+109	Employee_109	1
+110	Employee_110	3
+111	Employee_111	2
+112	Employee_112	1
+113	Employee_113	1
+114	Employee_114	1
+115	Employee_115	1
+116	Employee_116	2
+117	Employee_117	3
+118	Employee_118	1
+119	Employee_119	2
+120	Employee_120	3
+121	Employee_121	2
+122	Employee_122	3
+123	Employee_123	1
+124	Employee_124	3
+125	Employee_125	2
+126	Employee_126	2
+127	Employee_127	2
+128	Employee_128	1
+129	Employee_129	3
+130	Employee_130	3
+131	Employee_131	3
+132	Employee_132	3
+133	Employee_133	1
+134	Employee_134	3
+135	Employee_135	2
+136	Employee_136	1
+137	Employee_137	3
+138	Employee_138	2
+139	Employee_139	3
+140	Employee_140	3
+141	Employee_141	3
+142	Employee_142	2
+143	Employee_143	2
+144	Employee_144	1
+145	Employee_145	1
+146	Employee_146	1
+147	Employee_147	1
+148	Employee_148	2
+149	Employee_149	1
+150	Employee_150	1
+151	Employee_151	3
+152	Employee_152	2
+153	Employee_153	3
+154	Employee_154	1
+155	Employee_155	1
+156	Employee_156	1
+157	Employee_157	1
+158	Employee_158	3
+159	Employee_159	1
+160	Employee_160	2
+161	Employee_161	3
+162	Employee_162	1
+163	Employee_163	1
+164	Employee_164	1
+165	Employee_165	3
+166	Employee_166	2
+167	Employee_167	2
+168	Employee_168	2
+169	Employee_169	2
+170	Employee_170	2
+171	Employee_171	1
+172	Employee_172	1
+173	Employee_173	3
+174	Employee_174	1
+175	Employee_175	3
+176	Employee_176	3
+177	Employee_177	2
+178	Employee_178	2
+179	Employee_179	2
+180	Employee_180	1
+181	Employee_181	1
+182	Employee_182	1
+183	Employee_183	2
+184	Employee_184	1
+185	Employee_185	1
+186	Employee_186	2
+187	Employee_187	1
+188	Employee_188	1
+189	Employee_189	3
+190	Employee_190	2
+191	Employee_191	1
+192	Employee_192	3
+193	Employee_193	2
+194	Employee_194	2
+195	Employee_195	3
+196	Employee_196	2
+197	Employee_197	3
+198	Employee_198	1
+199	Employee_199	3
+200	Employee_200	2
+201	Employee_201	2
+202	Employee_202	1
+203	Employee_203	1
+204	Employee_204	2
+205	Employee_205	1
+206	Employee_206	1
+207	Employee_207	1
+208	Employee_208	1
+209	Employee_209	2
+210	Employee_210	3
+211	Employee_211	2
+212	Employee_212	3
+213	Employee_213	3
+214	Employee_214	1
+215	Employee_215	1
+216	Employee_216	3
+217	Employee_217	3
+218	Employee_218	1
+219	Employee_219	2
+220	Employee_220	2
+221	Employee_221	1
+222	Employee_222	1
+223	Employee_223	3
+224	Employee_224	2
+225	Employee_225	2
+226	Employee_226	3
+227	Employee_227	2
+228	Employee_228	3
+229	Employee_229	1
+230	Employee_230	3
+231	Employee_231	1
+232	Employee_232	2
+233	Employee_233	3
+234	Employee_234	2
+235	Employee_235	2
+236	Employee_236	2
+237	Employee_237	3
+238	Employee_238	1
+239	Employee_239	1
+240	Employee_240	1
+241	Employee_241	3
+242	Employee_242	2
+243	Employee_243	1
+244	Employee_244	1
+245	Employee_245	1
+246	Employee_246	2
+247	Employee_247	2
+248	Employee_248	1
+249	Employee_249	1
+250	Employee_250	2
+251	Employee_251	2
+252	Employee_252	1
+253	Employee_253	2
+254	Employee_254	2
+255	Employee_255	2
+256	Employee_256	1
+257	Employee_257	2
+258	Employee_258	3
+259	Employee_259	2
+260	Employee_260	1
+261	Employee_261	2
+262	Employee_262	2
+263	Employee_263	1
+264	Employee_264	1
+265	Employee_265	3
+266	Employee_266	1
+267	Employee_267	1
+268	Employee_268	3
+269	Employee_269	2
+270	Employee_270	3
+271	Employee_271	1
+272	Employee_272	2
+273	Employee_273	1
+274	Employee_274	2
+275	Employee_275	3
+276	Employee_276	1
+277	Employee_277	1
+278	Employee_278	1
+279	Employee_279	2
+280	Employee_280	1
+281	Employee_281	1
+282	Employee_282	3
+283	Employee_283	2
+284	Employee_284	1
+285	Employee_285	1
+286	Employee_286	3
+287	Employee_287	3
+288	Employee_288	3
+289	Employee_289	2
+290	Employee_290	1
+291	Employee_291	3
+292	Employee_292	3
+293	Employee_293	3
+294	Employee_294	2
+295	Employee_295	1
+296	Employee_296	1
+297	Employee_297	3
+298	Employee_298	1
+299	Employee_299	1
+300	Employee_300	2
+301	Employee_301	2
+302	Employee_302	2
+303	Employee_303	1
+304	Employee_304	3
+305	Employee_305	1
+306	Employee_306	1
+307	Employee_307	1
+308	Employee_308	3
+309	Employee_309	1
+310	Employee_310	2
+311	Employee_311	3
+312	Employee_312	3
+313	Employee_313	2
+314	Employee_314	3
+315	Employee_315	1
+316	Employee_316	2
+317	Employee_317	3
+318	Employee_318	1
+319	Employee_319	2
+320	Employee_320	2
+321	Employee_321	1
+322	Employee_322	2
+323	Employee_323	1
+324	Employee_324	3
+325	Employee_325	2
+326	Employee_326	3
+327	Employee_327	3
+328	Employee_328	3
+329	Employee_329	3
+330	Employee_330	3
+331	Employee_331	2
+332	Employee_332	1
+333	Employee_333	3
+334	Employee_334	2
+335	Employee_335	3
+336	Employee_336	2
+337	Employee_337	2
+338	Employee_338	1
+339	Employee_339	1
+340	Employee_340	3
+341	Employee_341	1
+342	Employee_342	3
+343	Employee_343	2
+344	Employee_344	2
+345	Employee_345	1
+346	Employee_346	1
+347	Employee_347	3
+348	Employee_348	2
+349	Employee_349	2
+350	Employee_350	3
+351	Employee_351	3
+352	Employee_352	1
+353	Employee_353	2
+354	Employee_354	1
+355	Employee_355	2
+356	Employee_356	3
+357	Employee_357	1
+358	Employee_358	2
+359	Employee_359	2
+360	Employee_360	2
+361	Employee_361	1
+362	Employee_362	3
+363	Employee_363	1
+364	Employee_364	2
+365	Employee_365	2
+366	Employee_366	1
+367	Employee_367	2
+368	Employee_368	3
+369	Employee_369	1
+370	Employee_370	2
+371	Employee_371	1
+372	Employee_372	1
+373	Employee_373	2
+374	Employee_374	1
+375	Employee_375	1
+376	Employee_376	3
+377	Employee_377	1
+378	Employee_378	2
+379	Employee_379	1
+380	Employee_380	1
+381	Employee_381	2
+382	Employee_382	3
+383	Employee_383	2
+384	Employee_384	3
+385	Employee_385	1
+386	Employee_386	3
+387	Employee_387	1
+388	Employee_388	3
+389	Employee_389	2
+390	Employee_390	1
+391	Employee_391	2
+392	Employee_392	1
+393	Employee_393	3
+394	Employee_394	3
+395	Employee_395	2
+396	Employee_396	3
+397	Employee_397	1
+398	Employee_398	1
+399	Employee_399	1
+400	Employee_400	1
+401	Employee_401	1
+402	Employee_402	3
+403	Employee_403	3
+404	Employee_404	2
+405	Employee_405	1
+406	Employee_406	1
+407	Employee_407	3
+408	Employee_408	1
+409	Employee_409	2
+410	Employee_410	2
+411	Employee_411	3
+412	Employee_412	1
+413	Employee_413	3
+414	Employee_414	3
+415	Employee_415	1
+416	Employee_416	3
+417	Employee_417	1
+418	Employee_418	2
+419	Employee_419	1
+420	Employee_420	3
+421	Employee_421	1
+422	Employee_422	2
+423	Employee_423	2
+424	Employee_424	2
+425	Employee_425	2
+426	Employee_426	2
+427	Employee_427	2
+428	Employee_428	3
+429	Employee_429	3
+430	Employee_430	3
+431	Employee_431	2
+432	Employee_432	3
+433	Employee_433	2
+434	Employee_434	2
+435	Employee_435	1
+436	Employee_436	3
+437	Employee_437	2
+438	Employee_438	2
+439	Employee_439	1
+440	Employee_440	1
+441	Employee_441	3
+442	Employee_442	3
+443	Employee_443	2
+444	Employee_444	1
+445	Employee_445	1
+446	Employee_446	3
+447	Employee_447	1
+448	Employee_448	1
+449	Employee_449	3
+450	Employee_450	3
+451	Employee_451	1
+452	Employee_452	3
+453	Employee_453	1
+454	Employee_454	3
+455	Employee_455	3
+456	Employee_456	2
+457	Employee_457	3
+458	Employee_458	2
+459	Employee_459	2
+460	Employee_460	2
+461	Employee_461	2
+462	Employee_462	3
+463	Employee_463	1
+464	Employee_464	3
+465	Employee_465	2
+466	Employee_466	3
+467	Employee_467	2
+468	Employee_468	2
+469	Employee_469	1
+470	Employee_470	1
+471	Employee_471	1
+472	Employee_472	2
+473	Employee_473	1
+474	Employee_474	3
+475	Employee_475	2
+476	Employee_476	2
+477	Employee_477	1
+478	Employee_478	2
+479	Employee_479	3
+480	Employee_480	1
+481	Employee_481	2
+482	Employee_482	3
+483	Employee_483	1
+484	Employee_484	1
+485	Employee_485	1
+486	Employee_486	2
+487	Employee_487	1
+488	Employee_488	2
+489	Employee_489	1
+490	Employee_490	3
+491	Employee_491	3
+492	Employee_492	3
+493	Employee_493	2
+494	Employee_494	1
+495	Employee_495	2
+496	Employee_496	3
+497	Employee_497	3
+498	Employee_498	3
+499	Employee_499	1
+500	Employee_500	3
+\.
+
+
+--
+-- TOC entry 3454 (class 0 OID 32783)
+-- Dependencies: 222
+-- Data for Name: housekeepingstatus; Type: TABLE DATA; Schema: public; Owner: myUser
+--
+
+COPY public.housekeepingstatus (statusid, statusname) FROM stdin;
+1	Dirty
+2	In Progress
+3	Clean
+4	Inspected
+5	Maintenance Required
+\.
+
+
+--
+-- TOC entry 3456 (class 0 OID 32790)
+-- Dependencies: 224
+-- Data for Name: housekeepingtask; Type: TABLE DATA; Schema: public; Owner: myUser
+--
+
+COPY public.housekeepingtask (taskid, roomid, tasktypeid, statusid, priority, duedate) FROM stdin;
+2	2	5	2	2	2026-04-14
+3	3	2	4	5	2026-04-15
+4	4	3	4	4	2026-04-16
+5	5	4	2	1	2026-04-17
+6	6	3	5	4	2026-04-18
+7	7	5	2	2	2026-04-19
+8	8	2	1	2	2026-04-20
+9	9	3	4	4	2026-04-21
+10	10	2	2	5	2026-04-22
+11	11	4	4	3	2026-04-23
+12	12	4	2	5	2026-04-24
+13	13	4	3	2	2026-04-25
+14	14	2	1	3	2026-04-26
+15	15	3	2	2	2026-04-27
+16	16	2	1	3	2026-04-28
+17	17	4	2	4	2026-04-29
+18	18	4	4	1	2026-04-30
+19	19	4	1	2	2026-05-01
+20	20	1	2	5	2026-05-02
+21	21	4	1	1	2026-05-03
+22	22	5	3	3	2026-05-04
+23	23	3	4	4	2026-05-05
+24	24	1	1	2	2026-05-06
+25	25	4	2	2	2026-05-07
+26	26	2	3	3	2026-05-08
+27	27	1	5	3	2026-05-09
+28	28	4	4	4	2026-05-10
+29	29	4	1	2	2026-05-11
+30	30	5	3	1	2026-04-12
+31	31	1	4	1	2026-04-13
+32	32	3	3	1	2026-04-14
+33	33	4	5	1	2026-04-15
+34	34	3	1	1	2026-04-16
+35	35	2	5	2	2026-04-17
+36	36	2	1	4	2026-04-18
+37	37	1	5	4	2026-04-19
+38	38	3	2	3	2026-04-20
+39	39	1	1	3	2026-04-21
+40	40	2	5	4	2026-04-22
+41	41	2	3	5	2026-04-23
+42	42	2	4	5	2026-04-24
+43	43	3	1	3	2026-04-25
+44	44	1	2	1	2026-04-26
+45	45	2	1	2	2026-04-27
+46	46	4	5	4	2026-04-28
+47	47	2	4	5	2026-04-29
+48	48	1	1	5	2026-04-30
+49	49	2	1	1	2026-05-01
+50	50	4	2	5	2026-05-02
+51	51	5	2	1	2026-05-03
+52	52	5	4	4	2026-05-04
+53	53	1	4	3	2026-05-05
+54	54	5	1	1	2026-05-06
+55	55	5	2	3	2026-05-07
+56	56	1	1	2	2026-05-08
+57	57	4	5	5	2026-05-09
+58	58	3	2	5	2026-05-10
+59	59	5	1	1	2026-05-11
+60	60	5	5	2	2026-04-12
+61	61	2	4	5	2026-04-13
+62	62	3	5	1	2026-04-14
+63	63	5	5	5	2026-04-15
+64	64	5	5	3	2026-04-16
+65	65	1	2	4	2026-04-17
+66	66	2	4	5	2026-04-18
+67	67	2	3	3	2026-04-19
+68	68	2	1	5	2026-04-20
+69	69	4	2	4	2026-04-21
+70	70	3	3	1	2026-04-22
+71	71	5	2	3	2026-04-23
+72	72	5	5	3	2026-04-24
+73	73	3	2	2	2026-04-25
+74	74	3	2	2	2026-04-26
+75	75	3	4	2	2026-04-27
+76	76	5	5	5	2026-04-28
+77	77	2	5	2	2026-04-29
+78	78	4	4	3	2026-04-30
+79	79	1	1	3	2026-05-01
+80	80	3	5	3	2026-05-02
+81	81	2	3	3	2026-05-03
+82	82	4	1	5	2026-05-04
+83	83	1	4	4	2026-05-05
+84	84	3	2	3	2026-05-06
+85	85	1	2	1	2026-05-07
+86	86	2	5	4	2026-05-08
+87	87	2	5	5	2026-05-09
+88	88	5	2	2	2026-05-10
+89	89	5	1	5	2026-05-11
+90	90	2	4	3	2026-04-12
+91	91	5	3	4	2026-04-13
+92	92	3	1	2	2026-04-14
+93	93	5	2	5	2026-04-15
+94	94	5	1	3	2026-04-16
+95	95	3	4	4	2026-04-17
+96	96	5	4	2	2026-04-18
+97	97	4	1	5	2026-04-19
+98	98	5	2	4	2026-04-20
+99	99	4	2	4	2026-04-21
+100	100	4	3	3	2026-04-22
+101	101	2	5	5	2026-04-23
+102	102	5	1	1	2026-04-24
+103	103	2	3	3	2026-04-25
+104	104	3	2	1	2026-04-26
+105	105	1	4	4	2026-04-27
+106	106	2	3	4	2026-04-28
+107	107	1	4	2	2026-04-29
+108	108	4	1	4	2026-04-30
+109	109	2	4	1	2026-05-01
+110	110	2	3	2	2026-05-02
+111	111	3	3	5	2026-05-03
+112	112	1	4	5	2026-05-04
+113	113	3	4	2	2026-05-05
+114	114	1	2	5	2026-05-06
+115	115	2	2	3	2026-05-07
+116	116	5	5	3	2026-05-08
+117	117	5	2	2	2026-05-09
+118	118	1	1	5	2026-05-10
+119	119	4	1	2	2026-05-11
+120	120	2	1	2	2026-04-12
+121	121	5	3	5	2026-04-13
+122	122	2	5	4	2026-04-14
+123	123	4	5	3	2026-04-15
+124	124	2	3	4	2026-04-16
+125	125	5	5	4	2026-04-17
+126	126	1	3	4	2026-04-18
+127	127	3	2	3	2026-04-19
+128	128	3	3	3	2026-04-20
+129	129	5	3	5	2026-04-21
+130	130	3	1	4	2026-04-22
+131	131	3	2	4	2026-04-23
+132	132	4	2	4	2026-04-24
+133	133	2	4	3	2026-04-25
+134	134	2	5	5	2026-04-26
+135	135	3	2	3	2026-04-27
+136	136	2	2	1	2026-04-28
+137	137	4	1	1	2026-04-29
+138	138	5	4	3	2026-04-30
+139	139	4	3	1	2026-05-01
+140	140	5	1	2	2026-05-02
+141	141	2	4	4	2026-05-03
+142	142	2	2	4	2026-05-04
+143	143	5	5	3	2026-05-05
+144	144	4	1	3	2026-05-06
+145	145	2	1	3	2026-05-07
+146	146	2	4	1	2026-05-08
+147	147	4	2	5	2026-05-09
+148	148	2	5	1	2026-05-10
+149	149	3	4	1	2026-05-11
+150	150	4	2	2	2026-04-12
+151	151	2	3	5	2026-04-13
+152	152	3	2	1	2026-04-14
+153	153	5	3	2	2026-04-15
+154	154	4	3	4	2026-04-16
+155	155	4	2	1	2026-04-17
+156	156	2	1	3	2026-04-18
+157	157	1	2	2	2026-04-19
+158	158	5	3	3	2026-04-20
+159	159	3	2	3	2026-04-21
+160	160	5	5	3	2026-04-22
+161	161	5	2	3	2026-04-23
+162	162	3	3	2	2026-04-24
+163	163	5	1	5	2026-04-25
+164	164	3	2	2	2026-04-26
+165	165	2	5	4	2026-04-27
+166	166	5	1	1	2026-04-28
+167	167	5	3	1	2026-04-29
+168	168	2	5	5	2026-04-30
+169	169	5	4	1	2026-05-01
+170	170	3	4	1	2026-05-02
+171	171	2	2	3	2026-05-03
+172	172	2	4	2	2026-05-04
+173	173	1	3	2	2026-05-05
+174	174	5	5	1	2026-05-06
+175	175	4	3	4	2026-05-07
+176	176	3	4	5	2026-05-08
+177	177	4	4	5	2026-05-09
+178	178	1	1	3	2026-05-10
+179	179	2	5	4	2026-05-11
+180	180	4	4	2	2026-04-12
+181	181	1	2	2	2026-04-13
+182	182	2	3	4	2026-04-14
+183	183	3	3	1	2026-04-15
+184	184	2	2	3	2026-04-16
+185	185	5	4	1	2026-04-17
+186	186	1	4	1	2026-04-18
+187	187	5	1	5	2026-04-19
+188	188	2	2	3	2026-04-20
+189	189	3	3	4	2026-04-21
+190	190	5	5	4	2026-04-22
+191	191	4	2	3	2026-04-23
+192	192	1	2	3	2026-04-24
+193	193	1	2	4	2026-04-25
+194	194	3	1	4	2026-04-26
+195	195	1	1	2	2026-04-27
+196	196	5	2	2	2026-04-28
+197	197	3	1	1	2026-04-29
+198	198	3	1	5	2026-04-30
+199	199	1	2	5	2026-05-01
+200	200	3	5	1	2026-05-02
+201	201	4	5	2	2026-05-03
+202	202	2	4	4	2026-05-04
+203	203	3	5	1	2026-05-05
+204	204	1	3	2	2026-05-06
+205	205	4	1	4	2026-05-07
+206	206	3	3	2	2026-05-08
+207	207	5	1	4	2026-05-09
+208	208	4	1	2	2026-05-10
+209	209	1	3	3	2026-05-11
+210	210	5	5	4	2026-04-12
+211	211	5	1	3	2026-04-13
+212	212	2	1	2	2026-04-14
+213	213	2	3	4	2026-04-15
+214	214	1	4	3	2026-04-16
+215	215	4	2	1	2026-04-17
+216	216	5	5	3	2026-04-18
+217	217	3	3	4	2026-04-19
+218	218	5	5	1	2026-04-20
+219	219	3	5	2	2026-04-21
+220	220	3	4	3	2026-04-22
+221	221	4	2	3	2026-04-23
+222	222	5	2	3	2026-04-24
+223	223	2	4	4	2026-04-25
+224	224	5	4	2	2026-04-26
+225	225	5	4	3	2026-04-27
+226	226	2	2	4	2026-04-28
+227	227	5	1	1	2026-04-29
+228	228	1	2	3	2026-04-30
+229	229	5	1	3	2026-05-01
+230	230	2	2	4	2026-05-02
+231	231	1	3	5	2026-05-03
+232	232	2	4	4	2026-05-04
+233	233	2	5	5	2026-05-05
+234	234	4	2	1	2026-05-06
+235	235	5	3	5	2026-05-07
+236	236	1	3	1	2026-05-08
+237	237	3	5	5	2026-05-09
+238	238	4	4	4	2026-05-10
+239	239	1	4	2	2026-05-11
+240	240	2	5	1	2026-04-12
+241	241	4	1	4	2026-04-13
+242	242	4	2	3	2026-04-14
+243	243	3	5	2	2026-04-15
+244	244	4	5	5	2026-04-16
+245	245	2	3	3	2026-04-17
+246	246	3	2	4	2026-04-18
+247	247	2	4	5	2026-04-19
+248	248	1	4	5	2026-04-20
+249	249	3	5	3	2026-04-21
+250	250	2	2	2	2026-04-22
+251	251	2	4	4	2026-04-23
+252	252	3	3	4	2026-04-24
+253	253	4	1	5	2026-04-25
+254	254	2	2	5	2026-04-26
+255	255	3	5	5	2026-04-27
+256	256	5	4	2	2026-04-28
+257	257	2	1	3	2026-04-29
+258	258	3	1	2	2026-04-30
+259	259	1	2	1	2026-05-01
+260	260	2	3	2	2026-05-02
+261	261	3	5	5	2026-05-03
+262	262	4	3	4	2026-05-04
+263	263	1	3	1	2026-05-05
+264	264	3	4	4	2026-05-06
+265	265	4	4	1	2026-05-07
+266	266	1	2	1	2026-05-08
+267	267	2	4	4	2026-05-09
+268	268	2	2	1	2026-05-10
+269	269	2	4	5	2026-05-11
+270	270	2	3	4	2026-04-12
+271	271	5	1	4	2026-04-13
+272	272	3	5	3	2026-04-14
+273	273	2	2	1	2026-04-15
+274	274	5	5	4	2026-04-16
+275	275	3	1	5	2026-04-17
+276	276	1	2	2	2026-04-18
+277	277	5	2	5	2026-04-19
+278	278	1	3	5	2026-04-20
+279	279	1	4	4	2026-04-21
+280	280	4	3	3	2026-04-22
+281	281	3	2	3	2026-04-23
+282	282	5	1	2	2026-04-24
+283	283	5	1	3	2026-04-25
+284	284	2	5	1	2026-04-26
+285	285	1	2	1	2026-04-27
+286	286	2	3	5	2026-04-28
+287	287	3	2	2	2026-04-29
+288	288	1	4	4	2026-04-30
+289	289	2	4	3	2026-05-01
+290	290	5	5	1	2026-05-02
+291	291	1	4	2	2026-05-03
+292	292	1	5	1	2026-05-04
+293	293	1	4	3	2026-05-05
+294	294	2	3	4	2026-05-06
+295	295	4	1	2	2026-05-07
+296	296	1	4	5	2026-05-08
+297	297	3	3	3	2026-05-09
+298	298	4	4	4	2026-05-10
+299	299	5	5	2	2026-05-11
+300	300	1	1	5	2026-04-12
+301	301	3	5	2	2026-04-13
+302	302	3	2	4	2026-04-14
+303	303	1	4	4	2026-04-15
+304	304	3	2	2	2026-04-16
+305	305	5	2	3	2026-04-17
+306	306	5	2	5	2026-04-18
+307	307	3	2	4	2026-04-19
+308	308	4	1	5	2026-04-20
+309	309	1	4	3	2026-04-21
+310	310	3	5	1	2026-04-22
+311	311	1	4	3	2026-04-23
+312	312	1	2	1	2026-04-24
+313	313	3	2	3	2026-04-25
+314	314	5	3	1	2026-04-26
+315	315	1	2	5	2026-04-27
+316	316	5	2	2	2026-04-28
+317	317	3	1	2	2026-04-29
+318	318	2	4	1	2026-04-30
+319	319	1	5	3	2026-05-01
+320	320	2	4	5	2026-05-02
+321	321	4	2	1	2026-05-03
+322	322	3	5	4	2026-05-04
+323	323	3	3	5	2026-05-05
+324	324	1	4	3	2026-05-06
+325	325	2	2	2	2026-05-07
+326	326	2	1	4	2026-05-08
+327	327	3	2	4	2026-05-09
+328	328	1	5	2	2026-05-10
+329	329	4	5	4	2026-05-11
+330	330	1	1	2	2026-04-12
+331	331	1	1	3	2026-04-13
+332	332	3	4	2	2026-04-14
+333	333	3	4	3	2026-04-15
+334	334	2	1	3	2026-04-16
+335	335	2	1	5	2026-04-17
+336	336	1	3	2	2026-04-18
+337	337	2	1	3	2026-04-19
+338	338	1	1	2	2026-04-20
+339	339	1	1	5	2026-04-21
+340	340	5	1	5	2026-04-22
+341	341	1	1	4	2026-04-23
+342	342	1	3	5	2026-04-24
+343	343	1	1	1	2026-04-25
+344	344	4	5	1	2026-04-26
+345	345	2	3	4	2026-04-27
+346	346	4	4	2	2026-04-28
+347	347	5	5	3	2026-04-29
+348	348	5	1	5	2026-04-30
+349	349	3	2	4	2026-05-01
+350	350	4	1	4	2026-05-02
+351	351	3	2	2	2026-05-03
+352	352	1	3	2	2026-05-04
+353	353	1	5	4	2026-05-05
+354	354	1	3	2	2026-05-06
+355	355	5	2	5	2026-05-07
+356	356	3	3	3	2026-05-08
+357	357	3	5	3	2026-05-09
+358	358	4	2	5	2026-05-10
+359	359	3	5	5	2026-05-11
+360	360	5	2	1	2026-04-12
+361	361	4	2	5	2026-04-13
+362	362	5	3	4	2026-04-14
+363	363	3	3	2	2026-04-15
+364	364	3	2	5	2026-04-16
+365	365	2	2	5	2026-04-17
+366	366	2	1	3	2026-04-18
+367	367	2	5	4	2026-04-19
+368	368	4	5	2	2026-04-20
+369	369	4	2	3	2026-04-21
+370	370	5	5	3	2026-04-22
+371	371	3	1	5	2026-04-23
+372	372	1	1	3	2026-04-24
+373	373	1	4	3	2026-04-25
+374	374	3	1	5	2026-04-26
+375	375	1	3	3	2026-04-27
+376	376	1	5	5	2026-04-28
+377	377	5	4	1	2026-04-29
+378	378	3	5	3	2026-04-30
+379	379	2	3	3	2026-05-01
+380	380	4	3	1	2026-05-02
+381	381	1	3	5	2026-05-03
+382	382	3	3	3	2026-05-04
+383	383	1	4	4	2026-05-05
+384	384	4	4	4	2026-05-06
+385	385	4	5	2	2026-05-07
+386	386	5	2	1	2026-05-08
+387	387	3	4	1	2026-05-09
+388	388	2	1	3	2026-05-10
+389	389	4	1	4	2026-05-11
+390	390	3	2	5	2026-04-12
+391	391	1	4	1	2026-04-13
+392	392	3	5	2	2026-04-14
+393	393	4	4	5	2026-04-15
+394	394	5	3	1	2026-04-16
+395	395	2	3	1	2026-04-17
+396	396	3	5	1	2026-04-18
+397	397	5	3	3	2026-04-19
+398	398	5	5	5	2026-04-20
+399	399	4	4	4	2026-04-21
+400	400	4	3	5	2026-04-22
+401	401	1	1	4	2026-04-23
+402	402	1	4	4	2026-04-24
+403	403	2	5	3	2026-04-25
+404	404	3	3	2	2026-04-26
+405	405	1	2	5	2026-04-27
+406	406	2	1	1	2026-04-28
+407	407	3	3	2	2026-04-29
+408	408	4	2	2	2026-04-30
+409	409	5	2	3	2026-05-01
+410	410	3	2	3	2026-05-02
+411	411	5	5	1	2026-05-03
+412	412	3	1	3	2026-05-04
+413	413	3	5	5	2026-05-05
+414	414	1	5	2	2026-05-06
+415	415	2	2	4	2026-05-07
+416	416	4	4	3	2026-05-08
+417	417	3	2	4	2026-05-09
+418	418	1	5	1	2026-05-10
+419	419	2	3	2	2026-05-11
+420	420	1	2	1	2026-04-12
+421	421	3	4	4	2026-04-13
+422	422	1	3	3	2026-04-14
+423	423	5	5	5	2026-04-15
+424	424	5	3	5	2026-04-16
+425	425	3	1	5	2026-04-17
+426	426	2	1	3	2026-04-18
+427	427	2	5	5	2026-04-19
+428	428	2	5	5	2026-04-20
+429	429	1	3	1	2026-04-21
+430	430	5	3	2	2026-04-22
+431	431	4	1	3	2026-04-23
+432	432	3	2	1	2026-04-24
+433	433	1	5	5	2026-04-25
+434	434	4	5	5	2026-04-26
+435	435	2	1	1	2026-04-27
+436	436	5	3	5	2026-04-28
+437	437	5	1	3	2026-04-29
+438	438	1	4	3	2026-04-30
+439	439	4	3	2	2026-05-01
+440	440	3	5	1	2026-05-02
+441	441	3	1	5	2026-05-03
+442	442	4	2	2	2026-05-04
+443	443	3	4	4	2026-05-05
+444	444	2	3	4	2026-05-06
+445	445	4	3	3	2026-05-07
+446	446	4	5	1	2026-05-08
+447	447	5	4	1	2026-05-09
+448	448	1	2	4	2026-05-10
+449	449	2	1	1	2026-05-11
+450	450	1	4	3	2026-04-12
+451	451	5	5	5	2026-04-13
+452	452	1	2	3	2026-04-14
+453	453	3	2	3	2026-04-15
+454	454	4	5	4	2026-04-16
+455	455	4	1	5	2026-04-17
+456	456	4	4	2	2026-04-18
+457	457	2	4	5	2026-04-19
+458	458	3	5	3	2026-04-20
+459	459	4	3	2	2026-04-21
+460	460	5	1	1	2026-04-22
+461	461	3	1	1	2026-04-23
+462	462	5	5	5	2026-04-24
+463	463	1	4	2	2026-04-25
+464	464	5	4	4	2026-04-26
+465	465	1	5	5	2026-04-27
+466	466	2	2	5	2026-04-28
+467	467	3	5	1	2026-04-29
+468	468	5	1	4	2026-04-30
+469	469	1	1	3	2026-05-01
+470	470	3	4	3	2026-05-02
+471	471	3	3	2	2026-05-03
+472	472	1	5	3	2026-05-04
+473	473	3	3	5	2026-05-05
+474	474	2	3	1	2026-05-06
+475	475	1	2	4	2026-05-07
+476	476	4	4	5	2026-05-08
+477	477	1	3	4	2026-05-09
+478	478	5	2	4	2026-05-10
+479	479	1	1	4	2026-05-11
+480	480	2	2	3	2026-04-12
+481	481	1	4	4	2026-04-13
+482	482	1	4	2	2026-04-14
+483	483	3	1	1	2026-04-15
+484	484	4	3	1	2026-04-16
+485	485	2	1	1	2026-04-17
+486	486	2	4	2	2026-04-18
+487	487	2	1	3	2026-04-19
+488	488	3	1	4	2026-04-20
+489	489	2	5	3	2026-04-21
+490	490	1	4	3	2026-04-22
+491	491	3	4	4	2026-04-23
+492	492	1	4	4	2026-04-24
+493	493	4	1	3	2026-04-25
+494	494	2	3	2	2026-04-26
+495	495	5	3	2	2026-04-27
+496	496	3	4	2	2026-04-28
+497	497	1	5	3	2026-04-29
+498	498	5	1	4	2026-04-30
+499	499	1	4	1	2026-05-01
+500	500	2	1	5	2026-05-02
+1	1	4	5	5	2026-04-13
+\.
+
+
+--
+-- TOC entry 3450 (class 0 OID 32769)
+-- Dependencies: 218
+-- Data for Name: room; Type: TABLE DATA; Schema: public; Owner: myUser
+--
+
+COPY public.room (roomid, roomnumber, floor) FROM stdin;
+1	R-101	2
+2	R-102	2
+3	R-103	2
+4	R-104	2
+5	R-105	5
+6	R-106	1
+7	R-107	1
+8	R-108	5
+9	R-109	3
+10	R-110	3
+11	R-111	1
+12	R-112	4
+13	R-113	1
+14	R-114	2
+15	R-115	3
+16	R-116	4
+17	R-117	2
+18	R-118	3
+19	R-119	1
+20	R-120	1
+21	R-121	1
+22	R-122	3
+23	R-123	2
+24	R-124	1
+25	R-125	2
+26	R-126	2
+27	R-127	3
+28	R-128	3
+29	R-129	5
+30	R-130	3
+31	R-131	3
+32	R-132	4
+33	R-133	4
+34	R-134	4
+35	R-135	4
+36	R-136	3
+37	R-137	5
+38	R-138	4
+39	R-139	5
+40	R-140	1
+41	R-141	1
+42	R-142	3
+43	R-143	4
+44	R-144	1
+45	R-145	2
+46	R-146	4
+47	R-147	2
+48	R-148	4
+49	R-149	1
+50	R-150	3
+51	R-151	2
+52	R-152	4
+53	R-153	2
+54	R-154	1
+55	R-155	2
+56	R-156	2
+57	R-157	3
+58	R-158	2
+59	R-159	4
+60	R-160	5
+61	R-161	2
+62	R-162	3
+63	R-163	4
+64	R-164	1
+65	R-165	4
+66	R-166	2
+67	R-167	1
+68	R-168	3
+69	R-169	5
+70	R-170	2
+71	R-171	3
+72	R-172	4
+73	R-173	4
+74	R-174	4
+75	R-175	4
+76	R-176	2
+77	R-177	3
+78	R-178	2
+79	R-179	1
+80	R-180	5
+81	R-181	3
+82	R-182	2
+83	R-183	3
+84	R-184	2
+85	R-185	2
+86	R-186	3
+87	R-187	5
+88	R-188	2
+89	R-189	4
+90	R-190	5
+91	R-191	2
+92	R-192	3
+93	R-193	4
+94	R-194	3
+95	R-195	1
+96	R-196	1
+97	R-197	5
+98	R-198	3
+99	R-199	4
+100	R-200	2
+101	R-201	4
+102	R-202	1
+103	R-203	2
+104	R-204	1
+105	R-205	1
+106	R-206	1
+107	R-207	3
+108	R-208	3
+109	R-209	5
+110	R-210	5
+111	R-211	1
+112	R-212	3
+113	R-213	2
+114	R-214	4
+115	R-215	3
+116	R-216	2
+117	R-217	4
+118	R-218	5
+119	R-219	1
+120	R-220	2
+121	R-221	2
+122	R-222	1
+123	R-223	1
+124	R-224	5
+125	R-225	3
+126	R-226	2
+127	R-227	1
+128	R-228	4
+129	R-229	1
+130	R-230	5
+131	R-231	4
+132	R-232	5
+133	R-233	4
+134	R-234	1
+135	R-235	5
+136	R-236	1
+137	R-237	2
+138	R-238	3
+139	R-239	3
+140	R-240	4
+141	R-241	2
+142	R-242	4
+143	R-243	5
+144	R-244	2
+145	R-245	4
+146	R-246	5
+147	R-247	5
+148	R-248	5
+149	R-249	5
+150	R-250	5
+151	R-251	3
+152	R-252	2
+153	R-253	1
+154	R-254	4
+155	R-255	3
+156	R-256	2
+157	R-257	5
+158	R-258	4
+159	R-259	5
+160	R-260	5
+161	R-261	1
+162	R-262	4
+163	R-263	5
+164	R-264	4
+165	R-265	2
+166	R-266	3
+167	R-267	3
+168	R-268	5
+169	R-269	3
+170	R-270	1
+171	R-271	2
+172	R-272	5
+173	R-273	2
+174	R-274	5
+175	R-275	1
+176	R-276	4
+177	R-277	1
+178	R-278	5
+179	R-279	2
+180	R-280	3
+181	R-281	3
+182	R-282	4
+183	R-283	2
+184	R-284	1
+185	R-285	1
+186	R-286	1
+187	R-287	2
+188	R-288	1
+189	R-289	1
+190	R-290	1
+191	R-291	1
+192	R-292	4
+193	R-293	2
+194	R-294	2
+195	R-295	4
+196	R-296	3
+197	R-297	2
+198	R-298	3
+199	R-299	1
+200	R-300	3
+201	R-301	1
+202	R-302	1
+203	R-303	3
+204	R-304	2
+205	R-305	3
+206	R-306	5
+207	R-307	5
+208	R-308	3
+209	R-309	1
+210	R-310	2
+211	R-311	4
+212	R-312	3
+213	R-313	5
+214	R-314	2
+215	R-315	3
+216	R-316	5
+217	R-317	2
+218	R-318	3
+219	R-319	5
+220	R-320	1
+221	R-321	5
+222	R-322	5
+223	R-323	1
+224	R-324	5
+225	R-325	1
+226	R-326	4
+227	R-327	5
+228	R-328	4
+229	R-329	4
+230	R-330	2
+231	R-331	1
+232	R-332	2
+233	R-333	3
+234	R-334	3
+235	R-335	3
+236	R-336	5
+237	R-337	5
+238	R-338	3
+239	R-339	3
+240	R-340	4
+241	R-341	3
+242	R-342	2
+243	R-343	3
+244	R-344	4
+245	R-345	5
+246	R-346	2
+247	R-347	1
+248	R-348	1
+249	R-349	2
+250	R-350	3
+251	R-351	2
+252	R-352	2
+253	R-353	5
+254	R-354	4
+255	R-355	2
+256	R-356	5
+257	R-357	5
+258	R-358	1
+259	R-359	2
+260	R-360	4
+261	R-361	2
+262	R-362	5
+263	R-363	1
+264	R-364	5
+265	R-365	2
+266	R-366	1
+267	R-367	3
+268	R-368	4
+269	R-369	1
+270	R-370	4
+271	R-371	1
+272	R-372	2
+273	R-373	1
+274	R-374	5
+275	R-375	3
+276	R-376	3
+277	R-377	3
+278	R-378	4
+279	R-379	2
+280	R-380	3
+281	R-381	4
+282	R-382	5
+283	R-383	1
+284	R-384	1
+285	R-385	5
+286	R-386	4
+287	R-387	5
+288	R-388	1
+289	R-389	2
+290	R-390	4
+291	R-391	1
+292	R-392	5
+293	R-393	5
+294	R-394	5
+295	R-395	1
+296	R-396	4
+297	R-397	4
+298	R-398	3
+299	R-399	4
+300	R-400	3
+301	R-401	2
+302	R-402	3
+303	R-403	4
+304	R-404	3
+305	R-405	5
+306	R-406	1
+307	R-407	1
+308	R-408	1
+309	R-409	3
+310	R-410	4
+311	R-411	4
+312	R-412	5
+313	R-413	1
+314	R-414	2
+315	R-415	5
+316	R-416	3
+317	R-417	2
+318	R-418	1
+319	R-419	1
+320	R-420	2
+321	R-421	1
+322	R-422	2
+323	R-423	2
+324	R-424	2
+325	R-425	2
+326	R-426	4
+327	R-427	1
+328	R-428	1
+329	R-429	1
+330	R-430	1
+331	R-431	2
+332	R-432	5
+333	R-433	5
+334	R-434	3
+335	R-435	1
+336	R-436	5
+337	R-437	5
+338	R-438	2
+339	R-439	1
+340	R-440	1
+341	R-441	3
+342	R-442	4
+343	R-443	1
+344	R-444	3
+345	R-445	1
+346	R-446	4
+347	R-447	3
+348	R-448	3
+349	R-449	1
+350	R-450	2
+351	R-451	4
+352	R-452	3
+353	R-453	5
+354	R-454	3
+355	R-455	3
+356	R-456	3
+357	R-457	4
+358	R-458	5
+359	R-459	4
+360	R-460	5
+361	R-461	4
+362	R-462	5
+363	R-463	4
+364	R-464	5
+365	R-465	3
+366	R-466	4
+367	R-467	4
+368	R-468	3
+369	R-469	1
+370	R-470	4
+371	R-471	2
+372	R-472	4
+373	R-473	1
+374	R-474	1
+375	R-475	1
+376	R-476	4
+377	R-477	2
+378	R-478	5
+379	R-479	1
+380	R-480	4
+381	R-481	4
+382	R-482	2
+383	R-483	1
+384	R-484	5
+385	R-485	2
+386	R-486	5
+387	R-487	1
+388	R-488	3
+389	R-489	1
+390	R-490	5
+391	R-491	2
+392	R-492	4
+393	R-493	4
+394	R-494	2
+395	R-495	3
+396	R-496	2
+397	R-497	1
+398	R-498	3
+399	R-499	5
+400	R-500	5
+401	R-501	5
+402	R-502	5
+403	R-503	3
+404	R-504	5
+405	R-505	2
+406	R-506	1
+407	R-507	2
+408	R-508	3
+409	R-509	5
+410	R-510	5
+411	R-511	3
+412	R-512	2
+413	R-513	5
+414	R-514	3
+415	R-515	5
+416	R-516	3
+417	R-517	4
+418	R-518	3
+419	R-519	1
+420	R-520	5
+421	R-521	2
+422	R-522	3
+423	R-523	1
+424	R-524	3
+425	R-525	5
+426	R-526	3
+427	R-527	3
+428	R-528	2
+429	R-529	5
+430	R-530	5
+431	R-531	3
+432	R-532	3
+433	R-533	4
+434	R-534	5
+435	R-535	5
+436	R-536	5
+437	R-537	5
+438	R-538	4
+439	R-539	5
+440	R-540	3
+441	R-541	5
+442	R-542	5
+443	R-543	4
+444	R-544	1
+445	R-545	1
+446	R-546	2
+447	R-547	3
+448	R-548	3
+449	R-549	4
+450	R-550	1
+451	R-551	2
+452	R-552	1
+453	R-553	5
+454	R-554	4
+455	R-555	2
+456	R-556	1
+457	R-557	3
+458	R-558	2
+459	R-559	3
+460	R-560	2
+461	R-561	2
+462	R-562	2
+463	R-563	5
+464	R-564	5
+465	R-565	4
+466	R-566	4
+467	R-567	1
+468	R-568	2
+469	R-569	3
+470	R-570	2
+471	R-571	1
+472	R-572	1
+473	R-573	4
+474	R-574	3
+475	R-575	5
+476	R-576	5
+477	R-577	5
+478	R-578	5
+479	R-579	2
+480	R-580	2
+481	R-581	4
+482	R-582	1
+483	R-583	4
+484	R-584	2
+485	R-585	1
+486	R-586	3
+487	R-587	4
+488	R-588	1
+489	R-589	2
+490	R-590	2
+491	R-591	3
+492	R-592	3
+493	R-593	2
+494	R-594	3
+495	R-595	2
+496	R-596	5
+497	R-597	3
+498	R-598	1
+499	R-599	5
+500	R-600	2
+\.
+
+
+--
+-- TOC entry 3462 (class 0 OID 32838)
+-- Dependencies: 230
+-- Data for Name: roomcheck; Type: TABLE DATA; Schema: public; Owner: myUser
+--
+
+COPY public.roomcheck (checkid, roomid, employeeid, checkdate, score) FROM stdin;
+1	258	388	2025-07-28 00:00:00	2
+2	380	397	2026-02-18 00:00:00	5
+3	135	276	2025-07-15 00:00:00	5
+4	244	474	2025-10-01 00:00:00	4
+5	241	203	2025-04-09 00:00:00	2
+6	12	362	2025-03-27 00:00:00	1
+7	177	425	2025-11-23 00:00:00	9
+8	92	383	2025-06-09 00:00:00	9
+9	91	274	2025-05-06 00:00:00	5
+10	104	423	2025-04-27 00:00:00	3
+11	365	455	2025-10-15 00:00:00	9
+12	291	72	2025-10-08 00:00:00	3
+13	147	117	2025-05-20 00:00:00	10
+14	224	346	2026-01-16 00:00:00	3
+15	419	274	2026-01-25 00:00:00	6
+16	421	272	2025-11-21 00:00:00	3
+17	135	158	2025-12-17 00:00:00	5
+18	285	406	2025-04-25 00:00:00	3
+19	77	39	2026-01-10 00:00:00	3
+20	12	336	2025-05-06 00:00:00	5
+21	201	499	2025-07-30 00:00:00	10
+22	4	443	2026-01-18 00:00:00	3
+23	483	379	2025-12-09 00:00:00	3
+24	64	3	2025-07-09 00:00:00	5
+25	400	158	2025-07-14 00:00:00	2
+26	94	95	2025-07-06 00:00:00	4
+27	123	268	2025-12-01 00:00:00	6
+28	178	144	2025-07-04 00:00:00	9
+29	219	480	2026-02-01 00:00:00	4
+30	364	323	2025-09-08 00:00:00	2
+31	476	54	2026-01-12 00:00:00	2
+32	73	230	2026-01-21 00:00:00	9
+33	272	497	2025-12-16 00:00:00	2
+34	245	426	2025-10-29 00:00:00	9
+35	243	396	2026-02-26 00:00:00	7
+36	9	20	2025-11-05 00:00:00	9
+37	295	304	2025-06-17 00:00:00	2
+38	313	116	2025-04-14 00:00:00	8
+39	162	16	2025-09-01 00:00:00	1
+40	371	12	2025-06-19 00:00:00	3
+41	464	210	2025-09-15 00:00:00	2
+42	437	399	2025-07-18 00:00:00	5
+43	146	406	2025-05-07 00:00:00	7
+44	441	191	2025-06-03 00:00:00	3
+45	322	266	2025-12-11 00:00:00	5
+46	138	104	2026-02-11 00:00:00	1
+47	459	159	2025-11-30 00:00:00	8
+48	318	317	2025-04-24 00:00:00	4
+49	144	98	2025-05-22 00:00:00	6
+50	312	27	2026-02-27 00:00:00	6
+51	391	330	2025-11-14 00:00:00	1
+52	112	112	2025-09-17 00:00:00	2
+53	103	206	2025-06-28 00:00:00	10
+54	151	4	2025-05-15 00:00:00	8
+55	223	478	2025-10-26 00:00:00	2
+56	483	132	2026-03-05 00:00:00	7
+57	218	118	2025-05-29 00:00:00	6
+58	36	202	2025-05-04 00:00:00	6
+59	383	108	2025-07-22 00:00:00	9
+60	58	198	2025-10-26 00:00:00	7
+61	221	476	2025-04-21 00:00:00	1
+62	145	252	2025-07-03 00:00:00	8
+63	169	203	2025-07-30 00:00:00	1
+64	446	114	2026-01-08 00:00:00	3
+65	201	101	2025-12-28 00:00:00	10
+66	263	114	2025-11-02 00:00:00	4
+67	166	129	2026-01-01 00:00:00	1
+68	301	461	2025-07-03 00:00:00	6
+69	408	68	2025-07-17 00:00:00	6
+70	111	41	2025-04-15 00:00:00	3
+71	448	366	2026-01-07 00:00:00	4
+72	317	402	2025-12-18 00:00:00	1
+73	107	328	2025-12-17 00:00:00	8
+74	274	438	2025-05-14 00:00:00	10
+75	278	342	2026-01-21 00:00:00	3
+76	227	9	2025-10-23 00:00:00	2
+77	250	105	2026-01-23 00:00:00	9
+78	487	258	2025-09-22 00:00:00	4
+79	184	221	2025-04-04 00:00:00	2
+80	192	412	2026-02-25 00:00:00	10
+81	469	384	2025-11-13 00:00:00	6
+82	233	265	2025-08-25 00:00:00	7
+83	329	457	2025-06-24 00:00:00	9
+84	366	149	2025-04-07 00:00:00	5
+85	354	211	2026-02-19 00:00:00	5
+86	484	404	2025-06-04 00:00:00	5
+87	492	476	2025-09-09 00:00:00	10
+88	356	201	2025-12-15 00:00:00	3
+89	58	190	2025-09-13 00:00:00	1
+90	69	376	2025-04-19 00:00:00	2
+91	329	476	2025-07-09 00:00:00	7
+92	11	153	2025-12-21 00:00:00	9
+93	57	15	2025-12-19 00:00:00	9
+94	336	104	2025-10-05 00:00:00	8
+95	92	346	2026-02-02 00:00:00	7
+96	423	321	2025-08-13 00:00:00	9
+97	361	387	2025-06-26 00:00:00	2
+98	312	410	2025-06-10 00:00:00	9
+99	141	373	2025-12-05 00:00:00	2
+100	271	230	2025-04-23 00:00:00	8
+101	499	74	2025-08-16 00:00:00	4
+102	19	367	2025-07-03 00:00:00	3
+103	48	155	2025-04-12 00:00:00	4
+104	263	321	2026-02-07 00:00:00	5
+105	442	326	2026-01-01 00:00:00	7
+106	231	410	2025-07-05 00:00:00	1
+107	19	127	2025-05-04 00:00:00	8
+108	214	64	2025-11-26 00:00:00	4
+109	75	33	2025-06-17 00:00:00	3
+110	467	313	2025-11-21 00:00:00	2
+111	421	492	2025-07-22 00:00:00	6
+112	419	91	2025-09-08 00:00:00	1
+113	133	334	2026-01-04 00:00:00	6
+114	158	296	2025-07-11 00:00:00	6
+115	128	418	2026-02-12 00:00:00	1
+116	151	185	2025-08-11 00:00:00	10
+117	149	306	2025-08-28 00:00:00	2
+118	154	72	2026-03-20 00:00:00	3
+119	177	150	2025-04-17 00:00:00	5
+120	380	454	2025-10-16 00:00:00	7
+121	10	381	2025-12-11 00:00:00	10
+122	125	450	2026-03-14 00:00:00	8
+123	139	124	2025-07-23 00:00:00	1
+124	493	235	2025-12-21 00:00:00	9
+125	480	111	2025-08-19 00:00:00	10
+126	393	336	2025-07-15 00:00:00	9
+127	274	125	2026-03-08 00:00:00	2
+128	327	499	2025-11-09 00:00:00	10
+129	38	270	2025-08-17 00:00:00	4
+130	291	253	2025-11-25 00:00:00	9
+131	299	419	2025-11-30 00:00:00	7
+132	35	372	2025-05-04 00:00:00	10
+133	473	258	2025-03-31 00:00:00	8
+134	259	273	2025-11-02 00:00:00	4
+135	275	66	2026-03-09 00:00:00	2
+136	138	78	2025-05-07 00:00:00	6
+137	74	43	2025-05-08 00:00:00	8
+138	98	56	2025-12-21 00:00:00	10
+139	182	405	2026-01-11 00:00:00	1
+140	286	93	2025-09-27 00:00:00	4
+141	238	316	2025-12-25 00:00:00	6
+142	436	134	2025-04-15 00:00:00	8
+143	119	170	2026-02-05 00:00:00	4
+144	415	106	2025-12-09 00:00:00	4
+145	193	462	2025-11-17 00:00:00	5
+146	259	302	2026-01-26 00:00:00	2
+147	477	313	2025-11-05 00:00:00	8
+148	364	350	2026-01-09 00:00:00	10
+149	236	49	2026-01-08 00:00:00	9
+150	398	108	2025-11-22 00:00:00	6
+151	372	95	2025-12-28 00:00:00	4
+152	487	365	2025-09-22 00:00:00	2
+153	326	9	2025-09-20 00:00:00	7
+154	257	117	2026-03-19 00:00:00	7
+155	422	88	2025-07-24 00:00:00	9
+156	413	119	2025-10-29 00:00:00	9
+157	372	444	2026-01-17 00:00:00	7
+158	295	159	2026-03-06 00:00:00	9
+159	27	399	2026-02-20 00:00:00	7
+160	321	395	2025-08-13 00:00:00	10
+161	197	194	2025-05-04 00:00:00	5
+162	228	291	2025-10-21 00:00:00	5
+163	435	53	2025-10-16 00:00:00	6
+164	141	233	2025-03-24 00:00:00	3
+165	15	134	2025-09-19 00:00:00	9
+166	183	385	2025-04-29 00:00:00	4
+167	297	101	2025-06-06 00:00:00	4
+168	251	207	2025-12-15 00:00:00	9
+169	140	263	2026-01-28 00:00:00	8
+170	435	341	2025-11-29 00:00:00	7
+171	126	471	2025-11-21 00:00:00	1
+172	138	247	2025-09-16 00:00:00	6
+173	92	81	2026-01-04 00:00:00	1
+174	355	163	2025-11-04 00:00:00	10
+175	376	239	2025-06-10 00:00:00	1
+176	366	19	2025-08-19 00:00:00	2
+177	198	498	2025-06-26 00:00:00	10
+178	90	55	2025-06-30 00:00:00	4
+179	397	293	2025-05-07 00:00:00	10
+180	350	149	2025-11-28 00:00:00	3
+181	412	360	2026-03-05 00:00:00	3
+182	157	338	2025-03-24 00:00:00	9
+183	318	352	2025-12-24 00:00:00	1
+184	483	466	2026-02-23 00:00:00	10
+185	91	334	2025-04-06 00:00:00	4
+186	188	489	2025-04-27 00:00:00	10
+187	19	47	2025-05-31 00:00:00	5
+188	384	494	2025-05-20 00:00:00	2
+189	460	315	2025-06-17 00:00:00	9
+190	386	442	2025-11-07 00:00:00	8
+191	126	48	2025-09-25 00:00:00	3
+192	75	453	2025-05-12 00:00:00	9
+193	24	89	2026-02-09 00:00:00	4
+194	261	307	2025-04-09 00:00:00	6
+195	421	339	2025-12-18 00:00:00	4
+196	190	289	2025-11-17 00:00:00	8
+197	470	444	2025-05-14 00:00:00	6
+198	476	230	2025-06-16 00:00:00	1
+199	270	434	2025-09-28 00:00:00	3
+200	249	310	2026-02-16 00:00:00	10
+201	35	288	2025-08-10 00:00:00	6
+202	272	400	2025-08-21 00:00:00	7
+203	449	491	2025-07-07 00:00:00	2
+204	392	352	2025-08-10 00:00:00	1
+205	489	409	2025-05-31 00:00:00	7
+206	245	333	2025-09-01 00:00:00	10
+207	172	442	2025-05-02 00:00:00	1
+208	397	354	2025-09-24 00:00:00	1
+209	355	318	2026-01-23 00:00:00	1
+210	174	3	2025-11-20 00:00:00	2
+211	268	297	2025-06-02 00:00:00	5
+212	11	354	2025-08-27 00:00:00	3
+213	149	6	2026-02-01 00:00:00	8
+214	244	421	2025-09-19 00:00:00	7
+215	75	3	2025-11-30 00:00:00	6
+216	169	255	2025-07-08 00:00:00	7
+217	440	419	2025-12-17 00:00:00	8
+218	116	434	2025-10-27 00:00:00	4
+219	326	275	2025-10-20 00:00:00	6
+220	349	311	2026-03-22 00:00:00	2
+221	229	56	2025-04-29 00:00:00	10
+222	294	93	2026-02-04 00:00:00	5
+223	95	464	2026-02-23 00:00:00	2
+224	236	36	2025-11-22 00:00:00	9
+225	365	261	2025-06-11 00:00:00	3
+226	61	314	2025-12-23 00:00:00	8
+227	74	193	2025-09-27 00:00:00	7
+228	226	261	2026-01-19 00:00:00	1
+229	167	292	2025-10-25 00:00:00	7
+230	377	374	2025-06-23 00:00:00	7
+231	168	260	2025-06-09 00:00:00	4
+232	70	284	2025-05-06 00:00:00	8
+233	52	387	2025-10-22 00:00:00	6
+234	397	61	2025-09-03 00:00:00	3
+235	311	316	2025-04-16 00:00:00	8
+236	481	267	2025-11-06 00:00:00	8
+237	200	21	2025-12-03 00:00:00	6
+238	138	279	2025-07-15 00:00:00	2
+239	153	204	2025-12-12 00:00:00	5
+240	128	431	2025-10-10 00:00:00	7
+241	16	369	2025-11-20 00:00:00	2
+242	216	368	2025-11-05 00:00:00	7
+243	218	301	2026-03-12 00:00:00	2
+244	249	106	2025-08-24 00:00:00	2
+245	134	256	2025-09-26 00:00:00	7
+246	405	329	2025-05-09 00:00:00	5
+247	448	12	2025-05-03 00:00:00	9
+248	250	436	2025-04-17 00:00:00	2
+249	109	146	2025-04-01 00:00:00	4
+250	370	189	2025-09-01 00:00:00	6
+251	368	86	2025-12-23 00:00:00	1
+252	356	25	2025-05-14 00:00:00	1
+253	295	131	2025-11-18 00:00:00	3
+254	196	259	2025-11-03 00:00:00	3
+255	59	421	2025-08-02 00:00:00	3
+256	71	310	2026-03-08 00:00:00	10
+257	279	248	2025-10-12 00:00:00	3
+258	402	468	2025-07-29 00:00:00	7
+259	174	446	2025-07-21 00:00:00	1
+260	65	269	2025-05-30 00:00:00	10
+261	268	180	2025-10-13 00:00:00	8
+262	399	385	2025-09-04 00:00:00	7
+263	356	382	2026-01-26 00:00:00	4
+264	95	499	2025-08-11 00:00:00	6
+265	53	448	2025-03-29 00:00:00	6
+266	42	15	2025-05-17 00:00:00	9
+267	448	369	2026-02-17 00:00:00	8
+268	189	216	2025-10-17 00:00:00	5
+269	376	431	2025-06-19 00:00:00	8
+270	139	34	2025-12-20 00:00:00	8
+271	484	255	2025-10-15 00:00:00	5
+272	88	30	2025-05-20 00:00:00	3
+273	396	469	2025-04-29 00:00:00	8
+274	357	128	2026-01-22 00:00:00	3
+275	8	36	2026-01-04 00:00:00	7
+276	305	488	2025-09-27 00:00:00	5
+277	267	145	2025-04-04 00:00:00	10
+278	294	272	2025-06-04 00:00:00	6
+279	212	177	2025-09-15 00:00:00	3
+280	265	7	2025-09-21 00:00:00	4
+281	151	218	2025-08-17 00:00:00	6
+282	222	341	2026-02-10 00:00:00	9
+283	117	172	2025-04-08 00:00:00	9
+284	476	446	2025-04-02 00:00:00	4
+285	83	472	2025-11-22 00:00:00	1
+286	388	48	2026-02-05 00:00:00	7
+287	108	437	2025-06-12 00:00:00	5
+288	380	67	2026-02-07 00:00:00	10
+289	177	157	2026-01-22 00:00:00	3
+290	13	154	2025-11-11 00:00:00	9
+291	214	490	2026-03-19 00:00:00	10
+292	492	175	2025-06-26 00:00:00	4
+293	476	163	2025-05-25 00:00:00	3
+294	217	415	2025-06-27 00:00:00	8
+295	264	168	2025-09-27 00:00:00	9
+296	399	142	2025-03-27 00:00:00	9
+297	277	118	2025-05-06 00:00:00	7
+298	465	189	2025-07-01 00:00:00	6
+299	404	312	2025-11-06 00:00:00	2
+300	375	332	2025-08-11 00:00:00	10
+301	398	326	2026-02-26 00:00:00	2
+302	235	146	2025-05-13 00:00:00	6
+303	383	91	2025-05-02 00:00:00	4
+304	290	361	2026-02-24 00:00:00	4
+305	153	63	2025-04-02 00:00:00	10
+306	430	205	2026-01-19 00:00:00	4
+307	19	24	2026-02-25 00:00:00	6
+308	409	376	2025-06-26 00:00:00	5
+309	282	249	2026-02-12 00:00:00	10
+310	408	230	2025-10-14 00:00:00	9
+311	138	187	2026-01-07 00:00:00	8
+312	158	349	2025-06-27 00:00:00	5
+313	47	335	2025-08-01 00:00:00	3
+314	490	17	2025-04-23 00:00:00	10
+315	110	46	2026-01-22 00:00:00	2
+316	104	323	2025-06-10 00:00:00	8
+317	334	418	2025-10-12 00:00:00	4
+318	149	162	2025-04-07 00:00:00	7
+319	12	372	2025-12-23 00:00:00	10
+320	242	198	2025-11-03 00:00:00	9
+321	338	190	2025-03-24 00:00:00	2
+322	404	395	2025-10-19 00:00:00	8
+323	418	475	2025-04-05 00:00:00	9
+324	109	295	2026-03-15 00:00:00	1
+325	22	156	2025-12-19 00:00:00	5
+326	163	386	2025-10-06 00:00:00	10
+327	361	416	2025-09-21 00:00:00	6
+328	212	471	2025-10-04 00:00:00	2
+329	435	19	2025-05-01 00:00:00	5
+330	278	427	2025-08-18 00:00:00	9
+331	242	201	2026-01-21 00:00:00	5
+332	481	250	2025-04-19 00:00:00	9
+333	38	181	2025-07-14 00:00:00	5
+334	12	487	2025-11-18 00:00:00	3
+335	496	435	2026-02-16 00:00:00	10
+336	406	265	2026-01-11 00:00:00	2
+337	287	469	2025-07-02 00:00:00	10
+338	148	164	2025-08-09 00:00:00	8
+339	387	198	2025-12-16 00:00:00	7
+340	90	24	2025-06-12 00:00:00	5
+341	330	327	2025-04-10 00:00:00	2
+342	163	445	2026-01-02 00:00:00	3
+343	491	391	2025-06-05 00:00:00	1
+344	71	497	2025-05-13 00:00:00	9
+345	424	416	2025-07-14 00:00:00	4
+346	169	367	2026-03-05 00:00:00	9
+347	366	434	2025-04-04 00:00:00	9
+348	362	124	2025-08-22 00:00:00	1
+349	381	327	2025-09-01 00:00:00	6
+350	101	277	2025-08-29 00:00:00	10
+351	191	84	2026-01-07 00:00:00	4
+352	360	80	2025-06-16 00:00:00	3
+353	109	66	2025-06-24 00:00:00	9
+354	292	449	2025-11-01 00:00:00	5
+355	99	260	2025-09-09 00:00:00	10
+356	486	131	2025-06-05 00:00:00	2
+357	83	159	2026-01-18 00:00:00	2
+358	495	462	2026-03-16 00:00:00	8
+359	305	445	2025-06-15 00:00:00	6
+360	226	162	2025-06-19 00:00:00	4
+361	177	434	2025-07-25 00:00:00	10
+362	365	232	2025-12-26 00:00:00	4
+363	110	8	2026-02-01 00:00:00	1
+364	416	462	2025-08-15 00:00:00	9
+365	55	221	2025-12-15 00:00:00	10
+366	441	36	2025-12-12 00:00:00	4
+367	345	85	2025-09-29 00:00:00	3
+368	243	141	2025-04-30 00:00:00	5
+369	287	131	2025-05-09 00:00:00	9
+370	485	449	2025-12-03 00:00:00	7
+371	346	454	2025-05-11 00:00:00	1
+372	402	225	2026-01-02 00:00:00	1
+373	285	206	2025-04-07 00:00:00	10
+374	339	307	2025-07-09 00:00:00	6
+375	246	291	2025-08-08 00:00:00	1
+376	440	481	2025-09-19 00:00:00	6
+377	276	439	2025-12-30 00:00:00	8
+378	324	114	2025-09-15 00:00:00	5
+379	340	226	2025-11-01 00:00:00	2
+380	100	253	2025-06-14 00:00:00	8
+381	491	481	2025-08-04 00:00:00	2
+382	101	364	2026-03-05 00:00:00	6
+383	103	463	2025-04-21 00:00:00	10
+384	269	88	2025-06-25 00:00:00	5
+385	387	41	2025-08-01 00:00:00	1
+386	416	368	2026-02-18 00:00:00	10
+387	233	267	2025-07-27 00:00:00	6
+388	305	215	2025-12-05 00:00:00	8
+389	369	379	2025-07-02 00:00:00	8
+390	467	488	2025-04-27 00:00:00	8
+391	324	206	2025-09-10 00:00:00	7
+392	67	381	2025-04-02 00:00:00	7
+393	306	478	2025-07-05 00:00:00	7
+394	305	88	2025-05-23 00:00:00	1
+395	279	340	2025-07-03 00:00:00	4
+396	173	395	2025-11-27 00:00:00	7
+397	291	233	2026-02-15 00:00:00	9
+398	454	447	2025-08-22 00:00:00	4
+399	266	119	2026-02-01 00:00:00	5
+400	174	71	2026-01-22 00:00:00	9
+401	19	9	2026-02-21 00:00:00	2
+402	193	404	2025-05-31 00:00:00	2
+403	45	79	2025-12-12 00:00:00	3
+404	321	401	2025-08-06 00:00:00	7
+405	137	19	2026-02-06 00:00:00	6
+406	129	306	2025-06-27 00:00:00	5
+407	422	203	2026-02-28 00:00:00	9
+408	13	92	2025-08-22 00:00:00	3
+409	377	98	2026-02-15 00:00:00	7
+410	289	90	2025-06-25 00:00:00	4
+411	142	142	2025-04-04 00:00:00	10
+412	105	18	2025-09-06 00:00:00	4
+413	200	340	2025-04-03 00:00:00	1
+414	468	253	2025-05-23 00:00:00	9
+415	252	322	2026-03-06 00:00:00	4
+416	347	203	2025-08-03 00:00:00	7
+417	25	59	2025-07-29 00:00:00	9
+418	101	327	2025-04-27 00:00:00	9
+419	300	426	2026-01-18 00:00:00	10
+420	247	169	2025-06-12 00:00:00	1
+421	419	435	2025-07-27 00:00:00	2
+422	86	448	2026-02-03 00:00:00	5
+423	324	162	2025-07-22 00:00:00	2
+424	349	271	2025-12-04 00:00:00	10
+425	47	367	2025-08-07 00:00:00	3
+426	98	42	2025-05-03 00:00:00	5
+427	296	195	2026-01-09 00:00:00	4
+428	93	456	2025-04-26 00:00:00	10
+429	410	39	2025-12-21 00:00:00	2
+430	43	371	2025-05-18 00:00:00	1
+431	138	17	2025-11-30 00:00:00	10
+432	379	348	2025-10-18 00:00:00	9
+433	357	342	2025-09-03 00:00:00	8
+434	187	342	2025-03-24 00:00:00	7
+435	187	408	2025-06-16 00:00:00	5
+436	500	235	2025-08-30 00:00:00	6
+437	89	153	2026-03-16 00:00:00	1
+438	475	482	2025-06-19 00:00:00	9
+439	105	130	2025-04-10 00:00:00	5
+440	71	87	2026-02-17 00:00:00	1
+441	223	87	2025-06-12 00:00:00	10
+442	423	446	2026-02-06 00:00:00	6
+443	174	139	2025-08-31 00:00:00	8
+444	237	470	2025-07-26 00:00:00	6
+445	104	348	2025-04-02 00:00:00	3
+446	95	192	2026-03-11 00:00:00	9
+447	387	140	2026-01-31 00:00:00	3
+448	293	50	2025-07-22 00:00:00	7
+449	43	247	2025-06-16 00:00:00	4
+450	324	469	2025-08-26 00:00:00	1
+451	132	307	2025-08-09 00:00:00	3
+452	12	208	2025-08-29 00:00:00	9
+453	179	227	2026-03-22 00:00:00	7
+454	300	69	2026-01-24 00:00:00	2
+455	313	278	2026-01-24 00:00:00	6
+456	303	99	2025-10-16 00:00:00	9
+457	2	278	2025-10-16 00:00:00	8
+458	486	278	2026-02-17 00:00:00	10
+459	367	407	2025-11-02 00:00:00	5
+460	87	301	2025-04-09 00:00:00	7
+461	268	253	2025-08-11 00:00:00	5
+462	483	475	2026-01-20 00:00:00	1
+463	199	9	2025-10-07 00:00:00	4
+464	350	199	2025-12-12 00:00:00	9
+465	136	327	2026-02-08 00:00:00	5
+466	93	455	2025-09-24 00:00:00	9
+467	495	225	2025-08-08 00:00:00	7
+468	111	434	2025-09-09 00:00:00	9
+469	407	298	2026-01-18 00:00:00	7
+470	444	117	2025-10-03 00:00:00	1
+471	27	227	2026-02-22 00:00:00	4
+472	131	157	2025-11-27 00:00:00	1
+473	81	19	2026-01-17 00:00:00	1
+474	500	324	2025-08-13 00:00:00	4
+475	166	258	2025-04-07 00:00:00	2
+476	419	267	2026-01-30 00:00:00	8
+477	434	68	2026-01-30 00:00:00	5
+478	275	73	2026-01-16 00:00:00	2
+479	100	197	2025-10-10 00:00:00	2
+480	259	123	2025-06-06 00:00:00	3
+481	115	389	2025-04-05 00:00:00	8
+482	490	419	2025-04-14 00:00:00	9
+483	268	9	2025-08-07 00:00:00	3
+484	62	139	2025-04-22 00:00:00	8
+485	111	34	2026-01-01 00:00:00	5
+486	410	268	2025-09-06 00:00:00	4
+487	275	434	2025-07-05 00:00:00	4
+488	131	49	2025-07-28 00:00:00	1
+489	130	291	2025-08-07 00:00:00	5
+490	113	157	2025-03-31 00:00:00	5
+491	143	465	2025-05-02 00:00:00	8
+492	118	337	2025-06-15 00:00:00	1
+493	80	493	2025-07-29 00:00:00	4
+494	204	107	2025-06-04 00:00:00	9
+495	249	44	2025-05-18 00:00:00	5
+496	306	41	2026-01-14 00:00:00	1
+497	67	144	2025-06-24 00:00:00	1
+498	93	457	2025-11-03 00:00:00	7
+499	226	204	2025-08-20 00:00:00	3
+500	300	269	2025-04-14 00:00:00	9
+\.
+
+
+--
+-- TOC entry 3452 (class 0 OID 32776)
+-- Dependencies: 220
+-- Data for Name: tasktype; Type: TABLE DATA; Schema: public; Owner: myUser
+--
+
+COPY public.tasktype (tasktypeid, name) FROM stdin;
+1	Deep Clean
+2	Stay-over
+3	Check-out
+4	Turn-down
+5	Sanitization
+\.
+
+
+--
+-- TOC entry 3466 (class 0 OID 32879)
+-- Dependencies: 234
+-- Data for Name: uses; Type: TABLE DATA; Schema: public; Owner: myUser
+--
+
+COPY public.uses (suppliesid, taskid, quantityused) FROM stdin;
+185	332	3
+470	289	4
+307	457	4
+148	285	1
+251	469	2
+494	247	1
+436	45	3
+409	68	3
+350	64	1
+105	467	2
+369	413	3
+394	256	1
+252	436	1
+231	332	3
+18	472	1
+462	440	5
+498	177	4
+272	38	4
+450	224	1
+81	199	2
+130	16	4
+148	115	3
+39	100	4
+28	46	2
+128	176	3
+155	338	2
+12	269	5
+153	1	1
+350	397	5
+92	59	1
+242	61	3
+403	17	1
+281	101	1
+80	44	1
+62	7	2
+362	466	2
+485	476	5
+442	357	1
+126	78	1
+417	73	1
+86	325	1
+449	375	5
+340	164	2
+98	47	1
+285	155	3
+83	267	2
+457	384	1
+23	333	2
+222	183	3
+240	477	1
+90	452	3
+373	388	2
+224	95	3
+391	190	1
+223	409	5
+62	260	2
+99	110	4
+232	171	3
+428	234	3
+321	473	4
+287	494	3
+196	487	3
+354	142	5
+107	73	3
+480	223	2
+493	323	5
+370	313	1
+34	209	2
+239	279	3
+213	383	2
+244	101	1
+398	470	5
+192	398	3
+285	338	5
+56	328	2
+215	450	3
+441	117	3
+55	397	3
+12	68	2
+82	338	1
+225	464	4
+325	404	4
+429	406	3
+384	425	5
+318	287	5
+40	452	5
+161	24	3
+498	89	4
+321	21	2
+352	54	1
+298	73	5
+347	55	4
+19	389	2
+295	491	5
+487	258	4
+114	13	1
+301	466	2
+218	286	1
+399	384	5
+188	159	3
+205	389	1
+394	297	2
+156	454	3
+458	300	2
+202	484	2
+310	84	5
+190	462	5
+410	459	3
+8	31	3
+324	386	1
+313	136	5
+230	279	4
+181	395	4
+28	258	5
+244	114	1
+442	190	5
+208	330	5
+263	338	3
+60	95	4
+388	487	2
+370	368	4
+437	302	1
+52	349	4
+285	346	3
+388	111	2
+435	482	1
+18	452	4
+134	470	4
+158	365	1
+91	296	3
+492	287	1
+22	72	5
+13	122	4
+136	387	1
+325	32	5
+220	9	2
+186	124	2
+59	474	4
+334	179	3
+147	366	2
+100	368	4
+386	379	2
+242	204	2
+429	180	5
+132	184	2
+318	12	3
+384	464	5
+373	96	1
+29	256	3
+221	124	5
+294	96	4
+85	346	3
+196	360	2
+286	302	3
+77	367	1
+198	47	5
+105	215	1
+364	216	4
+360	136	5
+261	114	5
+444	365	3
+51	373	1
+13	144	4
+302	75	2
+449	226	5
+97	421	1
+172	92	4
+132	26	5
+122	309	1
+399	399	4
+313	483	5
+458	162	2
+500	192	1
+391	73	5
+495	189	3
+96	108	5
+32	115	3
+380	30	5
+350	339	4
+83	330	5
+234	302	1
+294	186	1
+151	64	1
+23	360	5
+69	329	3
+278	230	4
+246	141	4
+465	291	2
+297	353	5
+33	69	3
+220	292	3
+402	34	3
+394	201	1
+119	89	4
+363	115	3
+296	333	3
+298	372	3
+73	148	3
+20	452	5
+431	162	5
+67	46	4
+49	304	2
+49	172	4
+125	175	3
+65	373	3
+314	168	2
+182	372	5
+392	63	4
+6	463	1
+191	282	1
+389	164	3
+470	423	3
+180	145	1
+268	404	2
+218	232	1
+475	135	1
+96	209	2
+171	7	4
+381	87	2
+488	205	5
+230	168	1
+205	34	3
+349	312	4
+398	391	1
+217	427	5
+421	140	4
+331	22	4
+395	352	4
+4	39	2
+448	282	3
+418	289	4
+455	80	3
+427	213	5
+399	473	3
+475	405	2
+95	32	3
+472	24	4
+271	446	3
+319	371	3
+302	9	2
+391	195	2
+426	13	4
+37	135	2
+97	171	5
+394	119	5
+448	475	3
+65	452	4
+81	395	1
+313	160	2
+33	311	1
+416	225	1
+363	453	2
+487	127	2
+318	473	5
+320	453	3
+369	115	1
+137	78	1
+254	343	4
+397	465	4
+89	390	3
+448	13	4
+422	394	4
+236	21	5
+359	467	3
+82	428	3
+273	260	2
+468	223	3
+400	117	1
+187	303	3
+433	152	3
+430	305	1
+157	212	3
+294	396	2
+113	240	4
+356	74	5
+181	214	3
+52	122	1
+404	376	5
+39	133	4
+212	437	4
+384	496	2
+208	32	4
+427	438	1
+347	72	1
+297	245	4
+216	146	5
+243	334	1
+40	144	3
+457	309	4
+93	316	4
+108	499	3
+370	197	2
+432	272	5
+389	391	4
+196	274	5
+345	262	1
+309	55	5
+81	315	2
+78	477	4
+135	107	5
+54	215	5
+160	250	4
+137	225	5
+407	314	4
+125	324	4
+126	186	5
+39	171	5
+83	378	5
+309	118	5
+179	18	2
+379	250	5
+263	390	5
+52	342	1
+426	100	3
+200	110	3
+372	66	5
+358	347	5
+187	181	2
+21	113	1
+390	314	3
+486	124	2
+11	486	5
+487	90	2
+91	85	2
+39	262	5
+369	483	5
+6	220	2
+303	216	2
+353	244	3
+409	18	4
+265	241	4
+198	475	3
+122	37	1
+254	447	4
+229	46	5
+334	47	2
+470	65	5
+374	152	4
+38	200	4
+395	397	1
+302	193	4
+68	217	4
+210	112	2
+172	173	5
+120	394	1
+103	156	2
+74	461	1
+329	37	1
+104	5	1
+398	311	5
+431	132	2
+352	317	5
+268	194	4
+10	127	3
+162	203	2
+46	332	2
+126	199	2
+103	365	5
+481	23	2
+249	103	5
+47	228	3
+395	167	2
+165	464	2
+369	295	3
+458	97	4
+52	440	1
+404	54	2
+352	86	1
+349	237	4
+473	452	3
+379	120	2
+5	374	3
+4	379	2
+317	407	2
+92	216	4
+130	486	1
+446	477	3
+213	153	4
+462	6	4
+17	295	1
+231	388	1
+201	290	2
+188	82	3
+250	439	4
+352	25	2
+472	51	3
+479	486	2
+124	128	4
+487	185	2
+151	317	3
+243	3	1
+37	232	5
+123	14	3
+161	184	1
+136	202	2
+409	457	5
+224	469	4
+171	242	5
+89	499	2
+479	476	4
+238	92	5
+366	439	4
+473	332	1
+144	208	4
+347	229	4
+432	190	2
+389	96	5
+90	314	2
+173	278	1
+497	457	1
+343	183	1
+93	484	2
+354	494	3
+217	361	2
+93	34	1
+331	55	1
+156	68	3
+124	408	4
+94	72	4
+377	269	1
+254	398	5
+28	215	1
+265	374	5
+16	276	2
+249	88	5
+425	312	4
+128	188	1
+52	63	4
+260	72	4
+175	357	3
+416	175	1
+87	80	1
+239	136	1
+33	357	3
+425	14	1
+37	46	3
+414	365	2
+265	411	4
+330	66	5
+30	231	5
+193	180	4
+318	218	2
+367	9	3
+38	294	5
+399	460	3
+104	500	5
+286	78	4
+140	172	5
+39	52	4
+412	51	3
+107	394	4
+257	363	1
+30	26	3
+259	146	4
+459	80	3
+57	167	3
+274	167	2
+409	381	3
+37	405	2
+279	417	5
+382	241	2
+487	8	5
+493	498	5
+343	248	5
+30	274	3
+225	414	5
+443	368	4
+496	419	2
+284	325	3
+233	77	3
+35	323	1
+208	390	5
+51	12	4
+359	261	5
+11	248	3
+146	3	3
+146	180	3
+65	454	5
+50	343	1
+363	481	2
+125	98	4
+350	66	5
+116	407	5
+364	425	1
+274	497	4
+170	187	1
+347	182	3
+275	344	1
+289	68	5
+466	431	2
+431	395	1
+289	19	1
+417	314	5
+276	282	5
+364	347	2
+453	190	3
+77	348	4
+373	159	4
+375	322	1
+38	452	3
+245	8	1
+342	357	5
+215	257	3
+399	459	5
+90	426	2
+213	41	5
+253	420	5
+411	160	4
+166	29	4
+114	197	5
+364	190	2
+484	177	5
+274	83	2
+388	249	2
+444	43	3
+47	221	4
+274	283	3
+422	380	2
+372	425	4
+64	119	1
+163	499	2
+15	13	4
+413	486	3
+98	70	2
+383	153	5
+394	344	2
+273	99	1
+146	76	1
+210	213	4
+471	449	1
+183	381	5
+388	405	3
+114	239	2
+138	30	3
+164	258	3
+221	336	4
+68	311	1
+195	292	2
+474	422	5
+163	500	5
+127	462	2
+366	55	5
+400	422	3
+115	278	5
+88	139	5
+164	51	1
+38	204	2
+361	479	4
+406	160	3
+287	337	5
+357	63	1
+169	439	1
+172	420	2
+218	119	2
+201	74	2
+241	73	5
+159	242	5
+436	215	1
+469	165	3
+321	457	3
+207	33	1
+166	381	3
+333	328	1
+399	36	2
+214	372	4
+224	181	1
+181	212	2
+481	298	1
+438	8	3
+116	421	5
+112	23	1
+400	303	4
+88	125	1
+183	425	3
+182	476	3
+319	453	4
+431	36	3
+311	461	2
+148	48	3
+7	7	4
+280	33	4
+154	206	3
+223	97	1
+251	149	4
+456	277	1
+148	118	2
+404	99	4
+215	343	5
+468	499	4
+119	30	1
+406	83	1
+304	122	4
+174	4	3
+331	495	2
+422	433	3
+239	442	1
+101	441	2
+155	245	3
+387	95	4
+407	495	4
+14	161	1
+296	15	1
+33	18	1
+376	286	1
+156	359	2
+145	348	1
+411	119	5
+98	201	3
+83	298	4
+423	379	4
+379	184	5
+346	8	3
+142	171	3
+346	460	2
+153	182	4
+2	249	1
+297	67	4
+255	85	1
+124	484	2
+361	1	5
+173	233	5
+179	79	1
+274	258	5
+68	443	4
+12	496	3
+318	1	1
+98	287	3
+218	449	1
+453	34	1
+350	458	2
+57	320	4
+475	419	4
+261	470	3
+471	232	1
+388	384	2
+366	119	4
+172	344	1
+225	5	2
+340	80	2
+464	370	2
+220	382	5
+148	496	2
+73	166	5
+422	481	5
+177	137	4
+329	102	3
+429	72	1
+276	28	2
+484	136	3
+432	99	1
+219	266	2
+495	140	1
+175	80	1
+147	350	4
+112	411	2
+337	344	3
+6	292	2
+358	368	4
+434	418	1
+5	427	4
+85	292	2
+398	20	4
+409	250	4
+316	477	4
+66	226	3
+348	87	3
+66	376	4
+380	109	5
+141	234	3
+405	431	2
+220	170	3
+262	390	4
+290	128	5
+147	33	4
+419	430	3
+91	57	1
+380	290	5
+270	219	2
+245	485	2
+422	450	4
+37	181	1
+477	269	4
+289	423	3
+121	305	3
+61	450	5
+40	67	2
+256	135	2
+437	221	4
+89	265	1
+283	459	2
+38	321	1
+216	454	3
+406	495	5
+184	33	4
+467	442	4
+110	433	5
+266	359	1
+154	46	4
+372	287	1
+234	34	5
+297	239	4
+85	2	2
+76	389	5
+365	18	2
+34	248	1
+369	278	2
+265	229	1
+483	12	2
+305	444	3
+157	479	4
+485	13	1
+415	267	2
+496	361	1
+421	201	5
+187	253	1
+187	287	4
+11	238	2
+422	221	4
+305	437	3
+126	71	4
+165	98	5
+186	22	5
+471	46	1
+460	28	5
+193	314	4
+446	273	1
+183	408	5
+232	36	5
+137	469	4
+342	34	4
+161	258	1
+433	333	5
+398	188	2
+133	308	2
+342	199	1
+94	343	1
+360	315	3
+463	290	4
+66	164	3
+289	495	3
+400	193	4
+97	270	1
+323	285	3
+428	266	1
+473	294	3
+162	422	1
+209	493	4
+126	32	1
+497	452	1
+158	497	3
+43	421	1
+135	103	2
+366	104	4
+303	371	4
+7	256	5
+231	299	4
+271	24	4
+400	259	2
+278	301	2
+70	269	4
+432	267	1
+223	363	2
+256	117	5
+231	11	1
+420	93	1
+299	169	3
+243	271	2
+239	297	4
+210	423	1
+453	172	4
+296	231	2
+71	364	3
+38	277	1
+384	157	1
+252	357	2
+436	326	4
+322	443	1
+105	48	2
+187	373	2
+220	338	2
+429	293	2
+287	163	1
+24	410	3
+148	106	1
+293	284	3
+206	179	4
+319	281	4
+478	85	4
+83	22	2
+122	65	3
+288	217	5
+209	359	4
+232	381	1
+55	409	2
+56	243	3
+211	241	4
+14	303	5
+328	384	4
+117	102	1
+428	29	1
+297	301	3
+152	155	3
+73	38	1
+59	234	4
+68	367	1
+244	108	5
+172	297	3
+485	148	5
+470	159	2
+199	125	5
+116	199	5
+485	101	1
+229	66	5
+233	281	4
+228	251	1
+468	329	4
+24	477	1
+128	211	2
+273	407	2
+99	490	4
+17	486	2
+292	251	3
+420	490	4
+109	368	1
+241	360	2
+55	174	3
+335	448	2
+20	450	5
+46	47	5
+88	131	5
+354	238	1
+206	167	4
+123	406	4
+116	59	1
+458	269	2
+306	84	2
+71	64	2
+340	208	2
+216	494	3
+66	426	2
+294	455	2
+384	355	3
+277	373	2
+136	383	1
+164	269	2
+172	372	5
+440	218	4
+270	493	5
+352	181	4
+339	430	2
+197	268	4
+235	226	3
+317	395	2
+160	389	3
+39	472	1
+313	366	5
+473	306	5
+141	403	2
+391	188	4
+425	226	1
+207	99	1
+428	418	3
+138	300	5
+312	485	1
+30	34	3
+380	366	3
+7	203	4
+459	369	3
+420	175	2
+47	335	5
+196	357	2
+7	140	3
+329	189	3
+215	421	3
+272	177	5
+161	267	1
+257	374	5
+19	56	3
+60	396	4
+277	439	2
+466	230	2
+196	51	4
+263	36	1
+368	303	4
+116	239	2
+90	165	2
+241	199	5
+36	13	4
+294	404	4
+395	498	4
+204	249	5
+133	175	2
+193	200	3
+205	285	1
+51	313	3
+301	484	1
+159	296	2
+47	351	5
+462	5	3
+143	4	2
+4	294	1
+197	177	2
+423	95	5
+474	436	2
+220	416	2
+61	189	3
+103	191	1
+204	90	3
+453	152	5
+45	271	1
+289	65	3
+473	320	1
+342	365	4
+223	150	2
+291	55	3
+466	424	4
+487	390	4
+403	119	4
+159	287	4
+303	98	3
+275	18	1
+324	320	5
+214	307	1
+363	421	3
+44	365	5
+292	244	5
+416	182	3
+127	278	3
+109	269	1
+273	354	5
+75	313	2
+294	48	1
+415	261	5
+424	450	4
+315	324	5
+478	46	5
+37	423	1
+487	240	3
+415	99	5
+312	237	4
+153	87	1
+152	138	1
+34	335	1
+292	489	5
+65	200	2
+444	389	2
+143	331	5
+179	208	5
+318	378	4
+388	182	1
+316	14	4
+323	74	2
+308	10	4
+370	145	5
+295	20	1
+289	179	2
+387	9	5
+191	223	4
+320	110	4
+69	85	4
+38	30	4
+170	29	1
+454	193	2
+317	93	4
+49	116	3
+225	317	1
+102	377	1
+39	492	3
+44	296	5
+87	2	3
+418	398	3
+428	103	5
+479	155	1
+336	490	2
+168	270	2
+257	231	5
+210	327	4
+140	208	3
+252	474	3
+139	298	2
+490	226	2
+279	89	2
+301	123	2
+132	447	1
+150	178	4
+353	457	1
+126	3	5
+150	126	1
+452	126	4
+316	420	1
+149	126	2
+422	161	5
+446	434	5
+305	367	2
+354	117	5
+319	102	3
+121	94	4
+31	217	5
+5	227	3
+320	372	4
+146	146	1
+385	261	1
+159	126	1
+426	404	4
+4	25	5
+235	2	1
+266	81	2
+417	111	2
+249	357	1
+432	171	3
+408	70	4
+3	76	5
+65	352	5
+139	83	4
+426	108	2
+484	212	5
+421	161	1
+491	241	2
+82	63	1
+456	56	1
+498	161	3
+355	206	5
+68	206	3
+1	421	3
+251	450	3
+177	418	5
+63	197	1
+41	465	5
+39	363	5
+292	187	4
+336	47	3
+84	191	5
+365	168	1
+264	223	3
+370	383	5
+204	451	2
+341	100	1
+88	418	1
+269	407	4
+206	263	1
+305	428	2
+400	374	2
+374	337	3
+338	241	4
+366	261	1
+39	496	3
+404	398	4
+429	123	2
+131	102	5
+137	438	3
+482	442	1
+104	281	5
+53	428	4
+93	337	3
+186	356	1
+411	48	4
+302	178	3
+179	285	5
+383	271	1
+416	45	3
+482	238	2
+308	316	1
+348	270	2
+171	117	3
+58	43	1
+86	291	4
+168	365	5
+436	360	5
+179	199	5
+231	171	2
+379	29	5
+485	6	1
+175	162	2
+342	77	3
+385	146	3
+146	248	4
+117	64	3
+138	479	2
+351	402	2
+58	77	2
+348	121	1
+336	241	4
+216	237	5
+491	458	1
+150	374	3
+223	157	1
+283	251	5
+210	462	4
+179	492	4
+479	294	5
+261	119	2
+333	156	2
+276	160	2
+20	155	4
+360	9	5
+298	282	2
+76	176	3
+498	27	1
+69	210	1
+78	303	4
+163	378	3
+112	139	2
+41	188	1
+233	286	1
+217	324	5
+142	62	5
+29	140	2
+400	379	3
+497	15	5
+443	214	5
+145	178	4
+372	348	1
+90	483	4
+109	246	3
+179	290	3
+69	484	2
+182	53	5
+170	47	5
+413	400	4
+370	177	3
+140	470	4
+267	8	5
+98	10	5
+182	54	4
+75	498	4
+483	338	1
+290	203	2
+30	351	4
+362	347	3
+352	78	3
+292	52	5
+173	362	2
+254	253	5
+81	260	4
+185	26	1
+238	16	3
+112	229	5
+122	152	1
+40	332	1
+30	212	1
+215	254	1
+59	410	3
+427	289	1
+3	138	2
+253	7	5
+445	310	4
+430	342	3
+247	132	3
+18	118	5
+53	318	4
+158	24	4
+83	488	4
+398	3	2
+172	124	4
+316	200	5
+186	41	5
+317	113	2
+229	471	4
+474	385	5
+454	366	1
+14	292	1
+404	492	1
+227	80	3
+287	123	3
+425	461	3
+388	463	5
+128	278	5
+85	20	4
+303	17	3
+478	324	3
+149	233	3
+437	355	5
+191	180	3
+130	42	5
+17	121	2
+382	124	1
+230	273	4
+50	117	5
+80	362	2
+178	176	2
+385	362	3
+220	191	2
+70	262	1
+167	75	2
+292	336	2
+346	293	2
+113	247	4
+476	458	3
+121	64	3
+171	260	3
+408	255	2
+237	71	3
+5	151	3
+260	222	2
+31	166	4
+223	433	5
+125	385	2
+409	408	4
+495	376	2
+480	376	1
+365	473	5
+91	81	3
+9	366	4
+212	104	1
+408	92	4
+70	35	2
+426	334	3
+84	467	2
+130	420	4
+187	498	5
+471	134	3
+45	488	5
+38	168	4
+252	100	4
+323	93	2
+113	147	2
+8	110	3
+397	90	1
+229	288	5
+118	199	2
+71	441	4
+177	301	5
+311	409	2
+8	260	3
+251	390	3
+446	359	3
+456	308	2
+18	57	5
+50	374	3
+275	306	1
+247	360	5
+342	43	3
+340	385	3
+45	259	1
+307	160	4
+386	93	4
+495	370	1
+318	390	3
+67	97	1
+351	300	1
+31	123	5
+12	361	2
+409	313	2
+12	226	1
+63	281	3
+463	150	1
+442	464	2
+415	250	3
+36	74	1
+100	27	4
+14	190	5
+284	194	5
+498	23	4
+239	71	4
+393	13	2
+204	166	4
+92	204	3
+128	381	4
+163	199	5
+186	214	4
+465	316	3
+175	87	2
+37	286	5
+329	281	4
+241	396	3
+70	496	5
+92	182	3
+466	83	1
+311	330	5
+381	181	1
+361	143	1
+11	485	5
+41	241	2
+21	489	5
+232	478	1
+361	311	4
+192	366	1
+14	490	2
+465	267	2
+28	389	2
+482	491	3
+208	252	5
+119	280	2
+47	185	1
+16	343	3
+401	281	3
+55	117	2
+212	430	4
+359	290	5
+299	431	4
+216	467	5
+371	313	2
+427	436	5
+222	17	4
+289	195	1
+387	301	1
+171	300	5
+388	87	1
+139	410	3
+2	282	5
+174	301	5
+252	360	1
+188	110	1
+356	287	2
+349	432	1
+44	82	2
+430	67	1
+147	46	4
+214	153	4
+419	366	2
+363	192	4
+452	231	4
+406	76	3
+286	496	4
+382	107	2
+136	263	1
+229	434	5
+33	464	2
+19	106	4
+197	182	5
+321	500	5
+313	188	2
+205	111	5
+473	495	4
+376	331	2
+18	261	2
+182	275	1
+328	39	5
+205	427	4
+140	300	1
+50	102	5
+198	201	2
+267	446	4
+215	148	1
+357	348	1
+199	92	3
+99	324	5
+411	290	1
+359	437	4
+149	106	3
+60	421	2
+116	428	5
+491	466	5
+108	236	5
+238	483	4
+7	193	4
+62	415	1
+25	24	4
+267	247	2
+115	221	3
+176	363	5
+98	460	5
+466	15	5
+474	159	4
+280	405	4
+162	445	3
+455	493	5
+234	73	5
+451	36	3
+366	332	3
+381	388	3
+319	219	4
+100	25	4
+448	490	2
+244	409	5
+388	124	4
+387	27	5
+423	284	2
+306	295	3
+161	166	4
+353	365	2
+348	93	5
+407	260	5
+190	307	5
+219	475	5
+291	49	2
+325	176	5
+433	2	4
+216	370	1
+388	379	4
+498	32	2
+210	18	4
+481	272	2
+113	217	2
+469	222	4
+134	94	1
+31	256	5
+260	171	2
+470	300	5
+90	128	1
+76	253	4
+48	110	4
+105	313	4
+372	186	4
+244	167	5
+332	355	5
+438	483	2
+347	466	1
+322	133	5
+171	243	4
+62	270	3
+137	496	3
+286	380	1
+443	417	5
+371	428	4
+114	227	5
+21	303	3
+169	79	2
+325	202	5
+283	488	3
+394	98	5
+440	323	3
+6	390	2
+457	30	1
+324	361	2
+493	261	5
+249	141	5
+74	367	5
+392	427	4
+76	266	2
+385	311	3
+38	122	2
+418	132	2
+230	404	1
+266	461	5
+24	302	1
+352	381	1
+240	42	5
+41	290	5
+257	458	3
+406	258	1
+265	314	4
+393	482	2
+368	10	5
+48	425	4
+152	233	4
+263	274	2
+317	48	5
+283	179	1
+201	248	2
+218	20	4
+421	178	2
+244	25	3
+289	394	3
+210	401	4
+225	82	4
+333	116	4
+94	492	2
+37	305	5
+180	286	2
+300	141	2
+153	126	1
+469	314	1
+167	195	5
+120	115	2
+125	404	4
+247	118	5
+415	118	5
+393	255	5
+34	259	5
+67	244	4
+151	230	5
+482	400	3
+472	309	1
+39	176	5
+290	300	3
+175	14	1
+283	400	3
+350	335	4
+240	209	3
+53	218	3
+353	59	4
+349	352	2
+498	299	1
+287	401	2
+496	310	4
+436	203	5
+360	379	2
+50	402	2
+464	485	1
+333	168	4
+138	51	1
+39	162	4
+126	153	3
+63	242	1
+441	141	2
+303	121	4
+32	31	4
+209	419	5
+290	147	1
+382	399	5
+173	412	1
+2	446	4
+295	234	4
+140	163	4
+148	67	1
+184	204	4
+310	152	1
+252	225	3
+114	336	1
+428	377	2
+386	237	1
+446	341	1
+356	254	1
+263	454	3
+410	303	5
+342	445	4
+187	455	2
+205	121	4
+392	321	4
+15	378	2
+380	260	4
+395	187	3
+396	86	5
+132	421	4
+370	233	1
+354	420	2
+46	130	2
+64	322	4
+86	384	3
+499	161	2
+261	192	5
+288	434	4
+448	325	2
+476	370	5
+178	187	2
+287	183	5
+92	165	4
+407	26	4
+159	264	4
+461	432	4
+456	101	2
+328	456	5
+378	430	3
+334	401	1
+194	152	3
+380	307	4
+110	230	5
+473	235	1
+469	158	4
+232	409	5
+490	27	3
+227	24	3
+84	469	4
+445	53	3
+324	112	5
+69	344	1
+487	150	4
+348	156	5
+493	116	1
+78	409	2
+88	414	5
+160	133	3
+231	58	5
+219	442	1
+114	370	3
+16	225	1
+77	65	4
+220	334	4
+203	460	2
+271	303	1
+63	155	2
+335	55	1
+271	239	5
+485	68	2
+188	396	3
+188	321	3
+421	382	5
+76	430	3
+30	257	2
+99	47	5
+92	359	3
+379	42	4
+350	437	1
+158	241	2
+117	93	3
+331	86	1
+288	436	3
+454	131	3
+472	226	3
+60	70	2
+233	272	3
+289	9	3
+204	252	2
+151	101	1
+462	467	1
+229	36	5
+246	161	1
+281	87	4
+260	10	3
+369	54	5
+40	262	2
+222	424	2
+467	332	2
+369	157	3
+471	327	3
+281	364	1
+216	141	2
+214	204	4
+118	240	4
+30	193	3
+377	111	2
+39	404	4
+189	457	3
+153	483	4
+11	265	1
+258	469	5
+425	406	4
+480	446	3
+450	465	2
+260	28	5
+351	94	4
+316	155	3
+34	86	5
+163	363	4
+153	158	3
+476	95	3
+482	168	2
+202	468	1
+499	114	1
+331	464	3
+31	429	2
+76	397	4
+327	145	3
+351	304	3
+6	364	5
+127	31	3
+263	341	5
+71	341	3
+494	230	3
+322	180	2
+57	172	1
+387	119	5
+83	283	5
+230	491	4
+289	308	5
+108	329	1
+72	97	5
+363	382	3
+219	191	5
+362	56	2
+105	205	5
+198	349	4
+208	48	1
+487	6	2
+79	97	5
+122	50	5
+50	253	1
+40	365	3
+452	334	4
+195	188	2
+71	297	3
+279	382	3
+212	175	3
+32	396	5
+278	368	2
+437	287	5
+431	376	5
+245	15	1
+269	13	1
+439	428	4
+449	121	3
+435	201	1
+163	31	5
+427	183	4
+56	185	5
+15	374	2
+401	385	2
+351	298	2
+498	334	2
+148	335	1
+79	16	4
+68	246	3
+383	72	5
+425	324	1
+411	219	3
+317	8	5
+487	268	1
+119	26	4
+166	96	5
+204	330	2
+428	211	4
+295	65	1
+173	280	1
+429	87	4
+178	16	2
+21	109	5
+255	93	1
+305	68	5
+91	114	1
+20	477	5
+92	126	5
+465	301	1
+468	311	3
+198	192	1
+217	366	3
+117	23	5
+272	152	3
+8	371	1
+378	370	3
+335	309	4
+248	224	3
+101	334	5
+476	48	1
+431	386	2
+110	223	2
+231	13	5
+97	417	4
+184	256	4
+106	203	1
+414	49	1
+44	471	5
+172	82	1
+283	442	4
+78	243	1
+139	422	2
+439	83	5
+352	228	4
+407	94	4
+17	479	5
+73	422	2
+379	16	2
+464	459	1
+416	318	2
+193	371	2
+319	393	3
+427	221	3
+281	213	2
+374	267	5
+328	270	1
+7	5	4
+426	86	4
+341	364	5
+227	270	4
+310	200	5
+371	69	1
+384	379	2
+45	378	2
+444	195	4
+226	272	3
+275	391	1
+182	455	5
+374	309	4
+71	436	4
+274	199	5
+270	135	4
+203	157	5
+90	130	5
+380	469	1
+474	186	1
+388	433	3
+461	482	1
+342	191	4
+8	277	1
+13	430	4
+396	440	4
+442	461	5
+446	210	4
+235	266	4
+24	376	4
+384	435	2
+273	435	1
+50	405	3
+123	22	2
+3	158	2
+308	285	4
+2	182	3
+69	20	3
+100	261	1
+184	284	4
+354	77	4
+264	17	3
+458	94	4
+494	460	5
+161	453	5
+63	366	2
+68	394	4
+112	386	1
+269	15	4
+169	402	5
+314	166	1
+71	119	2
+262	19	3
+369	172	4
+270	102	4
+149	124	5
+427	253	2
+500	337	3
+151	69	5
+236	115	5
+301	326	3
+448	18	1
+370	425	1
+118	469	5
+96	340	3
+166	486	1
+185	424	3
+167	62	2
+263	297	4
+406	500	5
+116	162	5
+424	239	4
+265	439	3
+22	67	3
+163	384	1
+56	334	4
+433	311	5
+382	406	2
+99	449	5
+269	116	2
+397	426	4
+297	5	1
+188	350	4
+279	484	4
+484	243	5
+86	359	2
+287	293	3
+387	73	5
+47	298	3
+134	429	1
+146	147	1
+324	390	4
+40	214	4
+130	154	5
+134	31	2
+141	358	1
+7	448	3
+329	500	5
+29	181	4
+329	88	5
+383	260	4
+396	174	4
+285	100	5
+469	69	2
+382	320	1
+125	436	5
+74	498	1
+182	360	5
+35	358	5
+361	266	5
+470	94	3
+276	250	5
+90	299	1
+357	226	4
+237	322	4
+62	405	3
+110	366	3
+361	406	5
+313	266	2
+121	14	5
+415	406	4
+153	383	1
+277	429	5
+397	72	1
+463	176	3
+409	305	5
+250	484	3
+339	79	5
+204	342	3
+138	494	1
+23	443	2
+71	98	1
+250	397	2
+329	143	2
+196	39	2
+198	456	2
+446	22	4
+400	406	5
+279	447	5
+409	261	5
+242	57	2
+115	211	3
+482	382	4
+401	292	4
+169	394	4
+336	144	3
+252	84	5
+230	428	2
+116	335	1
+343	135	3
+339	201	4
+154	95	1
+333	32	4
+86	155	5
+262	226	1
+437	40	3
+447	392	3
+218	113	1
+154	302	1
+462	330	4
+51	242	2
+66	70	2
+138	3	4
+379	197	4
+500	492	5
+419	84	5
+241	120	4
+294	331	4
+369	288	4
+20	342	5
+48	51	5
+13	72	5
+474	99	5
+134	233	3
+274	344	4
+137	336	5
+485	471	2
+54	113	5
+436	135	5
+283	42	2
+344	312	2
+315	307	4
+368	95	2
+133	329	2
+77	338	4
+88	440	2
+436	107	5
+431	237	1
+315	120	3
+227	148	1
+40	372	1
+83	39	1
+500	198	2
+37	325	3
+345	164	1
+119	143	3
+424	175	4
+399	195	3
+102	202	2
+90	308	1
+440	151	4
+313	493	2
+319	155	1
+231	484	2
+474	401	5
+105	441	1
+91	235	4
+369	434	4
+382	120	1
+481	441	2
+476	413	1
+338	4	1
+443	267	4
+330	129	5
+32	237	5
+166	414	2
+414	415	4
+480	91	4
+101	495	3
+36	268	5
+62	498	5
+321	88	5
+99	62	5
+436	187	3
+245	48	1
+83	54	3
+138	397	1
+304	86	3
+411	346	2
+321	310	2
+123	7	5
+310	399	4
+121	218	1
+41	187	1
+122	403	4
+202	321	5
+387	425	4
+410	407	1
+77	492	1
+242	162	5
+237	348	1
+225	434	1
+147	221	4
+367	60	5
+19	292	4
+95	54	1
+373	316	5
+369	438	3
+260	443	2
+12	160	2
+240	362	4
+196	384	3
+307	374	4
+391	85	1
+358	4	2
+467	99	2
+369	30	4
+149	431	3
+51	496	5
+482	325	1
+214	160	4
+347	371	2
+271	473	1
+60	373	1
+319	402	4
+268	28	2
+434	166	3
+164	246	4
+396	403	1
+11	402	2
+408	72	2
+268	158	4
+363	40	2
+156	284	4
+424	348	2
+81	291	4
+474	210	3
+120	121	3
+122	404	4
+214	339	4
+308	112	5
+413	106	1
+218	486	3
+143	406	4
+224	314	5
+304	472	1
+88	257	4
+199	444	3
+303	134	1
+344	157	4
+493	202	5
+173	374	1
+88	466	1
+336	440	3
+232	5	1
+276	442	5
+165	35	3
+328	117	2
+242	246	1
+73	157	3
+314	162	3
+152	378	2
+393	390	1
+297	117	1
+152	374	5
+9	39	1
+247	451	2
+341	285	1
+399	378	3
+494	405	1
+344	219	1
+147	263	1
+486	88	4
+456	183	4
+240	437	2
+357	391	2
+274	407	1
+131	151	3
+377	166	2
+82	242	4
+112	180	4
+405	157	4
+335	330	2
+65	345	5
+279	72	3
+419	326	2
+494	45	5
+23	428	2
+132	242	1
+352	487	2
+253	404	4
+381	405	5
+12	445	2
+280	435	4
+334	406	4
+202	377	1
+411	199	5
+128	258	2
+150	417	3
+185	361	1
+432	489	5
+355	219	2
+458	70	2
+195	352	3
+369	150	3
+456	92	4
+246	305	3
+148	68	5
+86	474	1
+71	89	4
+413	440	4
+485	141	4
+176	404	2
+472	218	4
+184	38	2
+314	255	1
+307	142	3
+39	382	2
+314	385	3
+265	233	5
+337	392	1
+463	400	1
+291	78	4
+330	498	4
+353	18	3
+421	302	2
+356	353	1
+379	160	2
+263	97	3
+11	224	2
+18	211	3
+65	488	5
+319	7	2
+33	58	5
+49	312	2
+329	118	2
+316	438	2
+145	253	1
+396	119	3
+476	201	4
+334	450	1
+303	10	5
+429	294	3
+320	307	2
+278	268	1
+90	376	2
+16	335	3
+454	170	3
+68	294	5
+489	58	5
+9	149	2
+344	266	5
+427	294	4
+85	400	5
+285	29	2
+270	104	5
+31	78	3
+361	183	2
+328	208	1
+254	152	3
+456	448	5
+143	475	1
+88	263	5
+174	197	5
+273	229	4
+390	439	5
+223	62	3
+107	432	2
+173	234	1
+253	119	4
+144	188	1
+91	165	5
+249	144	4
+278	418	2
+76	470	5
+472	426	5
+45	170	3
+417	413	3
+69	483	4
+304	255	2
+258	193	2
+160	142	1
+139	322	1
+283	147	2
+462	267	2
+133	312	1
+99	292	3
+29	136	1
+88	9	3
+169	419	5
+181	257	3
+91	330	5
+318	357	3
+102	278	1
+52	54	3
+400	420	2
+357	386	2
+334	12	5
+140	349	2
+486	493	3
+39	56	5
+125	429	1
+488	78	4
+395	55	1
+372	394	1
+284	413	4
+116	449	2
+260	218	3
+74	483	5
+164	9	5
+13	12	1
+334	417	2
+140	56	2
+482	90	4
+378	19	3
+58	295	2
+412	406	3
+372	498	5
+345	341	3
+65	400	4
+448	76	3
+72	222	1
+164	232	1
+20	356	3
+170	484	5
+379	40	3
+112	226	4
+147	119	3
+423	381	4
+141	247	3
+140	81	3
+108	446	4
+167	477	3
+122	382	5
+33	65	4
+302	438	3
+311	195	1
+40	498	2
+398	182	4
+255	39	3
+91	317	2
+260	184	1
+295	197	1
+172	5	3
+394	275	5
+28	132	1
+305	300	3
+17	56	3
+298	27	1
+345	232	1
+82	3	5
+349	52	4
+166	106	4
+23	269	2
+111	87	1
+329	450	2
+181	110	1
+45	165	3
+55	134	4
+310	13	4
+175	236	4
+56	457	4
+155	45	1
+166	326	5
+110	364	3
+158	424	3
+257	127	3
+75	84	1
+55	404	1
+253	247	3
+309	50	1
+151	189	3
+85	339	5
+473	148	4
+398	369	3
+455	201	2
+292	348	2
+305	412	2
+193	255	3
+405	271	2
+450	332	3
+237	9	2
+253	232	1
+29	275	2
+1	147	3
+373	197	3
+433	150	2
+209	66	2
+349	130	3
+456	459	3
+228	159	3
+453	207	2
+374	224	4
+244	321	4
+337	28	5
+110	490	1
+336	428	3
+260	398	5
+17	35	4
+422	313	2
+427	313	3
+271	461	3
+188	146	4
+273	155	1
+293	364	5
+259	94	2
+325	147	3
+138	404	4
+432	207	3
+159	52	1
+100	407	5
+343	2	5
+265	246	1
+116	215	4
+54	482	2
+246	54	3
+267	136	4
+392	245	4
+445	159	2
+359	101	2
+471	167	1
+232	49	1
+459	132	1
+43	395	3
+431	269	2
+141	253	5
+132	122	2
+22	372	4
+14	487	1
+71	125	4
+131	286	1
+95	412	4
+106	208	5
+174	68	1
+471	457	2
+464	463	4
+74	305	5
+443	92	3
+81	469	5
+414	312	1
+63	460	2
+460	361	1
+195	405	4
+369	233	1
+342	448	3
+416	358	2
+437	235	1
+255	352	4
+336	178	3
+431	382	5
+475	120	2
+474	221	1
+32	123	5
+179	454	1
+236	153	2
+446	336	5
+126	124	1
+418	464	3
+287	214	2
+380	304	5
+232	186	3
+421	315	5
+69	429	5
+121	265	3
+402	265	2
+493	115	1
+90	65	1
+118	356	1
+248	353	1
+93	23	5
+116	425	4
+133	120	3
+478	239	4
+312	194	3
+115	163	3
+97	124	5
+242	11	5
+281	227	4
+253	210	5
+261	210	4
+62	325	2
+484	416	3
+127	239	2
+291	234	4
+236	155	5
+364	482	3
+95	286	5
+492	266	2
+396	195	3
+340	170	5
+439	292	2
+357	411	1
+332	293	2
+315	97	2
+333	348	4
+326	102	1
+422	52	3
+456	381	3
+425	370	3
+104	444	2
+280	121	2
+331	432	3
+46	436	2
+74	363	3
+360	213	1
+212	58	2
+132	169	4
+357	142	4
+401	329	4
+397	121	4
+339	133	1
+197	465	3
+370	209	5
+184	495	5
+495	29	5
+491	2	1
+261	238	3
+366	12	5
+223	56	1
+309	370	2
+243	319	3
+358	262	2
+472	378	1
+2	141	4
+376	61	3
+352	43	4
+367	109	1
+394	222	4
+334	115	4
+425	436	2
+277	312	4
+201	270	1
+258	393	3
+134	198	5
+424	370	3
+481	124	3
+485	193	4
+89	337	4
+493	321	4
+22	477	2
+93	231	1
+222	477	5
+84	465	4
+339	329	3
+493	417	3
+148	170	4
+181	356	1
+441	388	4
+390	459	5
+274	456	5
+142	228	2
+90	350	3
+111	462	3
+356	283	1
+448	270	1
+476	200	5
+188	219	5
+399	163	4
+123	478	3
+340	291	5
+104	105	5
+190	409	5
+385	345	1
+268	391	3
+67	415	1
+256	470	4
+322	432	2
+400	222	3
+298	168	5
+414	78	2
+151	180	4
+48	228	3
+128	219	3
+3	265	4
+62	243	4
+347	34	2
+429	279	2
+464	267	2
+5	467	4
+264	231	2
+381	108	4
+386	301	1
+345	39	3
+384	75	5
+435	477	2
+130	283	1
+469	66	4
+120	105	5
+326	256	5
+186	464	4
+232	85	2
+150	397	4
+350	171	4
+353	23	3
+197	317	1
+500	190	2
+51	52	5
+291	222	3
+49	121	2
+122	34	1
+301	365	5
+60	344	1
+382	155	5
+349	291	2
+35	273	1
+197	224	5
+140	412	1
+318	356	3
+184	280	2
+284	195	3
+400	201	1
+413	204	3
+394	417	5
+205	346	3
+165	31	2
+190	147	3
+338	152	2
+315	62	4
+95	291	3
+233	310	5
+289	100	4
+444	233	1
+245	202	2
+214	121	4
+277	135	4
+216	439	4
+462	206	5
+486	387	2
+342	158	4
+253	462	3
+46	144	1
+277	383	4
+336	159	1
+361	161	1
+244	335	2
+474	192	1
+323	403	1
+469	435	1
+221	228	5
+165	330	2
+161	42	5
+484	104	3
+480	411	1
+69	348	1
+105	176	3
+397	329	2
+453	186	4
+220	381	1
+314	367	3
+298	66	2
+378	209	3
+449	212	1
+381	105	3
+267	172	1
+259	52	1
+15	222	3
+325	332	2
+205	67	2
+18	400	4
+149	36	4
+185	232	1
+262	308	5
+8	256	5
+32	350	4
+447	301	5
+278	481	2
+372	268	3
+147	38	2
+360	277	5
+466	233	1
+463	325	3
+402	191	1
+361	269	5
+72	297	1
+312	403	5
+388	114	5
+211	429	5
+103	91	2
+175	18	3
+284	186	5
+355	329	2
+260	254	4
+390	483	1
+445	49	2
+485	354	3
+327	96	3
+403	216	1
+208	263	3
+243	149	3
+365	283	1
+201	230	1
+178	17	3
+418	136	5
+215	237	4
+276	121	2
+488	128	1
+245	153	3
+257	237	4
+169	311	5
+32	401	3
+377	187	5
+356	459	2
+291	339	4
+88	25	5
+107	157	1
+187	94	5
+269	417	5
+130	241	2
+32	227	2
+40	128	3
+63	390	1
+5	76	4
+106	494	3
+134	219	4
+233	491	3
+352	316	5
+163	224	3
+241	226	4
+473	257	4
+99	463	2
+260	43	4
+197	285	4
+127	85	1
+266	32	3
+486	221	5
+65	64	5
+408	499	3
+17	372	2
+52	494	1
+201	247	3
+94	210	2
+431	256	3
+240	372	3
+428	499	4
+363	232	4
+410	80	5
+488	347	4
+57	183	5
+435	82	2
+129	488	1
+5	307	2
+319	186	2
+229	140	2
+300	498	2
+18	370	2
+354	248	3
+252	263	3
+106	102	3
+319	227	1
+409	296	1
+416	384	2
+34	475	1
+393	431	2
+378	383	3
+152	419	2
+229	411	2
+21	214	2
+17	312	4
+129	177	1
+461	317	4
+64	468	4
+294	289	5
+148	284	4
+230	125	5
+487	482	5
+225	258	1
+311	337	3
+43	220	2
+349	83	4
+362	184	4
+56	88	5
+346	493	4
+340	386	1
+346	497	2
+78	67	1
+435	417	4
+123	13	1
+408	4	1
+352	372	5
+59	424	4
+208	399	2
+469	407	5
+300	28	4
+477	286	4
+9	464	1
+94	94	5
+188	18	2
+131	31	1
+22	80	4
+272	271	2
+294	442	4
+225	191	5
+79	244	2
+76	158	4
+468	446	3
+190	252	1
+269	431	1
+481	142	1
+156	424	3
+469	363	4
+200	19	5
+176	263	5
+485	332	5
+366	157	1
+127	388	4
+267	450	4
+64	295	5
+463	465	1
+450	182	1
+156	384	5
+324	449	4
+392	391	4
+219	215	2
+357	436	5
+388	277	4
+6	7	5
+309	231	5
+239	249	5
+37	354	3
+475	449	4
+152	393	4
+434	29	5
+454	431	4
+408	369	1
+276	187	4
+128	446	4
+223	42	5
+48	69	2
+342	216	2
+59	37	1
+489	404	4
+452	154	5
+404	474	3
+48	361	4
+101	299	5
+376	398	4
+252	454	5
+327	79	2
+99	418	3
+152	441	5
+339	229	2
+328	261	5
+308	111	2
+168	470	2
+13	77	3
+287	194	2
+370	281	4
+420	153	2
+439	341	2
+181	473	3
+276	345	3
+486	290	3
+53	23	3
+361	375	2
+126	107	2
+73	383	4
+252	284	5
+94	285	5
+38	403	4
+275	302	5
+115	210	1
+364	295	3
+151	467	1
+98	456	5
+278	412	3
+201	99	3
+146	490	5
+487	234	4
+296	284	3
+30	183	4
+369	367	2
+114	90	2
+451	240	1
+50	414	1
+17	47	1
+106	6	3
+117	52	4
+415	193	5
+367	195	1
+344	465	4
+341	200	2
+28	385	2
+470	417	3
+407	108	1
+222	253	5
+130	370	4
+59	331	5
+157	67	1
+63	214	3
+295	372	3
+428	325	2
+288	105	4
+496	428	4
+456	232	4
+287	312	1
+313	84	5
+53	68	5
+76	398	4
+14	369	5
+213	55	4
+356	295	5
+145	207	3
+137	244	3
+135	193	2
+92	281	3
+256	347	4
+17	138	2
+56	257	5
+33	244	4
+221	357	1
+327	122	1
+360	110	2
+485	357	4
+117	382	3
+341	40	1
+303	480	3
+230	255	1
+321	402	3
+65	346	1
+391	382	3
+383	139	4
+116	260	5
+110	330	4
+187	254	3
+147	148	3
+53	285	5
+237	33	4
+23	384	1
+268	258	4
+340	333	1
+363	300	4
+170	270	2
+249	429	5
+309	344	3
+381	442	2
+116	500	3
+86	389	3
+191	481	1
+73	472	2
+190	240	3
+61	117	3
+348	327	5
+190	90	4
+337	135	3
+469	45	4
+15	200	5
+156	235	2
+110	391	1
+57	407	1
+49	479	5
+221	117	1
+249	232	3
+228	489	4
+247	395	3
+308	353	1
+374	135	1
+301	51	3
+234	410	4
+188	273	3
+72	288	5
+395	404	1
+366	182	4
+284	66	1
+135	295	2
+455	171	4
+124	404	2
+179	495	3
+428	113	4
+91	194	4
+231	402	4
+280	89	3
+387	148	4
+309	201	4
+267	131	2
+111	337	2
+343	447	2
+258	425	2
+420	320	3
+334	488	5
+89	328	3
+121	276	1
+273	283	5
+195	281	4
+6	377	4
+143	446	5
+227	113	5
+409	365	2
+369	382	3
+203	85	2
+370	67	1
+336	44	4
+39	293	2
+130	395	1
+125	160	3
+284	392	5
+308	115	4
+341	15	4
+72	306	2
+355	500	2
+152	269	1
+134	16	1
+37	410	2
+38	167	4
+430	176	1
+36	495	2
+482	373	1
+325	164	4
+266	31	4
+408	409	1
+82	99	4
+149	144	3
+413	127	4
+175	163	1
+267	490	2
+351	484	3
+317	147	5
+463	23	4
+370	300	3
+380	433	2
+350	471	2
+318	77	4
+242	174	4
+230	305	1
+278	160	2
+470	134	4
+50	166	3
+270	68	2
+364	43	5
+184	221	2
+477	392	5
+129	77	2
+473	442	3
+348	451	5
+327	192	3
+345	350	3
+19	300	1
+371	106	5
+83	200	4
+213	313	5
+340	281	1
+378	197	1
+144	238	5
+78	26	2
+173	291	2
+14	367	2
+80	257	4
+371	119	2
+495	288	3
+30	138	1
+112	120	4
+442	40	3
+491	278	1
+256	138	5
+323	324	1
+417	324	4
+367	229	2
+143	423	5
+14	106	2
+292	178	4
+31	35	1
+251	168	4
+199	76	3
+51	297	4
+336	52	1
+89	336	2
+123	452	2
+489	234	4
+216	324	1
+2	44	1
+298	86	1
+241	455	5
+272	167	1
+385	66	4
+202	197	3
+42	309	2
+219	370	1
+343	107	5
+330	327	2
+86	439	1
+266	436	5
+59	16	2
+317	332	2
+106	147	3
+297	149	3
+295	437	2
+176	408	2
+131	53	2
+457	411	1
+472	228	3
+337	247	3
+241	155	3
+409	413	4
+195	277	1
+83	218	2
+114	276	4
+244	14	4
+117	46	4
+140	435	1
+57	148	2
+43	280	1
+411	7	2
+380	271	1
+261	228	4
+146	274	3
+67	152	4
+281	18	4
+281	208	4
+289	261	3
+302	477	1
+359	429	2
+489	83	3
+112	255	2
+369	160	4
+282	467	5
+353	21	5
+87	403	4
+214	187	3
+427	229	2
+84	289	1
+235	102	4
+409	482	5
+74	497	2
+106	279	5
+458	496	1
+103	380	1
+181	248	4
+245	432	2
+417	17	2
+329	276	5
+228	22	1
+80	372	3
+360	198	4
+322	278	4
+89	451	1
+492	32	5
+137	490	5
+249	172	2
+327	462	2
+267	226	4
+124	345	4
+189	462	5
+433	466	1
+70	81	3
+121	479	5
+368	153	1
+495	16	2
+245	205	5
+242	82	5
+161	274	1
+326	445	3
+407	112	4
+86	237	1
+47	9	2
+153	498	4
+339	183	5
+470	401	1
+387	342	1
+446	30	2
+236	90	1
+424	200	3
+224	416	4
+204	107	1
+60	166	4
+352	135	1
+18	125	2
+356	34	1
+243	14	4
+197	138	4
+488	297	1
+19	360	4
+478	383	5
+302	289	2
+334	407	3
+264	200	2
+172	395	5
+79	258	4
+476	233	2
+89	441	2
+107	88	5
+144	464	2
+34	33	1
+57	80	3
+444	484	2
+340	2	4
+410	393	5
+367	319	2
+76	297	4
+63	149	1
+293	85	3
+216	199	3
+114	376	4
+140	262	1
+383	408	4
+77	222	5
+430	289	5
+191	414	1
+22	484	2
+208	40	2
+244	332	3
+372	422	1
+420	163	4
+348	385	4
+13	80	4
+102	166	1
+278	58	4
+227	105	1
+176	170	3
+388	267	2
+423	317	5
+117	300	1
+38	300	2
+304	442	4
+169	376	2
+168	61	1
+7	133	4
+365	209	1
+432	41	1
+344	131	1
+240	357	5
+265	155	4
+79	251	4
+239	367	3
+354	90	5
+259	486	3
+451	33	3
+38	222	2
+28	268	3
+413	391	1
+287	437	2
+446	440	4
+468	375	1
+258	109	5
+54	289	3
+450	113	5
+371	484	1
+167	494	4
+222	317	3
+33	304	5
+134	419	1
+486	38	1
+60	354	4
+407	219	1
+351	99	5
+101	277	4
+166	311	5
+367	208	5
+496	435	3
+198	16	5
+484	213	2
+149	4	4
+140	363	1
+126	45	4
+431	391	3
+169	204	3
+411	47	5
+109	7	4
+111	163	4
+376	31	3
+455	60	2
+239	193	2
+6	434	2
+427	254	3
+78	117	5
+242	499	2
+257	368	5
+83	468	5
+334	451	4
+73	480	1
+88	156	3
+99	458	5
+309	205	5
+122	370	3
+318	70	2
+287	220	1
+430	361	3
+12	70	5
+342	80	5
+222	376	1
+188	440	3
+371	450	1
+455	96	2
+206	468	2
+79	105	2
+394	130	2
+361	299	4
+359	354	3
+139	471	3
+147	322	5
+108	149	5
+318	256	2
+53	222	5
+42	493	3
+42	52	1
+432	254	1
+315	370	5
+470	17	1
+4	200	5
+291	94	4
+87	3	2
+403	468	2
+471	448	3
+443	280	4
+203	466	2
+167	294	1
+184	451	1
+267	497	3
+354	320	1
+224	62	5
+125	410	3
+41	426	5
+397	163	1
+425	292	3
+341	463	3
+460	95	5
+481	433	1
+382	288	3
+236	232	1
+221	258	4
+383	104	3
+421	242	4
+329	350	1
+437	377	5
+206	66	2
+309	75	5
+73	441	2
+500	209	5
+382	435	2
+55	163	1
+30	312	1
+105	167	5
+414	82	4
+268	68	3
+378	400	1
+273	490	3
+262	115	2
+217	482	5
+264	313	2
+113	448	1
+364	171	3
+309	238	3
+452	316	4
+353	180	4
+321	135	3
+322	126	1
+286	342	1
+13	263	4
+413	310	4
+35	95	3
+452	150	1
+167	442	3
+309	485	3
+23	45	5
+126	95	2
+328	205	2
+272	82	4
+227	199	4
+406	63	2
+373	326	5
+192	348	4
+177	159	3
+361	412	4
+469	262	1
+315	304	2
+298	409	2
+283	401	4
+10	138	1
+163	134	5
+255	311	1
+113	377	4
+395	462	3
+490	413	1
+64	263	1
+469	447	5
+370	310	1
+329	147	2
+307	17	1
+162	326	2
+9	218	1
+240	474	1
+108	269	4
+250	34	4
+194	240	4
+210	182	5
+138	131	2
+453	69	4
+201	123	1
+294	441	4
+112	7	3
+344	72	2
+283	119	5
+157	40	1
+111	287	3
+428	485	3
+230	467	4
+252	419	3
+402	371	5
+305	156	1
+406	343	5
+93	169	4
+128	3	3
+37	22	3
+350	205	5
+190	192	1
+420	216	1
+245	102	3
+36	120	5
+293	119	3
+320	416	1
+422	499	2
+397	332	1
+187	309	4
+394	46	4
+118	436	2
+113	484	4
+98	466	4
+54	37	4
+103	447	4
+416	159	2
+143	269	2
+215	320	1
+12	84	4
+438	306	2
+417	497	5
+208	43	4
+150	362	5
+497	211	2
+471	63	3
+497	158	2
+419	248	5
+279	17	4
+500	72	3
+365	460	2
+236	393	3
+154	410	4
+32	247	2
+332	381	5
+328	114	4
+260	391	4
+82	93	2
+399	289	3
+419	59	5
+304	140	4
+286	388	3
+449	129	4
+471	362	4
+451	376	2
+177	208	2
+464	117	1
+68	5	1
+422	225	2
+386	328	1
+219	367	3
+245	208	5
+453	403	5
+65	305	4
+457	434	5
+42	153	4
+412	315	5
+403	123	4
+200	364	2
+159	499	1
+411	10	1
+404	92	4
+65	371	5
+299	389	1
+342	175	3
+16	396	3
+316	290	1
+182	336	1
+70	298	4
+124	249	5
+485	448	1
+142	307	3
+333	68	5
+76	115	2
+363	202	1
+378	20	4
+65	198	5
+445	424	5
+128	2	3
+269	191	4
+295	212	3
+159	122	5
+92	130	5
+53	354	1
+443	273	1
+474	425	3
+187	427	1
+196	417	2
+33	128	2
+258	92	4
+214	182	1
+457	173	5
+413	48	3
+95	173	3
+86	246	3
+102	58	1
+424	283	1
+239	151	4
+234	88	1
+127	308	3
+227	245	2
+184	417	2
+278	302	1
+59	379	4
+492	193	3
+20	282	3
+207	233	5
+299	274	5
+426	164	5
+90	421	1
+104	140	2
+10	455	4
+348	84	4
+393	283	5
+417	310	2
+57	240	1
+432	102	5
+305	310	2
+306	180	2
+318	475	4
+357	455	3
+478	406	2
+217	103	4
+143	230	3
+36	332	5
+243	57	5
+480	499	4
+345	493	1
+45	13	1
+46	383	4
+174	78	1
+76	111	2
+231	44	5
+179	2	4
+221	469	3
+56	104	2
+474	419	1
+310	489	4
+365	380	1
+107	181	1
+280	337	3
+414	165	5
+50	325	2
+291	414	1
+2	308	1
+280	252	5
+36	448	3
+400	351	3
+233	228	5
+145	151	4
+256	137	3
+301	273	1
+484	293	3
+110	192	2
+138	140	5
+57	330	1
+441	176	3
+87	240	3
+308	136	2
+176	213	3
+232	83	5
+88	229	2
+234	194	2
+362	419	4
+448	193	1
+153	134	2
+498	116	1
+174	227	4
+160	477	4
+283	327	4
+326	303	2
+78	494	2
+107	367	4
+499	75	2
+471	196	2
+195	416	1
+292	210	1
+404	311	4
+185	376	5
+64	87	2
+21	164	2
+361	382	5
+270	353	4
+337	187	2
+408	264	3
+435	402	2
+25	7	4
+121	87	3
+352	257	5
+207	469	3
+333	290	3
+266	149	5
+150	175	5
+442	118	4
+407	250	3
+500	358	1
+56	63	4
+259	373	4
+34	70	2
+29	285	3
+362	423	1
+7	165	2
+383	500	1
+445	329	1
+255	274	5
+314	384	4
+406	466	4
+277	498	1
+271	16	5
+477	249	4
+224	321	2
+17	246	3
+83	458	2
+413	188	4
+399	470	3
+148	140	1
+385	95	1
+106	317	1
+338	224	1
+404	7	1
+262	232	4
+307	166	4
+23	160	5
+20	420	3
+262	416	1
+312	37	2
+137	473	5
+494	277	4
+320	219	1
+266	86	3
+117	206	3
+135	338	2
+296	486	2
+443	124	1
+129	266	3
+258	88	1
+447	288	1
+66	487	4
+484	128	2
+480	285	5
+444	107	2
+370	102	1
+43	146	1
+345	397	1
+178	135	3
+252	213	4
+42	183	3
+107	36	3
+57	168	3
+281	123	2
+491	462	4
+227	365	3
+128	43	5
+403	170	5
+60	361	4
+315	14	4
+231	189	3
+265	194	5
+438	118	5
+166	80	5
+230	56	1
+314	480	3
+233	6	2
+138	109	1
+361	112	1
+157	239	1
+51	257	5
+427	356	3
+413	393	1
+15	427	2
+126	466	1
+467	499	1
+191	471	1
+171	170	2
+75	182	2
+146	68	5
+7	369	2
+428	416	5
+39	157	2
+133	498	2
+71	264	3
+473	375	5
+237	248	5
+93	339	4
+226	288	2
+230	390	5
+28	485	3
+159	137	5
+62	334	2
+268	190	4
+229	231	5
+263	225	4
+339	415	2
+380	88	4
+148	14	5
+366	483	1
+367	191	3
+194	389	3
+474	472	1
+77	308	5
+448	294	4
+227	63	1
+157	272	2
+179	144	1
+470	356	2
+129	297	2
+270	366	2
+105	91	1
+294	372	5
+292	68	3
+397	152	1
+493	340	1
+484	408	3
+49	468	4
+183	226	5
+118	180	3
+240	456	1
+67	405	2
+60	33	4
+352	223	2
+305	484	4
+491	318	4
+454	292	5
+49	346	4
+248	443	5
+92	211	4
+332	418	4
+39	178	1
+411	434	1
+131	372	5
+288	310	1
+55	474	5
+115	362	4
+469	486	4
+350	497	5
+452	458	5
+396	478	5
+314	107	2
+431	294	2
+307	209	5
+287	299	4
+63	350	1
+245	135	2
+1	85	1
+427	131	3
+171	190	4
+461	474	3
+23	304	3
+363	313	3
+195	80	5
+163	427	5
+93	186	2
+419	368	1
+221	197	4
+403	394	3
+223	77	5
+370	43	3
+50	451	5
+51	495	3
+54	236	1
+111	189	3
+429	482	3
+105	86	3
+406	434	1
+472	423	3
+307	249	4
+51	269	3
+314	96	1
+209	308	1
+286	495	4
+235	173	2
+208	417	5
+184	350	1
+180	188	2
+187	316	1
+72	341	3
+210	296	1
+240	124	4
+101	239	5
+169	411	1
+383	90	2
+287	104	3
+266	118	5
+112	488	1
+311	361	5
+415	37	5
+121	84	2
+258	411	4
+210	178	4
+451	191	1
+325	40	2
+450	419	1
+422	418	5
+209	122	4
+274	390	4
+200	215	1
+430	65	2
+258	213	1
+238	447	4
+407	386	2
+225	374	3
+305	145	2
+302	81	5
+363	168	1
+207	174	1
+129	428	3
+274	325	1
+485	178	4
+94	299	3
+488	337	1
+198	67	1
+259	232	5
+418	92	4
+412	286	2
+193	375	2
+347	476	5
+190	230	5
+400	246	2
+385	195	2
+175	446	3
+243	424	2
+140	182	4
+50	100	1
+294	491	1
+385	361	2
+414	295	3
+375	189	5
+176	75	3
+465	150	1
+309	275	3
+274	332	3
+361	85	4
+312	247	3
+177	350	5
+498	5	2
+278	54	5
+343	401	3
+496	3	5
+143	449	3
+216	210	3
+400	350	4
+466	483	3
+417	370	1
+243	471	1
+20	173	4
+115	54	4
+175	149	3
+217	404	3
+256	489	3
+377	36	4
+293	78	3
+298	153	3
+408	473	1
+461	133	1
+76	342	5
+445	381	5
+49	466	3
+317	331	2
+444	203	4
+243	345	2
+99	401	5
+253	17	2
+479	197	2
+291	421	5
+478	218	1
+69	111	3
+47	188	5
+188	417	2
+326	206	3
+346	316	5
+444	366	5
+483	230	5
+492	493	2
+403	178	5
+318	490	1
+436	240	3
+407	256	5
+407	318	1
+379	466	4
+343	272	2
+104	219	1
+449	286	5
+253	234	4
+409	483	1
+284	23	1
+237	91	3
+5	367	1
+252	256	2
+55	37	4
+355	50	2
+249	309	1
+12	492	4
+168	494	1
+128	299	2
+283	361	2
+116	121	1
+158	87	2
+118	261	2
+286	378	1
+230	354	2
+231	455	2
+180	418	5
+84	194	1
+179	315	4
+440	93	3
+285	448	4
+474	148	2
+408	266	1
+461	73	3
+436	46	4
+277	442	5
+384	71	2
+99	1	4
+415	455	4
+123	368	5
+282	319	2
+70	319	4
+16	256	4
+433	264	5
+224	389	4
+442	177	3
+499	101	2
+166	267	1
+459	208	2
+227	484	3
+175	199	4
+430	278	5
+403	296	3
+190	98	3
+99	179	1
+90	85	1
+68	128	3
+212	157	4
+372	368	4
+398	54	5
+417	444	3
+290	2	3
+278	313	3
+235	39	3
+453	398	1
+113	57	2
+328	176	2
+295	183	1
+421	236	3
+178	86	5
+327	428	4
+148	40	5
+135	137	4
+352	478	3
+125	87	1
+412	281	5
+21	369	1
+258	351	1
+446	201	3
+158	256	3
+269	96	3
+197	448	3
+408	484	1
+29	188	4
+293	393	5
+43	453	2
+21	370	3
+56	56	3
+117	457	2
+25	106	3
+57	264	2
+423	26	5
+43	96	3
+432	186	4
+460	345	5
+452	21	5
+53	52	1
+62	475	4
+392	193	1
+49	269	1
+101	168	4
+326	476	5
+331	34	4
+126	288	3
+298	474	2
+3	470	5
+157	375	4
+206	203	3
+267	77	2
+193	203	4
+416	23	5
+277	395	1
+13	177	4
+421	78	4
+140	237	2
+418	443	4
+492	299	4
+105	436	1
+351	91	1
+372	108	4
+85	31	2
+193	111	5
+91	236	4
+176	95	5
+40	136	1
+293	215	4
+179	16	2
+157	422	2
+162	487	5
+125	72	5
+455	268	4
+46	369	2
+452	292	1
+86	447	3
+424	17	2
+459	121	5
+170	483	4
+231	346	5
+88	204	3
+208	331	5
+393	421	4
+356	154	2
+15	241	2
+156	301	3
+372	281	5
+5	435	4
+322	461	2
+218	187	1
+252	199	1
+150	448	4
+88	290	3
+42	376	3
+355	290	1
+234	371	3
+293	377	3
+271	411	2
+460	426	2
+433	172	5
+139	103	4
+337	17	2
+44	17	1
+456	385	3
+455	439	3
+216	74	3
+180	400	3
+57	110	1
+349	469	2
+119	326	4
+309	56	5
+143	246	4
+242	202	2
+177	398	3
+116	60	3
+487	417	1
+340	470	2
+498	173	2
+446	441	5
+366	85	4
+85	240	3
+147	498	1
+357	70	3
+209	489	4
+6	298	5
+61	72	1
+259	145	4
+435	352	5
+101	318	3
+203	118	2
+259	107	1
+13	205	3
+179	253	2
+163	55	5
+255	462	3
+272	192	2
+61	448	2
+428	183	2
+239	140	2
+473	18	1
+86	489	5
+356	43	2
+133	260	4
+331	20	4
+350	318	4
+479	350	4
+285	120	1
+475	280	5
+496	174	4
+220	60	1
+297	97	2
+48	460	5
+352	237	1
+290	206	1
+211	378	4
+454	100	4
+20	206	1
+415	27	5
+162	84	2
+174	388	5
+316	81	2
+82	494	2
+475	408	5
+38	495	1
+461	443	3
+20	407	5
+3	312	4
+265	353	5
+50	246	2
+171	60	1
+83	268	4
+147	186	2
+44	391	2
+139	75	4
+39	78	4
+71	65	4
+173	459	5
+173	181	4
+93	94	1
+96	126	4
+142	54	3
+442	195	3
+246	58	5
+438	156	1
+198	281	1
+130	257	5
+183	64	2
+446	242	3
+480	139	4
+170	148	3
+128	304	1
+39	229	2
+448	318	5
+229	474	1
+304	293	2
+358	438	4
+142	134	4
+303	372	2
+460	203	5
+483	62	5
+463	96	3
+315	193	3
+363	377	5
+189	446	3
+245	252	1
+453	424	4
+307	6	1
+69	323	1
+102	192	1
+1	27	2
+303	299	5
+335	139	2
+45	265	2
+14	322	2
+50	208	3
+333	204	5
+259	55	1
+144	479	2
+146	168	1
+434	359	2
+492	391	4
+374	27	5
+324	195	2
+424	449	1
+413	369	2
+192	429	4
+108	84	3
+154	235	3
+441	55	2
+46	428	2
+256	398	3
+68	141	1
+221	230	3
+457	136	5
+481	207	1
+179	365	5
+344	345	1
+434	232	3
+117	55	3
+73	18	4
+124	245	3
+412	408	4
+341	327	5
+326	2	3
+165	483	2
+434	413	2
+476	256	4
+89	52	1
+74	300	1
+421	493	5
+128	201	2
+409	167	3
+3	427	4
+69	40	1
+153	32	1
+106	500	2
+47	222	4
+31	444	2
+6	283	5
+81	60	3
+370	452	4
+299	95	5
+442	251	3
+362	306	5
+456	284	4
+446	227	1
+334	101	5
+301	282	4
+382	129	2
+310	183	1
+400	2	4
+32	363	2
+33	337	2
+190	377	1
+407	174	2
+82	444	5
+103	171	4
+270	216	2
+291	167	3
+20	485	3
+237	434	3
+433	329	4
+205	342	4
+316	198	1
+260	50	1
+22	5	1
+84	487	3
+447	466	4
+268	42	4
+116	304	2
+500	395	2
+345	36	2
+326	123	4
+496	427	4
+155	401	4
+350	389	2
+179	255	2
+214	464	2
+150	315	4
+416	199	4
+72	46	5
+206	315	2
+495	364	5
+275	368	2
+296	95	4
+269	298	5
+462	327	4
+111	444	4
+32	342	2
+500	270	2
+34	129	5
+473	458	5
+450	161	1
+408	24	3
+406	357	5
+238	440	3
+277	208	4
+358	396	4
+162	247	1
+212	119	5
+401	373	5
+407	95	3
+157	424	1
+62	118	5
+226	395	3
+362	174	1
+184	74	3
+293	67	4
+206	139	1
+451	238	2
+364	389	1
+318	37	4
+242	15	5
+194	491	2
+367	338	4
+439	450	5
+152	436	2
+358	158	4
+107	459	1
+203	130	1
+481	250	3
+144	313	4
+77	247	1
+29	324	3
+458	405	2
+460	417	3
+445	221	5
+452	306	3
+128	35	4
+6	6	5
+437	491	4
+97	345	5
+175	219	5
+235	348	1
+379	252	4
+382	210	4
+483	354	4
+146	278	4
+169	280	2
+224	9	1
+454	52	3
+293	156	2
+94	336	2
+178	277	1
+95	44	5
+43	122	1
+130	440	2
+460	100	2
+79	438	1
+361	353	1
+84	490	2
+278	290	2
+68	485	5
+110	9	3
+272	485	2
+477	273	5
+488	3	5
+496	15	1
+426	476	4
+474	449	1
+19	457	3
+338	489	5
+298	207	4
+231	76	3
+146	81	2
+337	288	3
+236	107	4
+361	185	2
+127	60	2
+230	22	3
+285	147	5
+96	64	5
+172	480	1
+487	489	5
+496	434	5
+255	144	4
+398	492	2
+371	463	5
+389	172	5
+213	431	4
+459	362	2
+85	366	5
+19	247	2
+367	17	2
+303	199	3
+491	82	4
+197	204	3
+404	320	3
+254	115	3
+204	209	1
+125	383	2
+218	352	2
+387	244	3
+261	148	3
+227	176	1
+472	9	4
+349	490	4
+163	435	2
+445	32	1
+20	94	4
+311	95	5
+437	148	1
+454	163	3
+72	36	4
+119	88	1
+419	210	2
+130	115	2
+21	251	4
+497	229	5
+1	432	3
+107	133	1
+280	354	2
+283	173	5
+290	341	4
+38	342	1
+461	274	3
+198	336	5
+405	3	5
+463	121	2
+15	203	3
+331	418	1
+271	286	3
+255	244	2
+249	393	1
+115	162	5
+317	245	1
+482	40	2
+73	134	2
+53	193	5
+264	350	2
+233	266	5
+223	251	3
+247	483	5
+252	310	4
+463	301	1
+361	96	5
+20	118	2
+127	169	5
+371	19	1
+472	111	4
+436	105	2
+4	481	5
+396	96	4
+436	266	4
+360	111	2
+61	362	2
+64	292	5
+301	8	4
+435	413	1
+31	244	1
+122	112	1
+191	373	4
+362	105	5
+139	245	4
+426	307	4
+402	44	4
+268	368	4
+232	154	2
+444	139	3
+394	415	2
+3	258	2
+399	383	1
+224	422	2
+69	342	3
+154	210	4
+474	91	1
+284	366	5
+338	344	3
+100	263	1
+117	98	5
+238	101	4
+365	497	2
+89	306	3
+406	396	5
+444	138	5
+448	220	2
+341	276	2
+78	194	2
+280	4	2
+247	148	3
+341	91	1
+329	360	3
+14	117	5
+109	407	2
+256	283	4
+425	326	3
+269	357	4
+2	57	4
+135	499	4
+254	480	2
+43	391	5
+177	120	1
+90	178	2
+440	179	5
+374	71	3
+60	287	2
+73	102	4
+378	162	1
+34	448	5
+459	171	3
+419	97	1
+348	492	4
+49	89	4
+264	441	4
+450	317	3
+146	113	3
+151	386	1
+351	253	3
+239	427	4
+90	208	4
+248	168	5
+66	156	4
+206	36	2
+113	176	4
+186	314	3
+199	473	5
+368	373	5
+279	359	5
+221	193	5
+170	27	1
+433	373	5
+306	438	3
+431	96	5
+457	453	5
+13	314	1
+381	142	4
+423	295	5
+226	357	5
+417	278	3
+499	202	4
+105	450	5
+38	84	5
+40	489	4
+19	227	1
+474	439	4
+67	369	3
+430	343	1
+387	393	1
+427	91	5
+426	378	3
+426	207	1
+421	166	5
+480	52	3
+384	254	2
+243	54	5
+447	22	3
+282	413	1
+373	221	3
+386	200	3
+276	307	3
+234	471	2
+466	182	5
+423	55	1
+206	107	2
+249	395	5
+307	427	5
+447	324	4
+77	134	5
+63	392	5
+401	82	4
+431	78	4
+459	66	4
+198	22	5
+33	320	2
+154	140	3
+405	418	3
+11	467	1
+253	113	2
+454	381	2
+190	237	3
+123	99	5
+58	403	2
+74	186	2
+124	199	3
+50	327	3
+70	23	2
+366	216	4
+327	361	5
+54	77	2
+413	392	3
+31	273	4
+311	214	5
+241	449	2
+275	484	5
+288	343	5
+322	184	2
+50	291	5
+424	316	2
+318	275	4
+284	259	3
+164	390	2
+458	372	1
+2	428	2
+354	158	1
+235	270	3
+301	224	2
+131	101	4
+128	148	1
+471	178	2
+280	175	4
+34	447	1
+376	284	1
+106	84	1
+190	17	2
+308	66	3
+436	259	2
+167	252	2
+173	312	1
+16	143	1
+267	94	2
+154	261	4
+372	150	1
+416	268	2
+203	60	3
+204	482	5
+123	196	1
+86	216	3
+39	425	5
+217	338	4
+293	307	2
+265	257	1
+284	471	5
+65	188	2
+134	38	5
+441	198	4
+88	369	5
+460	88	4
+279	376	4
+291	348	4
+83	442	4
+206	236	4
+208	189	5
+70	227	2
+169	245	1
+208	92	1
+480	13	1
+295	148	5
+358	223	5
+374	438	2
+444	188	2
+314	99	2
+109	184	5
+235	274	4
+330	72	4
+194	280	5
+7	365	3
+251	237	1
+105	484	4
+452	208	1
+299	463	1
+66	434	5
+170	415	2
+63	192	5
+383	431	3
+36	115	1
+349	318	2
+242	12	1
+206	273	3
+287	167	1
+143	115	4
+284	378	2
+162	493	1
+172	446	2
+142	375	3
+346	312	5
+214	176	2
+457	54	1
+403	128	3
+366	98	2
+71	306	5
+322	167	4
+312	98	1
+278	87	1
+403	359	5
+269	9	4
+306	408	1
+248	45	3
+126	90	2
+53	48	3
+268	382	5
+22	192	3
+195	107	2
+270	411	3
+291	116	5
+401	173	4
+362	122	3
+315	65	3
+318	342	1
+148	307	2
+196	20	4
+454	291	3
+188	310	3
+160	362	5
+308	463	3
+126	478	3
+384	395	4
+100	231	1
+323	376	3
+423	236	2
+320	473	1
+20	388	1
+422	61	1
+479	77	1
+333	459	1
+204	466	5
+156	391	5
+167	64	1
+40	417	3
+2	165	4
+454	354	5
+347	70	1
+425	55	5
+500	169	3
+162	349	5
+271	89	4
+286	366	4
+159	489	1
+248	121	4
+306	20	1
+2	452	1
+197	95	3
+84	343	3
+183	240	4
+248	185	4
+422	8	3
+404	456	4
+128	373	5
+241	453	2
+332	345	5
+314	421	1
+450	2	2
+212	235	5
+394	187	1
+496	164	2
+314	316	5
+205	390	5
+112	75	2
+214	3	5
+464	360	2
+224	499	5
+68	435	3
+325	477	4
+183	38	5
+449	140	4
+22	467	2
+57	242	2
+18	76	1
+158	195	3
+186	234	2
+87	133	5
+266	58	4
+330	202	3
+341	263	1
+333	449	1
+70	317	2
+3	375	1
+383	6	3
+135	267	3
+441	84	1
+1	93	3
+106	338	4
+412	81	3
+43	420	1
+444	487	5
+226	300	4
+167	214	1
+402	384	5
+250	496	5
+82	495	2
+174	163	5
+296	110	1
+446	171	1
+420	7	2
+466	381	4
+402	165	5
+139	415	4
+415	134	2
+67	314	2
+58	97	1
+387	323	2
+138	283	1
+183	148	1
+254	61	2
+460	63	3
+242	281	5
+295	121	5
+30	346	1
+487	196	1
+183	45	5
+79	253	1
+115	408	3
+48	179	2
+479	144	1
+227	112	3
+170	219	1
+227	374	4
+16	166	2
+205	270	3
+70	485	5
+441	437	1
+46	326	5
+465	459	2
+371	55	4
+157	284	4
+88	267	2
+69	308	4
+88	413	1
+62	93	1
+255	254	4
+333	61	2
+103	115	2
+353	228	5
+445	214	4
+338	187	1
+435	230	1
+237	179	4
+182	233	5
+430	426	3
+67	105	5
+310	153	3
+338	453	4
+196	432	2
+38	232	2
+132	448	2
+415	206	5
+385	291	1
+481	165	1
+76	67	5
+204	326	4
+195	387	1
+122	381	4
+47	174	1
+292	32	1
+237	268	5
+64	116	1
+93	251	2
+182	315	1
+319	231	2
+313	295	5
+493	89	3
+280	433	1
+315	89	1
+220	162	5
+496	454	5
+384	377	2
+377	210	3
+142	359	1
+427	140	2
+172	422	5
+52	338	5
+386	11	3
+49	446	1
+371	451	1
+490	75	5
+29	312	5
+448	90	4
+228	382	2
+140	45	3
+458	380	3
+188	36	2
+261	289	3
+103	300	1
+263	364	1
+412	312	3
+362	103	5
+82	448	2
+490	452	1
+411	467	5
+195	344	1
+347	66	1
+395	35	1
+267	426	3
+382	213	4
+294	285	1
+410	318	4
+181	273	4
+185	301	4
+7	266	2
+498	165	3
+448	46	3
+330	392	2
+65	60	4
+366	13	4
+277	49	1
+474	211	2
+217	120	2
+54	169	5
+172	184	2
+348	260	5
+327	327	1
+99	478	4
+360	134	3
+423	383	2
+489	128	3
+156	323	5
+10	144	2
+33	248	3
+195	123	4
+439	109	5
+334	219	4
+86	313	2
+466	458	2
+491	165	4
+95	334	5
+359	202	3
+133	203	3
+46	140	1
+28	337	1
+303	337	1
+288	54	3
+277	330	3
+33	497	2
+56	169	3
+307	168	5
+35	483	4
+262	98	5
+178	269	1
+68	66	5
+162	463	4
+241	493	1
+441	408	2
+278	129	2
+218	4	1
+209	160	2
+3	368	5
+261	186	1
+304	286	3
+92	433	2
+399	16	2
+208	321	3
+410	201	4
+331	117	3
+56	311	2
+456	256	1
+98	384	1
+386	342	1
+304	497	3
+456	163	3
+339	416	1
+120	458	3
+262	44	3
+233	482	2
+449	401	5
+432	401	1
+31	85	3
+377	335	4
+179	129	2
+301	41	4
+229	429	1
+426	205	3
+374	53	3
+437	198	1
+288	336	3
+360	267	5
+166	108	2
+459	222	3
+396	386	3
+152	467	3
+176	26	1
+94	64	4
+10	389	2
+414	434	1
+305	159	1
+437	469	4
+319	232	5
+95	379	5
+125	170	3
+137	173	4
+97	198	4
+382	60	4
+119	333	5
+20	458	3
+362	158	2
+294	345	5
+361	486	2
+77	254	4
+45	108	2
+63	38	5
+382	202	3
+320	227	3
+380	196	4
+492	135	5
+350	102	5
+202	267	5
+108	262	4
+52	186	2
+347	86	5
+91	60	5
+333	71	1
+320	190	3
+81	403	5
+158	255	2
+423	168	2
+254	275	2
+237	145	4
+78	132	3
+384	477	2
+404	207	1
+20	35	2
+481	34	2
+112	451	5
+468	374	1
+478	125	1
+163	407	1
+161	81	4
+319	322	5
+136	291	2
+153	31	2
+431	424	1
+271	379	3
+282	279	5
+235	432	2
+341	278	4
+250	40	2
+278	215	3
+10	446	3
+382	300	3
+273	464	2
+493	181	2
+130	142	5
+322	57	3
+236	397	3
+133	178	5
+408	172	2
+461	390	3
+339	11	3
+302	121	2
+444	292	1
+67	55	1
+325	492	1
+245	425	1
+182	302	3
+411	46	4
+86	156	3
+360	215	1
+252	382	5
+42	372	3
+387	100	3
+277	119	3
+16	109	3
+488	56	1
+124	362	2
+15	98	4
+119	283	3
+70	11	1
+222	191	1
+407	104	4
+486	242	5
+216	391	5
+312	404	5
+480	57	5
+95	97	5
+375	367	4
+272	490	4
+205	351	3
+325	423	5
+339	164	1
+89	407	5
+100	124	3
+47	433	2
+313	130	1
+460	162	1
+147	280	2
+109	438	3
+267	275	1
+19	427	2
+3	4	2
+440	132	4
+234	43	4
+370	423	4
+459	460	2
+19	12	3
+25	329	5
+203	304	3
+162	49	5
+297	38	4
+476	324	5
+9	130	2
+241	340	1
+29	46	1
+8	91	3
+81	46	4
+30	140	1
+108	393	2
+203	479	5
+258	296	3
+451	368	3
+1	122	5
+444	237	2
+272	21	5
+157	366	5
+254	120	5
+396	426	2
+315	278	2
+176	445	5
+81	21	3
+317	492	1
+184	75	3
+7	84	4
+223	273	5
+445	378	5
+339	185	3
+209	484	5
+61	248	2
+435	366	4
+314	446	2
+485	45	1
+75	362	2
+313	499	2
+264	222	5
+453	101	1
+292	340	4
+227	212	1
+184	360	3
+245	300	4
+452	351	1
+188	426	4
+83	238	3
+349	236	3
+494	72	2
+5	173	2
+195	471	5
+291	434	1
+29	454	1
+296	482	5
+67	484	3
+111	240	4
+139	457	1
+276	229	1
+294	61	4
+149	445	2
+241	349	3
+468	258	2
+167	361	2
+149	438	5
+394	32	1
+391	318	5
+457	61	2
+259	392	4
+282	441	1
+361	163	5
+144	90	5
+145	342	1
+140	276	2
+285	307	5
+399	47	1
+439	496	5
+30	137	1
+390	313	1
+380	276	2
+31	246	1
+126	358	5
+260	16	1
+93	285	2
+215	336	5
+41	236	2
+105	84	5
+195	66	3
+296	462	3
+258	19	5
+256	488	4
+405	267	5
+244	179	5
+320	29	3
+192	442	3
+427	320	5
+378	152	3
+388	122	5
+301	189	1
+217	84	3
+28	117	3
+426	499	3
+387	58	2
+407	437	3
+438	70	5
+385	430	2
+418	351	5
+301	60	3
+116	198	5
+353	47	1
+289	340	4
+408	250	5
+292	65	3
+440	96	2
+152	70	4
+75	26	4
+34	189	2
+239	12	5
+20	13	5
+315	78	3
+248	42	4
+146	136	4
+108	290	4
+480	394	1
+312	134	4
+75	348	2
+174	97	1
+212	494	1
+155	407	5
+111	377	2
+84	117	2
+55	463	3
+492	239	2
+79	7	3
+174	331	5
+269	476	3
+60	172	4
+87	182	3
+467	180	5
+283	385	5
+43	470	1
+127	16	1
+332	213	5
+332	209	4
+488	99	4
+381	420	2
+293	69	4
+108	159	5
+421	494	3
+114	246	2
+328	62	1
+223	2	4
+359	385	5
+340	453	1
+151	318	5
+376	467	3
+497	404	4
+489	195	3
+150	334	3
+409	377	5
+129	20	5
+60	158	5
+304	195	2
+221	39	5
+248	21	5
+268	297	4
+434	120	5
+156	169	4
+364	333	4
+317	342	2
+409	403	4
+31	229	3
+233	211	4
+120	272	4
+9	7	3
+294	44	2
+326	282	5
+280	177	1
+285	114	1
+272	370	3
+324	201	4
+449	460	1
+53	350	1
+51	162	5
+109	231	2
+123	91	2
+49	248	1
+295	331	3
+435	197	3
+420	139	1
+421	68	5
+132	329	4
+247	338	5
+3	423	5
+252	104	2
+249	469	3
+379	33	2
+487	120	4
+375	80	3
+231	150	1
+294	221	2
+129	337	3
+429	428	3
+251	119	3
+480	189	5
+194	70	5
+457	209	5
+195	17	3
+33	60	3
+61	6	1
+289	306	2
+498	267	3
+104	273	4
+93	321	2
+151	175	3
+456	135	2
+424	389	4
+123	102	3
+489	40	5
+395	106	5
+298	269	2
+340	297	2
+193	171	5
+23	352	1
+199	26	4
+185	385	1
+284	215	4
+305	451	1
+105	54	5
+418	169	1
+201	106	3
+370	242	2
+200	325	4
+156	74	1
+60	449	2
+90	422	5
+438	252	1
+77	24	4
+8	364	1
+255	428	3
+497	273	5
+496	254	2
+491	417	1
+303	135	4
+289	328	4
+339	368	1
+450	453	2
+485	286	4
+326	154	5
+154	474	2
+359	296	2
+206	50	2
+250	417	4
+479	401	2
+459	37	3
+370	216	2
+114	486	1
+85	176	1
+497	81	1
+290	277	4
+35	392	4
+476	172	4
+403	352	2
+401	266	3
+489	224	1
+352	38	3
+280	188	2
+262	54	2
+121	130	3
+38	377	5
+16	297	5
+303	225	5
+166	166	2
+358	432	5
+366	16	4
+176	463	1
+342	352	2
+185	123	4
+40	310	3
+344	396	3
+180	318	4
+247	229	2
+261	448	5
+78	356	1
+129	257	1
+490	405	5
+369	349	2
+199	121	3
+422	279	5
+281	477	1
+6	406	1
+472	33	4
+407	248	4
+170	129	5
+203	206	5
+322	239	1
+21	260	3
+340	35	3
+312	336	4
+434	126	4
+4	289	3
+46	154	3
+255	470	3
+274	491	4
+291	478	1
+393	204	3
+485	27	4
+149	43	3
+312	436	1
+370	99	5
+374	384	5
+477	379	3
+419	78	5
+398	352	3
+491	236	2
+109	462	2
+493	164	3
+47	118	2
+96	137	4
+288	251	3
+53	304	4
+415	456	3
+269	145	1
+55	77	4
+286	462	3
+108	362	1
+327	306	2
+336	28	3
+424	106	5
+413	442	1
+462	409	3
+381	185	1
+329	215	3
+485	365	3
+432	26	2
+161	438	4
+130	267	1
+275	323	5
+154	106	3
+142	2	2
+439	204	5
+133	453	4
+347	256	2
+116	114	5
+301	487	4
+134	472	5
+63	102	5
+225	164	5
+97	89	5
+227	402	2
+72	137	3
+41	268	3
+80	426	2
+448	464	4
+133	270	2
+322	453	5
+115	121	3
+461	457	2
+164	108	2
+91	411	1
+206	163	3
+36	185	1
+356	218	2
+70	472	2
+121	374	3
+431	290	3
+134	460	3
+189	42	1
+360	230	2
+488	475	5
+207	413	4
+185	359	2
+288	169	3
+312	252	4
+65	459	4
+229	271	4
+141	155	5
+360	32	3
+20	283	5
+233	30	1
+41	376	2
+76	258	5
+207	462	3
+331	465	3
+204	465	2
+203	405	3
+50	227	3
+207	188	3
+161	466	3
+300	283	4
+335	198	4
+318	87	5
+475	246	1
+300	401	1
+458	386	3
+219	193	4
+259	423	4
+267	190	4
+225	8	2
+319	178	1
+186	260	2
+106	72	5
+70	161	5
+195	364	4
+165	204	3
+488	124	2
+103	397	4
+14	68	1
+313	410	3
+193	55	1
+92	65	4
+47	367	5
+403	171	4
+175	98	2
+286	396	4
+309	242	2
+96	359	4
+248	383	2
+352	45	4
+310	396	1
+187	340	4
+299	13	3
+96	2	5
+390	84	5
+202	167	3
+203	459	4
+286	285	4
+151	115	2
+14	57	2
+357	216	5
+114	484	1
+444	402	5
+474	414	2
+198	258	3
+241	402	1
+331	450	2
+439	467	1
+33	393	1
+128	108	1
+215	243	3
+130	124	2
+314	413	3
+362	352	2
+156	308	1
+384	443	2
+259	230	2
+423	292	2
+83	404	2
+335	287	5
+419	251	5
+398	386	3
+329	325	1
+274	195	4
+274	138	4
+245	136	4
+219	291	3
+206	336	5
+299	456	1
+81	88	1
+183	95	2
+230	281	5
+333	407	3
+245	71	3
+2	179	2
+323	204	3
+499	234	1
+170	372	3
+118	333	1
+206	287	1
+122	94	5
+6	180	3
+360	61	2
+454	209	4
+389	84	4
+338	413	1
+379	283	4
+65	401	3
+363	469	4
+302	97	1
+68	113	2
+160	474	4
+308	445	4
+24	216	3
+114	487	4
+59	396	4
+278	417	5
+276	492	2
+302	252	2
+44	33	5
+483	196	4
+4	307	1
+347	62	2
+94	151	2
+22	223	3
+180	457	2
+342	125	5
+393	277	5
+94	468	2
+57	241	5
+207	412	2
+194	179	1
+240	266	1
+394	401	4
+58	327	4
+436	141	3
+406	280	2
+119	135	3
+72	430	2
+49	49	2
+462	141	3
+171	9	4
+412	415	5
+239	211	2
+474	359	4
+92	270	2
+210	8	4
+143	190	4
+500	302	5
+238	318	1
+215	49	4
+131	2	3
+336	347	4
+333	7	5
+165	267	5
+87	229	1
+388	33	5
+398	278	5
+228	353	5
+28	149	5
+16	287	1
+326	195	5
+258	186	2
+321	248	1
+389	255	4
+304	24	5
+474	146	2
+388	419	2
+36	419	1
+429	418	5
+457	76	5
+123	330	5
+401	411	2
+168	176	5
+261	181	3
+174	246	3
+152	12	5
+371	365	1
+254	246	4
+18	127	4
+312	402	2
+164	459	3
+194	202	3
+483	299	1
+75	321	4
+215	227	4
+102	343	2
+196	498	1
+281	204	5
+181	286	5
+423	6	4
+464	68	5
+448	324	1
+394	50	1
+110	200	5
+399	4	3
+460	414	4
+417	41	4
+367	455	5
+113	58	3
+443	310	1
+380	23	3
+93	385	3
+112	406	1
+306	452	5
+148	268	2
+428	89	3
+432	19	1
+402	35	4
+317	294	3
+355	471	5
+6	363	3
+85	80	3
+134	288	1
+491	490	3
+14	459	5
+146	63	1
+260	65	3
+431	360	5
+182	52	4
+476	395	4
+491	105	2
+326	293	3
+292	271	5
+219	68	2
+360	185	4
+343	498	2
+258	14	4
+466	91	2
+80	485	1
+292	246	5
+484	83	3
+363	225	3
+36	103	2
+345	311	3
+190	315	2
+24	377	3
+374	343	5
+144	67	4
+287	291	5
+55	135	3
+163	304	3
+300	197	3
+398	90	1
+132	17	2
+239	176	4
+378	23	1
+277	7	2
+170	261	5
+268	146	1
+72	423	2
+197	93	2
+408	173	5
+397	208	5
+31	112	1
+290	209	4
+190	418	4
+141	330	2
+264	141	1
+357	196	3
+243	111	3
+33	480	3
+167	314	3
+57	210	1
+499	208	3
+198	185	5
+419	261	1
+204	261	5
+248	485	1
+216	308	1
+281	182	5
+349	481	3
+486	355	4
+248	250	5
+270	373	3
+376	182	5
+407	385	2
+276	272	4
+341	93	2
+458	491	3
+499	71	5
+206	289	4
+115	49	1
+431	393	2
+340	332	3
+415	44	4
+71	463	1
+493	184	3
+181	154	3
+489	412	3
+272	470	3
+214	90	4
+9	285	4
+346	161	1
+416	208	3
+478	364	5
+8	499	4
+56	453	2
+32	316	5
+196	297	1
+140	419	1
+46	127	5
+6	141	4
+211	76	3
+242	152	4
+461	114	4
+485	144	4
+230	58	3
+36	180	5
+97	344	4
+260	19	1
+139	272	3
+80	252	2
+371	378	2
+347	81	3
+333	111	2
+356	127	2
+436	147	3
+495	58	1
+354	271	1
+166	206	1
+180	166	5
+365	246	1
+99	27	5
+177	294	3
+372	290	3
+41	301	1
+110	270	1
+442	175	4
+414	111	2
+375	354	2
+152	165	4
+330	1	3
+498	413	5
+347	227	1
+140	40	3
+261	385	3
+493	424	3
+489	124	5
+499	168	5
+17	355	3
+89	216	4
+46	179	2
+365	294	2
+83	111	1
+385	25	1
+374	231	2
+372	423	2
+270	9	4
+230	76	1
+339	172	3
+114	325	5
+77	359	1
+384	305	2
+148	429	5
+436	338	2
+198	373	4
+71	449	4
+3	145	4
+349	102	1
+307	333	5
+136	353	3
+382	401	1
+230	110	1
+479	346	1
+275	269	5
+61	316	1
+145	2	2
+375	46	3
+281	432	3
+309	153	5
+194	95	5
+35	126	3
+195	339	5
+208	357	5
+158	118	3
+10	475	5
+132	488	1
+61	78	2
+29	89	2
+215	57	4
+237	326	5
+223	216	1
+476	408	1
+431	241	3
+177	451	3
+209	244	1
+148	191	5
+469	181	3
+230	171	3
+93	468	4
+40	239	4
+113	483	1
+64	42	3
+23	374	3
+217	167	3
+79	384	5
+483	223	1
+69	371	5
+198	396	5
+20	311	4
+105	298	5
+141	462	1
+154	319	2
+329	367	5
+278	55	5
+374	401	1
+360	356	2
+436	81	4
+62	276	5
+216	473	5
+109	236	3
+449	149	4
+470	424	2
+148	413	1
+337	409	1
+69	202	5
+121	295	1
+290	412	2
+189	205	5
+301	162	3
+431	143	4
+105	193	2
+126	432	3
+420	149	4
+256	249	3
+6	300	2
+55	151	2
+134	231	2
+354	107	5
+9	341	4
+448	177	3
+171	262	2
+495	130	5
+464	430	2
+13	448	2
+161	142	2
+257	62	4
+34	1	2
+383	486	1
+252	480	2
+40	406	3
+166	69	1
+219	480	1
+94	153	1
+137	187	1
+424	384	2
+185	411	5
+500	1	5
+166	154	1
+49	392	5
+426	422	2
+301	210	5
+419	396	1
+284	304	3
+301	343	4
+406	197	2
+129	179	3
+102	401	3
+161	297	1
+393	465	2
+498	213	2
+468	399	5
+227	305	3
+451	62	3
+335	363	5
+7	310	4
+262	334	4
+288	90	1
+62	10	5
+138	67	5
+43	124	4
+119	406	1
+340	53	5
+167	281	5
+180	160	2
+382	468	4
+487	423	1
+234	339	3
+206	270	1
+167	288	4
+298	226	5
+101	211	2
+61	388	5
+438	308	3
+215	332	3
+431	164	4
+184	285	1
+490	49	1
+422	496	2
+325	316	2
+167	70	3
+304	437	2
+390	7	2
+369	163	1
+393	397	4
+290	435	2
+33	149	4
+7	367	2
+170	443	1
+54	22	5
+420	284	2
+53	132	1
+169	154	5
+145	438	5
+300	48	5
+371	135	4
+347	1	2
+458	47	5
+317	495	2
+86	103	1
+476	85	1
+29	473	1
+70	138	1
+209	22	5
+279	480	4
+344	2	3
+142	25	4
+368	446	4
+164	480	1
+409	172	1
+171	65	2
+359	318	5
+323	222	2
+476	351	3
+116	252	2
+53	375	3
+305	462	5
+58	245	2
+302	334	5
+344	21	5
+79	215	4
+324	181	5
+420	373	3
+291	191	2
+127	460	4
+247	114	2
+40	488	5
+500	197	3
+70	293	5
+450	119	3
+481	133	4
+466	419	5
+19	141	5
+264	270	4
+45	144	1
+306	275	3
+374	21	2
+72	261	3
+410	170	4
+290	59	1
+467	63	5
+383	250	3
+249	255	3
+32	397	1
+169	373	1
+36	195	4
+348	177	2
+382	20	1
+41	44	2
+464	89	2
+321	312	2
+63	283	2
+98	159	3
+312	432	3
+105	429	3
+231	417	4
+84	416	5
+87	102	3
+176	87	3
+255	248	4
+244	174	5
+335	177	5
+305	187	1
+60	308	1
+455	407	4
+425	74	4
+84	4	3
+492	366	5
+277	96	4
+416	122	1
+195	426	5
+387	34	5
+245	298	5
+404	355	5
+376	433	5
+280	161	1
+448	368	3
+44	60	3
+239	349	2
+478	9	2
+109	82	4
+158	307	1
+38	197	5
+463	128	5
+14	306	5
+184	291	4
+407	254	2
+274	232	5
+346	119	3
+384	455	5
+183	379	1
+393	250	4
+398	426	4
+396	271	4
+190	142	1
+177	322	5
+142	188	4
+203	374	4
+33	150	5
+292	484	4
+353	132	2
+490	255	4
+222	329	2
+145	45	1
+203	313	2
+258	12	3
+420	257	5
+86	344	2
+136	450	4
+142	275	4
+484	63	1
+189	113	2
+383	129	5
+431	284	3
+306	468	5
+209	428	4
+281	7	2
+6	100	3
+208	2	1
+185	434	1
+339	97	4
+455	487	1
+68	222	3
+453	427	3
+472	327	1
+48	426	4
+377	151	2
+437	381	2
+207	202	1
+56	179	5
+135	429	1
+485	29	4
+414	198	1
+404	417	4
+154	59	3
+12	158	5
+41	403	5
+288	347	4
+58	354	4
+400	189	1
+39	480	4
+155	395	4
+120	470	3
+1	261	1
+320	362	4
+190	287	1
+406	58	2
+373	387	3
+194	89	4
+115	452	2
+463	49	2
+73	13	3
+377	451	5
+319	105	3
+176	469	1
+343	180	2
+272	431	4
+333	381	5
+19	234	5
+136	116	1
+93	177	4
+481	66	2
+491	313	3
+112	343	1
+336	134	1
+339	171	2
+14	50	1
+136	351	4
+347	240	5
+496	300	3
+235	291	3
+359	478	3
+242	206	5
+342	307	5
+253	281	5
+131	52	2
+353	306	2
+380	119	3
+171	333	3
+6	397	2
+160	162	1
+99	40	4
+351	331	1
+284	247	2
+123	425	4
+18	486	4
+189	147	5
+373	149	5
+446	143	2
+378	236	1
+117	491	4
+421	441	3
+190	158	5
+245	362	2
+306	396	1
+385	205	5
+394	110	1
+469	438	3
+485	473	3
+100	197	2
+207	158	4
+39	432	5
+289	138	5
+68	390	5
+297	320	5
+173	119	3
+110	204	1
+14	225	3
+18	92	2
+208	184	5
+164	275	1
+137	35	3
+393	297	1
+261	342	2
+433	19	3
+475	475	4
+105	206	5
+454	166	3
+2	129	1
+35	66	1
+290	155	3
+345	260	2
+380	440	3
+428	215	3
+375	438	1
+327	491	4
+115	222	3
+290	212	2
+442	480	4
+316	96	2
+313	307	3
+113	479	3
+269	94	5
+43	127	5
+185	318	4
+436	420	4
+346	289	4
+286	280	4
+206	319	1
+335	90	3
+482	375	4
+141	162	2
+136	381	1
+235	248	5
+205	231	2
+48	399	4
+399	448	4
+221	102	2
+479	237	2
+410	10	4
+428	201	5
+485	309	4
+48	332	3
+422	347	2
+303	86	3
+436	346	2
+131	230	5
+341	350	4
+3	152	5
+206	379	3
+252	390	3
+107	480	1
+439	232	5
+212	406	2
+205	208	3
+178	428	2
+426	361	3
+383	257	4
+363	445	4
+245	405	3
+81	382	4
+176	137	2
+335	232	2
+326	251	2
+11	327	5
+488	490	2
+370	344	4
+454	88	1
+392	218	4
+488	91	3
+469	248	5
+390	382	3
+438	458	4
+281	72	1
+464	51	2
+263	46	2
+263	291	2
+494	448	5
+486	104	1
+455	399	4
+222	428	3
+209	410	4
+414	379	3
+217	415	4
+313	268	1
+211	343	3
+397	232	4
+15	285	4
+125	202	3
+64	385	1
+292	104	3
+398	201	1
+308	417	5
+344	188	5
+90	158	1
+217	464	5
+11	477	4
+163	182	1
+405	361	2
+33	424	2
+466	27	4
+195	142	4
+489	183	3
+412	461	5
+463	365	5
+419	435	3
+493	112	4
+104	467	1
+200	164	1
+222	459	4
+253	192	3
+409	171	4
+219	14	3
+251	369	5
+145	275	1
+475	174	1
+187	481	5
+43	19	4
+413	355	5
+206	198	5
+427	102	3
+396	398	4
+309	372	1
+418	228	5
+59	127	5
+348	152	2
+358	93	5
+234	16	5
+299	37	5
+368	44	5
+65	121	2
+30	468	5
+377	311	2
+490	418	5
+418	349	1
+153	285	3
+325	225	3
+407	294	3
+96	128	5
+31	194	5
+142	165	4
+40	341	5
+430	9	5
+296	71	3
+387	226	2
+23	306	5
+355	93	3
+48	137	2
+128	277	3
+2	389	2
+371	317	2
+449	325	5
+146	220	5
+362	188	1
+136	2	4
+423	319	5
+171	144	2
+63	409	2
+434	128	2
+61	172	1
+42	320	4
+452	314	2
+436	426	2
+331	315	5
+159	363	2
+400	362	5
+139	445	3
+115	236	2
+481	225	5
+169	417	4
+95	315	5
+445	433	4
+81	386	5
+458	203	2
+237	256	1
+11	183	3
+43	60	5
+62	92	3
+86	178	3
+247	12	1
+397	445	3
+454	133	4
+150	371	5
+492	58	4
+285	142	1
+306	82	1
+234	99	1
+245	460	2
+16	288	5
+66	124	3
+332	356	5
+17	450	1
+390	26	3
+294	176	3
+151	268	2
+388	89	1
+392	399	4
+349	338	5
+413	137	5
+332	33	4
+330	335	2
+311	187	5
+17	472	5
+186	445	1
+282	360	3
+187	234	2
+481	22	4
+213	90	5
+177	317	1
+429	413	4
+157	145	4
+104	363	3
+476	163	3
+136	77	5
+284	313	4
+87	465	1
+477	182	1
+140	453	3
+450	131	4
+72	374	5
+493	99	4
+125	103	3
+14	378	5
+113	183	2
+350	454	3
+168	82	2
+107	303	1
+305	246	4
+157	53	2
+212	94	4
+302	267	4
+160	313	2
+154	374	2
+432	299	2
+97	46	2
+179	297	4
+420	421	2
+474	111	1
+306	54	4
+53	171	3
+4	146	2
+363	206	2
+298	439	3
+245	388	1
+301	403	3
+498	147	5
+240	413	2
+374	285	4
+320	106	2
+380	234	1
+288	101	2
+51	491	4
+182	359	3
+89	480	3
+156	153	2
+337	397	1
+435	196	2
+430	434	5
+349	112	5
+308	468	2
+32	348	2
+115	122	2
+140	271	5
+40	7	5
+199	336	4
+419	438	3
+281	317	1
+463	97	4
+411	381	2
+410	17	5
+484	405	4
+313	278	4
+31	111	4
+275	365	4
+342	154	4
+468	150	1
+223	327	3
+246	97	2
+319	83	1
+320	62	2
+326	210	2
+174	62	2
+407	194	2
+416	438	1
+412	420	2
+309	77	4
+473	434	4
+282	115	2
+12	491	1
+174	19	4
+282	232	2
+492	331	2
+186	15	2
+490	172	1
+88	77	2
+426	191	5
+384	205	4
+303	494	3
+170	339	1
+295	78	4
+84	9	3
+448	233	1
+455	226	3
+331	143	5
+150	443	1
+66	200	5
+311	283	5
+359	500	4
+230	119	5
+408	73	5
+182	139	2
+341	440	2
+228	235	1
+123	342	4
+61	159	2
+450	135	3
+187	469	5
+394	472	2
+413	415	4
+314	28	2
+242	413	4
+332	374	5
+299	488	5
+212	415	1
+248	370	2
+329	165	5
+333	206	3
+323	496	3
+127	259	5
+84	8	2
+155	111	1
+473	191	3
+397	372	4
+431	387	2
+403	54	1
+233	276	3
+424	343	2
+173	423	1
+262	178	2
+343	152	3
+261	31	2
+230	423	5
+243	331	2
+81	121	5
+331	364	1
+316	318	3
+276	246	4
+279	467	3
+309	46	1
+491	440	2
+190	62	1
+361	15	5
+286	191	5
+303	253	3
+254	206	4
+71	206	3
+415	480	1
+480	14	3
+457	109	2
+459	44	4
+455	68	1
+407	257	1
+337	179	2
+344	87	5
+362	314	1
+237	63	3
+80	123	4
+191	190	5
+391	30	1
+160	213	1
+64	356	3
+290	275	1
+474	243	2
+431	371	1
+51	421	4
+7	258	5
+435	329	4
+263	261	1
+44	390	5
+196	3	3
+358	119	4
+126	129	2
+467	219	1
+212	53	1
+47	461	4
+157	331	1
+437	61	2
+313	232	2
+73	34	4
+259	261	4
+482	60	1
+6	49	1
+226	284	5
+308	247	5
+384	191	3
+179	284	5
+43	417	3
+227	40	4
+210	371	5
+105	224	4
+460	64	5
+94	222	1
+439	396	2
+401	434	1
+210	473	5
+470	448	2
+125	428	1
+131	12	5
+455	483	1
+94	129	5
+459	489	5
+137	154	5
+224	337	4
+306	315	5
+457	464	1
+426	161	2
+411	292	1
+4	43	4
+315	332	4
+286	482	1
+395	285	4
+163	394	3
+321	302	1
+290	146	4
+202	472	4
+182	413	4
+404	212	2
+430	59	4
+8	21	3
+51	423	5
+41	421	4
+376	72	1
+112	372	1
+435	484	4
+209	424	1
+380	294	3
+481	297	4
+30	477	2
+368	248	3
+194	396	1
+57	288	5
+127	43	5
+1	495	1
+172	81	2
+117	125	2
+430	10	2
+435	173	5
+12	325	1
+413	431	2
+460	13	2
+117	74	4
+495	414	5
+366	107	1
+397	355	1
+114	35	2
+60	208	4
+375	137	4
+216	304	1
+113	420	1
+76	246	5
+271	138	4
+5	274	3
+205	188	2
+4	274	5
+455	161	4
+61	272	3
+403	443	2
+475	194	5
+352	148	4
+230	455	5
+146	347	4
+451	350	3
+446	298	1
+39	29	2
+329	285	4
+185	334	4
+151	401	2
+255	361	2
+290	282	3
+73	410	4
+242	81	1
+414	44	4
+328	178	2
+424	143	5
+119	212	2
+484	157	3
+47	414	3
+73	37	3
+369	430	5
+255	375	3
+28	11	1
+234	397	1
+389	417	4
+48	336	3
+328	133	5
+215	490	1
+198	127	5
+168	353	4
+422	351	1
+479	250	5
+409	87	2
+316	325	5
+240	237	4
+472	490	4
+295	126	5
+288	189	2
+53	11	2
+9	273	2
+348	181	1
+282	478	5
+236	488	2
+133	500	1
+104	213	2
+101	390	5
+457	338	2
+368	20	3
+414	429	5
+357	337	1
+317	193	1
+452	245	2
+344	103	1
+438	266	3
+1	439	5
+111	180	3
+197	16	4
+103	21	1
+103	173	4
+222	243	3
+442	379	5
+295	213	5
+4	53	2
+150	181	4
+93	382	3
+152	164	2
+177	201	3
+327	494	5
+310	393	4
+251	32	5
+449	277	1
+357	425	5
+398	302	5
+167	10	2
+163	84	2
+113	192	2
+449	352	4
+130	148	4
+40	125	1
+236	67	1
+85	255	2
+57	90	3
+499	102	4
+42	352	1
+481	464	4
+259	242	4
+445	412	4
+37	295	1
+346	93	2
+456	144	4
+208	451	5
+93	470	4
+426	134	2
+450	120	1
+260	274	5
+487	67	4
+312	472	4
+296	348	3
+389	396	2
+61	161	1
+131	34	4
+328	20	3
+382	318	3
+388	307	3
+65	86	1
+307	94	1
+378	360	3
+215	63	4
+343	200	4
+12	66	2
+353	101	3
+8	152	4
+328	243	3
+22	324	5
+96	77	3
+196	344	1
+236	112	4
+346	223	3
+421	165	2
+4	366	2
+46	443	5
+219	203	3
+313	279	4
+165	268	1
+352	386	4
+47	7	5
+94	296	2
+459	295	2
+484	310	5
+343	70	4
+199	134	2
+320	159	1
+179	242	1
+241	26	4
+455	38	2
+429	399	3
+424	48	1
+279	8	2
+195	216	4
+166	297	1
+92	481	1
+494	428	3
+421	259	4
+335	289	4
+361	354	2
+326	410	5
+41	492	5
+55	476	4
+441	39	4
+292	189	5
+420	41	1
+485	133	5
+19	364	1
+258	145	2
+146	492	4
+250	162	4
+166	128	2
+314	350	4
+330	258	4
+408	298	2
+85	320	3
+177	107	1
+273	470	3
+222	113	3
+376	16	5
+280	438	2
+52	173	3
+240	261	5
+221	488	1
+354	395	3
+359	95	3
+317	138	2
+143	437	4
+491	107	4
+110	329	4
+311	321	2
+427	127	4
+51	189	5
+2	394	2
+233	104	1
+45	110	3
+62	306	3
+419	229	5
+154	441	3
+138	290	5
+91	340	1
+24	175	4
+90	125	3
+11	386	3
+319	323	5
+321	213	3
+428	314	4
+238	229	4
+250	141	3
+410	181	5
+372	300	4
+1	177	4
+21	271	4
+51	465	1
+349	489	2
+319	475	4
+214	457	1
+437	434	4
+45	349	1
+157	43	4
+170	248	3
+382	73	5
+228	140	2
+64	318	4
+145	487	1
+415	10	1
+215	401	4
+468	239	1
+491	237	3
+474	421	5
+280	204	3
+196	216	3
+48	215	5
+50	45	4
+138	91	5
+110	256	5
+403	279	2
+400	153	4
+78	300	2
+51	292	3
+110	246	2
+415	211	4
+367	10	1
+366	269	1
+206	381	4
+488	310	4
+413	268	1
+67	85	1
+497	320	4
+444	246	2
+476	239	4
+324	495	4
+195	334	5
+32	134	2
+285	165	5
+139	25	5
+120	456	2
+283	402	1
+272	55	1
+497	226	1
+8	69	5
+384	202	3
+245	334	1
+88	244	4
+418	227	5
+443	495	2
+117	153	4
+15	6	4
+277	273	4
+311	284	1
+316	172	1
+119	29	1
+35	112	2
+188	233	3
+388	224	1
+320	490	4
+477	180	4
+461	234	1
+183	262	2
+250	475	2
+322	205	2
+235	434	4
+43	475	4
+300	392	2
+342	277	3
+153	67	2
+28	168	5
+327	212	3
+300	12	4
+174	489	1
+426	70	4
+169	365	1
+304	79	1
+390	430	4
+49	207	3
+420	44	5
+148	306	2
+402	150	3
+83	399	3
+268	208	5
+89	342	2
+294	106	3
+335	401	1
+350	29	4
+316	158	5
+462	391	5
+409	267	1
+91	348	4
+380	178	2
+112	468	1
+170	203	4
+49	278	5
+343	26	5
+325	61	5
+193	35	4
+219	92	4
+263	447	4
+447	158	4
+170	285	3
+449	323	4
+85	340	5
+317	206	3
+302	198	4
+28	77	1
+186	38	4
+118	481	4
+40	111	4
+56	476	3
+396	316	1
+193	275	1
+469	273	5
+66	267	2
+211	338	2
+111	264	3
+410	314	3
+99	308	5
+341	169	3
+87	379	1
+195	197	3
+285	309	2
+488	162	5
+201	499	5
+108	335	3
+94	404	1
+48	461	1
+310	315	3
+57	143	3
+35	180	5
+121	32	1
+29	321	5
+49	467	1
+401	299	4
+180	380	4
+486	325	4
+296	297	5
+369	362	3
+41	203	3
+449	55	4
+443	401	1
+250	159	2
+348	408	5
+250	350	4
+222	19	3
+61	420	1
+147	199	1
+425	85	5
+143	309	5
+56	251	3
+275	86	5
+361	325	2
+49	128	5
+121	390	1
+468	377	1
+93	248	5
+454	123	5
+146	402	2
+74	27	5
+86	105	3
+498	330	1
+341	236	1
+266	174	4
+248	377	2
+238	379	4
+439	90	4
+152	6	3
+300	223	5
+135	377	4
+121	177	1
+11	262	1
+338	364	4
+321	8	3
+419	406	1
+101	360	3
+324	241	5
+361	207	5
+499	121	1
+96	335	3
+481	390	4
+409	222	1
+284	364	2
+228	152	3
+334	165	5
+207	499	4
+33	15	5
+236	44	5
+115	48	5
+58	85	3
+486	130	3
+470	32	1
+480	113	4
+174	271	5
+451	3	5
+365	379	2
+54	178	3
+59	185	5
+167	13	1
+288	173	5
+366	102	5
+5	38	2
+321	43	3
+235	330	3
+362	169	2
+165	234	4
+321	465	5
+138	377	4
+128	265	4
+447	257	4
+19	461	1
+114	150	5
+294	227	3
+415	165	3
+209	133	2
+460	136	2
+52	150	5
+381	161	5
+227	151	1
+95	105	2
+261	375	3
+233	308	2
+500	151	4
+7	216	4
+301	35	2
+415	478	1
+215	436	1
+29	22	5
+372	331	5
+433	423	1
+314	483	5
+45	331	1
+498	123	3
+462	415	2
+216	192	1
+1	273	4
+130	94	5
+118	458	2
+470	496	1
+278	270	3
+10	46	2
+191	16	2
+389	321	2
+111	326	5
+283	453	1
+159	442	4
+32	57	4
+400	4	4
+130	11	4
+48	424	4
+467	139	5
+230	6	3
+310	338	4
+474	49	3
+348	351	5
+275	164	2
+478	16	3
+341	4	3
+186	256	4
+103	475	5
+48	298	2
+475	134	3
+200	34	5
+307	321	2
+231	128	3
+72	192	2
+481	189	5
+290	499	5
+19	64	4
+452	278	2
+411	66	1
+46	252	2
+464	224	2
+73	484	4
+458	80	5
+140	142	1
+432	476	1
+257	106	1
+435	144	2
+314	456	3
+281	438	3
+29	207	5
+413	349	3
+273	217	1
+30	293	1
+103	407	4
+391	259	3
+337	56	4
+436	261	5
+421	142	5
+259	45	4
+343	149	4
+372	120	5
+223	12	4
+265	228	4
+29	175	1
+397	47	2
+494	377	1
+143	358	2
+274	433	1
+451	224	3
+495	106	1
+92	344	3
+405	227	1
+148	231	2
+177	295	3
+426	231	1
+170	293	1
+8	451	1
+40	158	5
+278	485	2
+53	367	3
+155	350	2
+25	3	1
+21	135	5
+118	124	4
+288	216	5
+351	2	2
+457	484	3
+188	134	2
+440	45	4
+187	226	5
+117	268	1
+404	195	4
+283	271	1
+121	284	4
+258	180	1
+70	316	4
+213	414	1
+7	178	2
+416	277	2
+468	444	3
+191	254	5
+257	404	5
+46	263	3
+154	300	4
+147	49	1
+451	4	3
+34	416	5
+33	70	4
+143	328	3
+242	474	3
+271	298	1
+51	195	2
+342	123	2
+319	336	3
+143	404	2
+324	43	5
+298	233	1
+493	309	4
+176	388	5
+488	218	5
+32	105	2
+458	217	3
+165	348	5
+343	193	5
+337	190	2
+481	13	5
+91	13	4
+244	460	3
+259	75	2
+319	204	2
+155	306	5
+405	61	3
+135	210	2
+103	176	1
+168	495	3
+178	162	1
+70	121	1
+427	247	5
+80	70	5
+87	109	3
+199	123	2
+186	315	5
+413	212	5
+56	330	3
+307	226	4
+178	474	1
+161	375	2
+463	289	3
+440	302	4
+148	7	1
+241	444	3
+237	83	5
+321	478	5
+76	184	1
+434	253	4
+12	340	3
+375	4	1
+288	271	4
+230	116	2
+308	378	3
+128	475	5
+58	65	2
+218	213	3
+462	180	2
+331	265	1
+134	489	3
+455	98	2
+65	151	1
+159	177	2
+334	21	4
+234	53	2
+86	220	4
+227	381	1
+286	436	2
+35	418	4
+348	395	5
+226	114	1
+409	36	4
+470	15	2
+276	302	5
+427	344	4
+431	460	5
+223	174	1
+145	163	2
+260	261	5
+479	238	4
+182	420	3
+399	134	4
+305	75	1
+450	18	2
+264	119	1
+203	210	3
+309	120	2
+404	211	3
+98	117	1
+484	409	1
+87	357	1
+494	287	1
+174	304	4
+1	301	2
+215	14	1
+53	81	5
+107	174	2
+493	312	2
+138	218	1
+137	131	1
+53	402	1
+364	49	3
+420	389	4
+474	48	2
+16	4	1
+85	376	2
+59	105	2
+43	18	4
+20	293	5
+64	2	4
+401	211	4
+183	16	5
+386	119	1
+115	34	5
+382	281	2
+330	144	4
+51	467	4
+417	464	3
+465	406	2
+108	432	1
+268	312	4
+112	299	3
+180	138	2
+318	330	1
+8	446	2
+7	99	1
+137	152	1
+229	276	2
+165	423	3
+268	324	1
+99	230	1
+490	113	4
+86	153	1
+9	233	4
+476	405	1
+382	458	5
+470	493	4
+64	331	5
+456	176	5
+71	397	4
+155	53	5
+416	133	2
+278	488	4
+405	347	4
+195	125	1
+76	47	4
+125	392	4
+230	433	4
+438	225	5
+150	146	2
+488	110	1
+309	373	4
+436	491	4
+317	123	4
+409	396	2
+22	371	5
+305	208	2
+422	463	2
+68	95	3
+423	214	1
+10	229	4
+20	389	4
+193	413	5
+266	322	5
+102	373	1
+156	82	3
+447	190	3
+469	217	5
+167	353	4
+344	204	3
+143	61	4
+65	149	1
+145	65	1
+110	229	3
+325	131	5
+331	405	2
+16	429	1
+45	396	1
+471	186	1
+55	227	4
+430	494	1
+281	472	4
+483	261	3
+363	142	3
+2	173	5
+346	326	2
+384	154	5
+401	25	2
+68	59	3
+119	69	1
+376	172	3
+109	425	4
+309	38	1
+1	493	1
+399	450	2
+102	101	3
+305	238	4
+83	312	2
+29	465	4
+431	24	4
+405	143	1
+139	98	2
+330	167	1
+166	488	4
+341	205	5
+280	280	4
+123	239	5
+141	317	5
+314	222	4
+158	473	2
+407	299	5
+416	3	3
+468	148	1
+211	366	3
+305	377	3
+72	466	3
+187	26	3
+348	269	3
+495	236	2
+180	118	1
+466	31	2
+180	170	4
+377	389	1
+277	91	2
+469	268	4
+285	343	2
+306	7	2
+1	478	1
+413	326	1
+226	403	1
+189	422	4
+55	488	5
+134	26	1
+113	5	2
+135	141	2
+35	415	4
+110	117	5
+121	365	5
+147	130	3
+115	271	3
+7	19	2
+267	237	4
+196	1	3
+17	143	4
+241	409	5
+493	214	4
+100	413	1
+326	372	3
+84	266	5
+381	235	4
+385	440	2
+221	321	5
+39	442	5
+467	500	1
+110	46	1
+416	214	5
+83	405	2
+140	244	1
+473	391	5
+151	325	5
+196	4	2
+400	48	3
+392	476	1
+305	331	5
+251	497	5
+158	70	2
+68	118	1
+124	171	1
+438	150	5
+489	394	5
+28	95	4
+121	49	5
+440	240	2
+258	28	3
+379	168	5
+98	329	2
+112	56	2
+122	250	1
+493	311	1
+78	291	2
+290	307	2
+463	431	5
+59	14	1
+107	427	2
+340	86	4
+311	233	1
+117	326	1
+198	472	5
+237	30	4
+275	1	1
+440	8	2
+36	354	3
+475	123	1
+438	32	3
+186	80	1
+252	294	5
+367	407	3
+151	87	3
+384	22	5
+158	409	3
+83	14	5
+128	414	4
+229	203	2
+437	234	4
+283	277	4
+125	104	5
+230	36	1
+280	316	1
+489	448	3
+328	165	1
+69	375	1
+366	242	2
+487	291	1
+469	309	3
+393	67	2
+235	236	5
+2	221	4
+250	142	5
+201	91	1
+39	14	5
+456	445	4
+34	444	4
+16	155	4
+58	484	3
+101	47	4
+448	40	4
+357	227	5
+164	70	5
+143	167	5
+138	456	5
+37	158	2
+330	353	2
+172	100	2
+426	96	5
+203	276	2
+446	331	4
+469	29	2
+149	92	3
+415	309	1
+403	361	2
+443	218	2
+201	333	1
+224	122	3
+62	286	4
+452	371	4
+30	406	4
+185	447	1
+335	274	5
+471	201	2
+269	449	3
+150	366	1
+206	463	4
+232	30	4
+423	66	2
+88	196	3
+102	307	2
+354	167	1
+7	324	4
+191	378	5
+176	78	5
+236	485	2
+449	83	4
+177	368	3
+240	45	5
+80	497	2
+160	63	2
+454	118	5
+300	266	2
+272	341	4
+91	376	5
+259	435	4
+424	217	2
+477	93	3
+275	68	1
+86	116	3
+234	113	5
+149	89	4
+128	83	5
+139	466	1
+244	386	5
+378	188	3
+489	30	4
+299	98	2
+310	269	5
+70	355	3
+178	97	3
+241	117	4
+259	429	5
+432	236	4
+348	240	5
+161	450	2
+343	48	5
+67	233	3
+294	402	2
+358	437	4
+439	342	1
+429	157	4
+238	298	1
+468	100	5
+255	198	5
+440	234	3
+34	499	3
+162	185	5
+260	272	3
+99	83	2
+281	461	1
+23	282	2
+327	127	2
+74	324	3
+20	179	1
+346	21	2
+289	452	4
+140	371	2
+279	74	5
+243	456	4
+436	389	5
+201	172	3
+135	390	5
+499	123	5
+96	445	5
+78	282	4
+151	161	5
+15	280	2
+240	177	1
+373	267	3
+271	175	2
+89	303	3
+57	252	3
+447	450	3
+152	45	3
+112	253	2
+122	67	4
+206	69	1
+370	4	4
+479	166	2
+66	405	2
+280	49	3
+402	272	3
+208	114	3
+337	86	1
+238	263	5
+464	171	4
+175	34	2
+17	124	2
+299	3	5
+337	376	4
+473	376	5
+101	377	2
+209	199	5
+104	67	1
+169	458	2
+460	205	3
+354	104	3
+118	109	5
+246	177	3
+347	105	4
+370	181	2
+477	44	5
+31	345	3
+300	22	3
+269	481	4
+444	357	3
+9	305	5
+325	455	4
+224	401	1
+65	365	4
+387	439	2
+402	245	4
+77	279	4
+11	103	2
+496	215	5
+244	107	4
+89	145	5
+271	256	5
+498	427	1
+84	305	4
+232	414	3
+434	431	5
+335	31	5
+379	300	5
+28	34	4
+277	238	4
+313	271	4
+15	486	4
+378	454	5
+217	65	1
+205	371	3
+434	8	3
+458	462	4
+273	418	3
+277	358	3
+8	47	5
+361	423	2
+340	3	4
+293	402	1
+319	263	4
+354	260	5
+143	41	3
+235	464	4
+186	58	3
+324	162	4
+38	170	2
+230	254	4
+425	232	5
+316	277	5
+263	443	1
+115	219	1
+316	147	1
+29	186	4
+14	366	1
+357	170	2
+237	492	3
+382	113	2
+421	123	5
+400	148	5
+233	362	1
+459	351	4
+409	476	5
+290	309	3
+348	174	5
+302	85	4
+382	360	2
+373	44	5
+131	279	1
+182	386	2
+175	58	3
+179	408	4
+192	97	5
+299	318	5
+215	95	1
+391	344	1
+203	44	5
+308	281	3
+92	22	3
+110	48	5
+15	50	3
+466	47	1
+299	172	4
+127	492	4
+326	113	3
+176	488	3
+308	166	4
+399	497	2
+125	353	5
+310	483	1
+56	446	1
+362	443	3
+225	298	1
+79	67	2
+332	101	4
+282	177	2
+184	402	4
+365	62	5
+40	367	1
+403	76	3
+52	442	2
+138	121	4
+344	323	4
+322	261	2
+14	316	1
+23	140	5
+74	212	2
+414	4	2
+132	403	3
+291	185	3
+105	319	1
+97	459	1
+215	379	1
+88	311	5
+413	115	4
+447	168	4
+217	409	5
+179	388	5
+228	83	1
+242	4	2
+43	3	5
+133	319	5
+2	14	5
+208	424	3
+244	139	1
+419	8	5
+8	227	2
+289	223	5
+201	121	3
+448	224	1
+406	354	1
+191	315	4
+383	394	3
+21	61	1
+178	494	2
+437	54	1
+487	144	5
+69	262	5
+300	281	3
+23	251	4
+42	374	4
+375	86	5
+107	207	1
+166	349	2
+53	432	5
+227	480	3
+414	135	1
+203	363	4
+18	420	5
+296	199	4
+483	212	3
+401	104	1
+45	429	3
+333	49	2
+350	156	2
+1	412	4
+262	120	3
+52	334	2
+395	373	4
+159	494	2
+146	280	2
+239	433	4
+253	57	4
+33	172	3
+472	317	2
+145	418	5
+96	19	2
+413	119	4
+238	223	3
+258	297	1
+329	90	1
+130	222	1
+121	281	3
+393	314	4
+294	318	5
+200	128	3
+148	367	3
+380	60	3
+340	258	3
+272	274	3
+262	45	4
+245	380	3
+459	234	4
+169	161	2
+262	374	2
+358	74	2
+219	170	5
+353	186	1
+244	401	5
+220	218	4
+339	461	5
+135	437	4
+322	65	3
+355	391	1
+16	50	5
+119	297	2
+212	93	1
+461	300	3
+198	494	1
+304	148	5
+86	43	1
+335	257	2
+69	455	1
+401	311	3
+5	140	1
+304	169	4
+191	463	1
+396	110	1
+249	14	3
+406	171	4
+6	27	5
+148	195	2
+40	321	5
+145	343	1
+408	419	5
+293	400	4
+60	477	1
+9	200	4
+124	182	5
+311	5	1
+270	5	1
+42	500	3
+103	376	3
+307	425	4
+248	200	5
+497	327	3
+217	297	4
+351	389	5
+363	13	3
+169	58	1
+96	32	1
+56	5	5
+401	158	4
+367	1	3
+205	277	3
+268	285	1
+399	278	1
+454	497	1
+22	124	1
+182	158	3
+245	161	5
+231	403	2
+211	166	4
+158	310	3
+49	345	3
+39	333	3
+337	283	1
+264	295	4
+429	153	5
+421	28	4
+444	468	2
+342	284	2
+380	93	1
+19	208	1
+499	376	4
+93	119	4
+466	255	1
+179	24	3
+68	236	5
+17	474	3
+320	292	4
+263	141	2
+96	162	4
+256	420	5
+171	157	1
+124	268	5
+47	482	5
+261	145	1
+25	58	1
+171	284	4
+279	315	2
+83	166	3
+285	2	1
+82	30	5
+466	312	2
+334	215	4
+212	419	5
+371	171	2
+321	380	4
+186	360	5
+107	241	4
+251	91	3
+184	329	5
+204	177	4
+75	384	3
+453	365	4
+79	319	2
+97	458	1
+254	75	2
+262	136	2
+112	137	3
+294	440	3
+498	181	3
+158	188	1
+158	102	4
+36	261	1
+310	377	4
+279	293	1
+76	163	3
+474	240	2
+209	180	4
+320	40	2
+261	292	3
+408	471	4
+476	406	5
+476	109	5
+194	485	1
+260	447	2
+73	143	1
+44	322	1
+239	327	3
+488	190	5
+59	176	4
+260	139	4
+417	198	2
+356	30	4
+331	149	3
+300	212	3
+298	295	1
+117	386	3
+238	335	3
+104	245	3
+108	487	1
+436	249	3
+424	397	5
+498	298	4
+320	13	2
+463	447	5
+216	444	5
+340	23	4
+231	222	2
+74	249	2
+279	228	5
+305	330	4
+221	142	2
+345	446	3
+374	427	4
+176	402	4
+477	117	1
+212	424	1
+121	472	3
+133	337	2
+249	284	4
+182	323	4
+31	462	3
+210	64	3
+453	151	3
+463	382	2
+266	349	4
+224	159	3
+479	120	3
+9	463	4
+403	493	2
+437	184	5
+487	137	5
+462	50	2
+484	46	4
+265	496	2
+276	392	5
+187	283	3
+173	369	5
+71	340	5
+36	104	4
+356	500	1
+265	116	3
+212	169	3
+174	1	2
+210	58	3
+228	161	3
+314	164	2
+131	268	5
+2	433	1
+18	321	2
+478	120	2
+66	6	3
+154	188	1
+215	228	2
+33	382	4
+391	334	2
+482	377	2
+398	435	3
+424	282	4
+43	412	3
+34	145	4
+176	294	1
+87	369	3
+335	76	2
+119	292	2
+388	403	2
+162	387	2
+402	173	5
+257	19	1
+187	124	1
+493	390	1
+278	478	1
+17	250	3
+356	26	2
+351	471	2
+480	188	2
+33	138	1
+224	130	2
+73	344	4
+293	26	4
+324	130	2
+401	350	4
+178	302	3
+498	300	3
+179	124	3
+158	400	4
+457	452	2
+149	213	4
+259	369	2
+230	133	4
+87	43	3
+364	410	5
+492	105	3
+457	466	2
+290	350	1
+253	43	5
+268	252	5
+31	359	4
+137	198	4
+441	417	1
+198	359	3
+201	124	5
+225	110	5
+494	49	2
+449	168	2
+488	382	3
+267	330	4
+329	429	3
+343	261	2
+229	52	4
+115	265	5
+305	77	3
+456	34	1
+146	408	1
+100	205	3
+409	493	3
+55	495	3
+487	139	4
+30	101	3
+398	59	2
+298	132	1
+378	282	1
+5	172	3
+429	308	5
+158	76	2
+2	230	2
+17	6	4
+111	427	2
+257	396	4
+67	262	4
+108	483	1
+468	144	5
+430	349	3
+38	267	3
+62	490	4
+166	463	1
+195	456	1
+55	262	3
+89	147	2
+433	320	2
+286	207	4
+251	404	4
+4	88	2
+417	419	5
+276	207	4
+97	312	4
+31	302	1
+244	444	5
+45	236	3
+401	140	3
+157	241	3
+266	190	3
+7	453	3
+352	84	2
+452	123	3
+499	55	2
+124	497	5
+307	68	5
+286	11	4
+436	237	4
+243	314	3
+60	190	2
+499	245	5
+286	392	1
+360	18	1
+131	367	3
+289	58	4
+491	419	3
+480	452	2
+10	428	3
+210	206	1
+343	363	5
+149	403	1
+477	410	4
+260	367	1
+75	134	5
+91	163	5
+148	358	1
+425	265	2
+116	42	1
+470	453	2
+336	453	4
+383	170	5
+249	21	1
+220	157	2
+432	68	3
+235	376	2
+87	150	2
+10	141	3
+112	347	5
+217	153	5
+146	272	3
+25	370	5
+159	206	4
+356	25	4
+377	136	4
+80	376	4
+494	77	5
+203	234	3
+455	295	4
+448	427	3
+79	158	5
+493	152	3
+359	266	1
+360	126	2
+473	351	3
+392	228	2
+224	355	5
+456	33	4
+281	201	4
+256	208	5
+470	457	3
+353	484	1
+350	304	3
+209	231	5
+235	439	3
+157	313	4
+224	204	1
+71	487	3
+262	425	2
+467	195	4
+146	265	1
+1	458	5
+345	146	3
+495	37	4
+190	421	1
+220	351	1
+16	142	4
+140	180	1
+474	124	5
+245	271	5
+22	222	2
+194	81	5
+298	170	5
+143	139	5
+121	315	1
+437	189	3
+192	463	4
+201	71	2
+181	348	2
+187	487	5
+64	391	2
+438	82	3
+230	464	5
+48	145	1
+293	240	1
+322	100	5
+422	290	5
+52	139	5
+208	37	5
+102	376	2
+123	88	1
+418	260	2
+346	294	1
+499	19	2
+389	227	4
+45	306	2
+19	429	4
+310	415	3
+435	205	4
+41	212	3
+343	84	5
+321	232	4
+180	478	4
+130	329	4
+288	132	2
+164	160	2
+397	104	5
+138	1	2
+257	202	4
+208	232	3
+167	266	2
+3	263	4
+186	69	4
+138	144	2
+180	335	4
+57	498	2
+442	410	1
+246	51	1
+369	420	4
+120	124	1
+469	350	1
+172	478	4
+331	196	5
+8	395	4
+489	154	4
+134	499	1
+439	339	4
+488	271	5
+414	296	2
+138	238	2
+188	409	4
+98	370	2
+18	144	3
+38	256	4
+30	335	5
+309	14	2
+187	272	5
+257	204	3
+347	449	1
+341	242	3
+270	460	4
+381	155	5
+256	220	2
+298	335	3
+420	343	4
+62	418	1
+305	489	2
+389	319	1
+435	426	5
+105	260	2
+204	298	2
+358	379	1
+183	82	5
+379	457	1
+61	15	5
+420	186	2
+131	354	4
+28	24	4
+114	92	5
+244	498	3
+113	72	5
+416	256	1
+332	163	1
+402	175	1
+414	326	4
+38	106	5
+193	488	5
+469	464	2
+72	177	4
+419	369	1
+422	115	1
+44	248	4
+169	482	5
+41	377	2
+500	474	3
+364	103	2
+199	29	4
+227	422	2
+364	450	1
+279	469	2
+205	172	1
+120	488	1
+171	276	1
+145	136	1
+143	14	2
+240	158	5
+435	145	3
+110	257	2
+135	166	5
+62	51	4
+218	406	4
+242	41	3
+422	196	3
+390	491	2
+317	223	5
+375	499	2
+8	207	3
+161	269	1
+146	26	5
+60	285	4
+190	335	2
+361	417	1
+205	467	2
+401	183	4
+2	40	5
+361	109	1
+92	197	1
+195	235	3
+183	75	2
+470	158	1
+36	209	1
+462	90	1
+319	456	5
+344	263	3
+258	216	1
+444	407	5
+181	22	4
+305	299	2
+477	477	3
+158	148	5
+195	154	3
+245	187	3
+237	496	3
+340	113	1
+30	4	2
+206	484	4
+385	128	1
+354	96	1
+55	455	5
+408	234	2
+118	140	1
+149	62	1
+279	363	3
+110	333	1
+309	330	3
+2	137	3
+249	115	4
+271	200	5
+335	190	4
+476	185	2
+122	88	3
+375	385	2
+189	245	1
+368	213	5
+203	13	1
+44	316	5
+116	496	1
+91	23	2
+267	134	3
+178	12	5
+362	433	5
+184	85	1
+129	306	4
+283	221	3
+442	105	1
+23	9	3
+467	443	4
+96	145	3
+225	410	1
+202	332	4
+378	409	1
+226	396	4
+444	486	2
+475	349	1
+492	104	1
+100	19	4
+84	373	2
+436	365	1
+118	397	2
+77	59	4
+41	271	4
+143	267	5
+205	52	1
+390	125	1
+499	154	4
+283	425	2
+221	404	5
+59	90	3
+18	70	5
+170	128	3
+285	4	1
+269	401	2
+261	16	3
+5	7	1
+376	139	3
+103	44	1
+494	310	4
+156	104	1
+7	215	3
+103	61	2
+479	46	1
+29	137	5
+298	229	1
+238	349	1
+397	179	2
+351	111	4
+252	344	3
+70	94	1
+66	482	4
+487	238	4
+249	66	1
+170	72	2
+6	148	2
+170	120	2
+432	44	4
+360	7	4
+499	295	1
+494	280	3
+443	363	2
+44	27	5
+127	68	4
+285	464	5
+444	423	4
+277	258	2
+241	56	1
+291	57	1
+361	255	3
+126	198	2
+346	225	5
+81	270	3
+94	494	1
+14	221	1
+295	208	4
+474	228	3
+151	356	1
+439	152	1
+309	155	3
+288	42	4
+288	70	5
+432	147	3
+371	257	1
+229	19	5
+428	12	5
+361	173	3
+286	103	2
+178	137	4
+17	228	4
+273	158	5
+246	219	3
+143	103	3
+416	292	5
+364	441	4
+388	351	4
+165	395	2
+114	377	3
+54	235	3
+370	347	2
+142	293	5
+162	462	1
+335	439	1
+105	125	5
+378	150	1
+169	54	3
+34	194	3
+419	141	3
+5	363	4
+175	287	4
+7	175	1
+296	483	1
+341	454	3
+265	333	4
+180	422	2
+347	87	3
+398	24	5
+219	181	2
+261	483	1
+126	35	5
+355	269	4
+246	185	1
+103	309	4
+317	70	3
+83	67	5
+188	287	5
+318	56	5
+15	180	3
+375	177	5
+306	182	4
+201	138	2
+97	66	2
+471	108	1
+447	55	2
+435	148	4
+407	117	3
+404	414	4
+365	175	2
+197	24	1
+394	243	4
+368	79	2
+456	337	1
+168	254	4
+5	497	5
+440	353	1
+441	193	1
+198	175	2
+30	7	5
+345	416	2
+457	286	4
+318	163	1
+435	51	2
+473	369	3
+318	86	4
+304	321	4
+336	37	3
+387	111	3
+65	214	2
+401	419	3
+401	12	1
+179	372	3
+114	455	5
+159	305	3
+184	168	5
+153	99	3
+477	214	4
+320	330	5
+57	270	2
+277	28	1
+472	413	1
+373	286	4
+293	342	3
+75	280	4
+330	153	3
+218	100	5
+274	154	4
+176	312	3
+110	36	1
+312	202	3
+57	248	4
+68	418	1
+155	329	2
+268	102	2
+399	50	1
+474	295	3
+162	411	3
+232	439	1
+317	427	2
+364	63	4
+304	478	1
+365	388	4
+93	404	4
+387	377	5
+453	127	3
+429	405	1
+29	164	5
+178	278	2
+148	460	5
+500	456	2
+255	330	4
+36	238	3
+479	241	1
+114	172	3
+413	283	3
+13	131	4
+64	26	1
+147	54	4
+303	397	5
+432	232	2
+488	150	2
+279	489	4
+366	344	1
+247	406	5
+84	145	4
+359	421	1
+95	298	1
+350	110	1
+30	446	5
+41	458	3
+51	83	1
+195	11	4
+148	469	2
+456	105	1
+325	338	3
+282	116	2
+233	334	3
+158	492	5
+173	39	5
+151	117	1
+158	280	2
+208	484	1
+197	490	1
+338	154	4
+138	246	1
+156	379	1
+301	433	1
+139	378	1
+391	401	4
+216	445	4
+441	401	3
+358	188	5
+394	384	5
+39	203	4
+311	208	4
+149	96	2
+458	194	1
+232	53	2
+390	428	4
+263	489	1
+44	358	2
+152	133	1
+381	458	1
+4	420	3
+442	210	1
+496	416	3
+93	208	3
+190	388	1
+290	115	1
+418	82	1
+437	123	5
+182	111	5
+17	360	1
+197	324	4
+188	297	1
+403	31	5
+206	132	5
+160	175	2
+244	394	3
+16	419	1
+459	411	1
+467	55	5
+496	383	3
+30	280	3
+260	457	4
+72	333	3
+472	298	2
+210	315	4
+208	61	2
+256	213	2
+331	272	2
+167	426	2
+172	336	4
+51	177	3
+340	368	3
+476	224	2
+159	186	5
+398	313	5
+366	45	3
+370	11	2
+257	157	2
+43	64	5
+435	122	2
+43	65	2
+3	474	1
+201	321	1
+157	121	1
+173	458	3
+177	281	1
+170	386	4
+102	359	3
+60	467	3
+210	42	2
+453	379	1
+155	133	5
+243	230	2
+351	184	4
+273	434	4
+446	411	1
+42	212	4
+426	491	1
+357	36	5
+76	372	3
+498	1	5
+118	415	1
+80	494	1
+73	292	4
+311	266	5
+318	162	5
+475	396	5
+102	232	3
+469	276	3
+386	389	2
+376	253	5
+219	154	5
+412	37	1
+276	211	2
+279	82	2
+9	415	1
+362	330	3
+196	435	4
+154	207	2
+290	455	1
+404	297	2
+81	466	5
+138	36	2
+340	185	5
+32	249	5
+436	239	1
+204	239	1
+329	305	2
+330	240	3
+265	259	1
+241	479	4
+219	19	3
+425	110	1
+25	347	2
+380	179	5
+108	363	1
+431	476	2
+354	101	5
+148	289	4
+133	298	2
+418	119	3
+464	62	5
+18	201	4
+183	204	2
+253	134	1
+414	347	1
+452	382	4
+457	67	5
+452	388	1
+244	149	4
+140	375	5
+231	480	2
+128	178	2
+270	145	1
+144	448	5
+439	275	5
+325	468	5
+495	421	3
+78	481	2
+371	294	3
+196	448	5
+489	485	1
+389	443	5
+94	196	1
+447	499	5
+291	165	1
+391	497	1
+111	473	5
+201	414	3
+346	288	5
+430	500	1
+302	463	1
+163	191	3
+361	437	3
+364	314	3
+95	325	4
+280	247	2
+100	268	5
+257	230	2
+210	24	2
+355	12	1
+176	5	4
+270	73	3
+417	136	3
+76	32	5
+185	408	3
+101	93	3
+339	21	2
+355	220	3
+53	472	5
+441	457	1
+349	206	4
+231	412	3
+289	477	4
+165	56	1
+490	487	2
+33	192	2
+452	477	1
+210	397	3
+392	109	4
+275	342	2
+255	276	4
+279	453	2
+334	314	4
+103	267	5
+151	425	4
+146	445	4
+235	320	4
+114	167	3
+444	256	3
+465	353	4
+423	403	2
+483	281	5
+160	348	2
+87	55	2
+286	94	1
+196	378	2
+448	403	3
+11	93	2
+45	59	1
+205	31	4
+456	187	1
+425	54	4
+284	206	3
+288	489	5
+106	362	1
+331	198	3
+276	51	5
+13	466	3
+229	235	5
+243	53	3
+273	476	1
+25	413	2
+18	103	4
+43	59	3
+205	473	2
+230	341	1
+123	173	4
+85	158	3
+466	163	1
+303	222	2
+12	21	5
+51	60	2
+61	87	1
+98	151	3
+235	324	3
+497	262	1
+209	23	1
+47	68	5
+248	291	5
+185	91	2
+223	392	1
+97	150	1
+466	123	3
+159	15	2
+329	424	2
+323	360	5
+378	89	4
+30	118	5
+242	418	2
+58	50	5
+476	43	2
+272	321	4
+409	434	5
+430	424	2
+340	207	2
+303	457	1
+306	92	2
+190	35	2
+443	17	1
+306	394	1
+223	163	3
+153	269	1
+379	383	3
+450	80	2
+34	28	3
+342	425	3
+494	446	2
+78	312	2
+380	293	2
+495	19	3
+157	402	3
+387	287	4
+113	242	3
+109	145	5
+127	418	1
+8	216	1
+97	153	3
+154	39	2
+189	467	4
+148	472	5
+20	473	1
+122	260	5
+98	411	4
+17	105	1
+114	465	1
+231	297	1
+273	19	1
+8	370	1
+53	233	5
+153	454	2
+296	109	5
+405	489	5
+267	431	1
+284	39	2
+274	458	1
+376	435	5
+200	262	2
+250	187	4
+120	232	2
+411	462	4
+180	101	5
+497	10	1
+403	301	5
+148	262	1
+398	19	4
+317	489	5
+130	328	5
+425	286	2
+367	149	4
+299	377	5
+153	21	2
+325	335	5
+59	21	4
+259	3	1
+353	303	2
+131	361	1
+391	479	5
+41	92	4
+129	292	3
+84	460	4
+107	390	5
+258	497	5
+261	357	4
+123	369	5
+381	380	5
+55	314	4
+359	491	2
+284	464	3
+175	325	3
+181	194	2
+403	245	1
+443	190	3
+465	125	5
+37	132	5
+467	69	5
+145	132	4
+300	239	4
+98	163	1
+233	430	4
+447	17	2
+349	89	3
+446	161	5
+431	155	1
+70	202	3
+393	271	3
+226	360	4
+379	321	4
+489	219	1
+301	426	3
+68	244	4
+298	68	4
+482	450	2
+353	135	2
+244	259	2
+311	299	5
+163	219	1
+133	107	3
+350	11	4
+201	82	2
+201	217	4
+112	87	5
+229	215	1
+400	81	2
+350	206	2
+137	129	5
+189	192	4
+346	353	4
+183	404	4
+143	330	1
+483	137	5
+302	212	2
+129	355	3
+389	339	1
+273	285	5
+274	68	4
+89	166	2
+415	130	2
+482	329	2
+22	120	4
+62	39	5
+18	218	4
+435	87	1
+81	104	4
+204	320	1
+300	348	2
+51	44	2
+173	393	4
+171	110	4
+198	32	1
+211	404	3
+496	116	3
+151	282	1
+411	177	1
+121	178	3
+99	66	5
+115	397	2
+377	382	1
+16	139	1
+412	17	1
+308	102	5
+454	276	4
+411	157	3
+102	190	2
+142	434	5
+448	86	4
+147	295	1
+403	380	2
+29	144	1
+208	1	1
+64	169	2
+388	241	3
+261	104	5
+420	492	3
+351	190	1
+223	453	1
+325	115	2
+89	102	3
+361	83	1
+462	186	4
+208	309	3
+95	148	3
+239	121	5
+84	186	4
+271	485	4
+454	198	3
+101	466	2
+131	15	3
+63	471	2
+358	215	2
+7	119	4
+100	210	1
+439	4	4
+417	239	1
+354	443	4
+419	181	2
+379	352	5
+464	298	2
+263	491	3
+149	272	3
+296	264	1
+275	456	3
+450	200	2
+24	281	5
+11	496	2
+161	311	3
+412	421	4
+107	34	1
+184	67	5
+8	53	4
+369	196	1
+86	431	2
+93	154	2
+70	46	3
+224	312	3
+299	320	1
+185	322	2
+292	291	4
+11	397	4
+402	134	4
+402	354	5
+267	43	1
+86	343	4
+15	416	3
+79	164	4
+170	399	4
+223	232	4
+194	498	2
+457	8	3
+118	238	5
+71	305	5
+210	458	5
+236	128	2
+57	461	2
+69	397	5
+405	401	1
+132	57	2
+340	51	2
+326	338	1
+245	163	4
+414	340	5
+307	37	4
+40	368	5
+355	2	2
+282	19	5
+237	4	2
+418	451	1
+379	77	1
+304	272	2
+476	258	4
+442	64	3
+21	318	2
+285	460	3
+94	397	3
+354	106	5
+204	65	3
+197	77	5
+293	80	2
+313	454	3
+300	76	5
+115	322	2
+397	442	1
+247	206	1
+180	469	3
+443	240	5
+2	100	1
+471	436	3
+261	451	3
+150	405	1
+269	387	5
+61	29	4
+316	409	3
+338	289	4
+485	227	2
+320	423	4
+54	192	2
+214	71	2
+279	123	3
+148	478	2
+160	495	4
+47	446	1
+48	309	3
+279	256	4
+440	11	5
+391	371	1
+169	105	5
+268	308	3
+459	357	4
+39	495	3
+324	131	1
+471	392	3
+307	206	4
+157	453	3
+427	177	5
+364	125	4
+151	354	4
+312	360	2
+11	215	4
+46	158	5
+357	313	3
+458	408	1
+474	214	1
+446	142	5
+184	49	5
+318	173	2
+302	169	1
+407	461	3
+22	368	3
+152	279	1
+305	272	5
+213	238	4
+344	398	4
+280	15	3
+160	195	2
+224	179	5
+456	123	5
+106	140	4
+222	484	3
+497	133	3
+417	330	4
+139	365	1
+296	325	1
+416	46	4
+155	43	1
+428	313	4
+315	245	1
+289	412	2
+32	373	5
+268	62	2
+384	451	4
+138	304	5
+108	54	5
+47	356	2
+385	105	5
+414	300	4
+475	407	2
+489	273	4
+7	471	5
+5	488	1
+453	82	1
+77	36	5
+468	80	1
+338	454	5
+466	332	4
+275	410	4
+48	233	2
+63	314	4
+462	128	3
+490	419	1
+322	109	3
+383	73	4
+97	321	1
+488	325	1
+61	132	3
+38	282	4
+181	424	5
+77	166	3
+469	312	2
+337	222	4
+29	9	1
+77	395	2
+252	202	5
+1	39	2
+10	413	1
+253	207	1
+397	55	1
+91	257	3
+303	364	1
+145	395	2
+238	359	3
+136	392	4
+130	212	2
+28	350	4
+313	12	5
+460	111	1
+483	496	5
+297	249	5
+293	271	1
+64	309	4
+462	436	3
+161	52	4
+253	296	3
+113	98	2
+340	323	1
+328	455	5
+186	118	3
+96	6	5
+72	6	3
+354	89	2
+107	205	4
+454	184	5
+40	252	1
+6	187	5
+418	138	5
+59	98	5
+168	18	3
+164	103	1
+52	41	3
+33	120	4
+1	369	1
+272	16	5
+300	138	5
+123	90	2
+227	366	4
+200	27	1
+21	82	2
+97	5	3
+465	254	4
+209	498	1
+297	90	4
+146	325	1
+225	445	4
+128	174	4
+378	299	5
+9	44	4
+490	293	3
+359	420	3
+245	134	2
+410	376	2
+455	191	4
+252	281	3
+169	63	5
+469	430	4
+154	359	5
+104	447	2
+288	406	2
+204	55	4
+281	135	5
+439	86	1
+357	301	2
+61	273	4
+175	210	2
+270	105	3
+217	83	5
+36	290	4
+85	444	2
+489	381	5
+409	215	4
+366	49	5
+186	90	1
+162	212	3
+468	74	4
+159	95	3
+471	123	3
+469	330	2
+34	251	5
+202	4	5
+209	274	1
+453	210	2
+312	376	2
+331	30	5
+344	367	5
+316	302	3
+169	366	1
+31	305	3
+150	307	3
+22	217	2
+5	397	4
+172	83	4
+214	94	1
+295	70	4
+149	328	4
+89	335	2
+166	143	5
+278	114	4
+170	244	5
+118	107	1
+397	462	2
+446	390	5
+382	310	3
+428	373	1
+429	61	4
+416	310	4
+430	129	1
+288	23	1
+253	293	4
+108	480	1
+108	146	3
+246	271	1
+323	187	4
+16	382	3
+429	89	2
+497	106	1
+362	305	3
+413	455	2
+392	84	4
+78	30	1
+496	128	5
+245	476	1
+199	37	1
+268	435	1
+42	118	4
+365	365	4
+437	154	5
+271	97	1
+128	335	5
+216	262	5
+386	292	4
+232	463	3
+396	387	4
+163	453	2
+238	238	5
+394	389	3
+102	409	3
+108	43	1
+344	257	1
+241	424	1
+347	16	5
+355	403	2
+332	275	1
+318	221	2
+36	375	1
+228	396	4
+417	85	5
+311	335	3
+439	69	5
+480	321	2
+364	224	2
+295	187	3
+421	121	5
+201	347	5
+101	141	2
+122	438	4
+175	260	1
+215	81	3
+378	427	4
+169	322	4
+225	89	5
+101	29	3
+290	260	1
+235	185	3
+414	154	2
+346	231	3
+58	193	1
+240	148	5
+112	378	3
+29	21	1
+44	34	2
+3	396	3
+474	304	4
+67	37	4
+248	259	3
+269	109	4
+458	294	2
+171	328	3
+284	121	1
+87	237	5
+498	262	1
+272	163	1
+266	415	2
+65	337	5
+242	108	3
+195	413	5
+395	338	2
+467	373	1
+411	1	3
+210	255	1
+197	129	1
+344	400	4
+221	406	2
+454	469	5
+131	122	3
+199	259	5
+282	171	4
+471	257	2
+164	98	5
+289	380	1
+232	412	1
+367	352	1
+44	414	4
+246	397	3
+408	60	1
+180	428	2
+303	195	3
+92	310	4
+397	118	3
+107	48	5
+305	107	4
+264	470	5
+452	207	1
+491	96	5
+293	431	3
+116	102	1
+363	186	5
+290	366	1
+57	45	1
+289	474	5
+261	408	1
+278	336	4
+161	331	1
+311	272	3
+367	77	5
+194	87	3
+476	305	1
+294	288	5
+95	373	3
+357	208	5
+454	286	3
+2	69	1
+112	263	2
+313	429	3
+94	135	5
+479	231	5
+438	297	2
+496	364	4
+286	27	2
+297	132	1
+262	240	1
+449	250	2
+351	35	5
+163	90	5
+460	392	5
+462	429	2
+162	490	1
+135	457	3
+16	119	4
+280	434	5
+14	29	2
+44	396	4
+465	469	5
+37	84	2
+270	52	1
+116	118	4
+180	226	5
+93	121	1
+90	290	4
+326	53	3
+237	202	3
+490	366	5
+292	164	5
+369	401	5
+458	202	5
+313	45	5
+178	491	5
+40	467	4
+362	468	5
+302	357	2
+224	427	1
+472	370	5
+375	400	2
+138	356	5
+463	11	4
+368	189	4
+197	222	2
+369	300	3
+130	253	3
+321	367	2
+441	336	2
+255	165	2
+420	25	2
+384	289	2
+13	188	3
+105	405	1
+336	54	2
+198	489	4
+90	179	2
+132	231	4
+354	71	5
+48	155	4
+310	209	2
+331	87	5
+243	475	2
+165	126	5
+110	349	1
+494	330	5
+298	113	5
+374	491	2
+435	318	1
+461	124	3
+492	301	4
+38	336	1
+277	348	1
+449	150	4
+373	273	3
+344	427	4
+359	306	4
+221	381	5
+151	239	4
+218	204	1
+108	266	5
+364	77	2
+247	290	1
+337	63	1
+380	475	5
+284	420	1
+125	345	5
+92	392	4
+279	165	5
+350	480	4
+10	73	2
+358	116	5
+135	48	2
+344	223	5
+382	182	2
+311	467	1
+297	135	4
+464	198	3
+393	410	1
+29	187	1
+409	241	1
+72	281	4
+195	332	5
+268	53	2
+294	108	4
+280	500	2
+298	324	4
+364	491	4
+23	257	5
+114	28	2
+185	292	4
+45	494	2
+9	404	5
+129	291	4
+68	273	2
+56	325	3
+34	382	5
+424	275	5
+338	130	5
+484	442	5
+129	419	2
+121	224	1
+324	136	5
+63	69	5
+138	396	1
+154	80	1
+188	395	4
+60	473	5
+148	375	2
+305	207	2
+109	49	3
+204	135	1
+426	365	2
+456	118	4
+29	168	3
+231	289	5
+417	87	5
+39	479	1
+469	105	2
+19	311	4
+78	313	2
+459	394	3
+98	242	5
+376	396	5
+348	275	1
+128	402	2
+84	482	4
+331	68	1
+428	321	1
+329	84	5
+81	247	1
+195	384	3
+212	137	1
+139	12	1
+45	52	1
+341	136	3
+340	372	1
+37	255	3
+246	208	1
+334	116	2
+316	372	1
+51	364	1
+230	79	2
+233	17	4
+102	500	5
+315	27	4
+129	71	1
+349	366	4
+412	53	4
+265	329	4
+24	167	3
+278	179	1
+86	441	1
+307	118	4
+166	421	5
+288	128	3
+153	492	2
+240	267	3
+198	95	5
+149	240	5
+329	57	4
+49	294	5
+124	309	2
+309	351	5
+433	288	3
+287	28	5
+441	490	1
+340	213	2
+358	481	4
+409	339	3
+491	45	3
+430	378	5
+172	453	1
+168	139	4
+433	213	5
+382	102	4
+230	97	1
+150	215	1
+104	322	3
+117	260	3
+200	411	1
+273	218	3
+66	36	5
+208	291	1
+127	321	5
+361	422	2
+183	214	4
+410	390	5
+235	79	3
+428	276	1
+397	4	2
+52	489	1
+475	211	5
+96	83	1
+269	408	2
+456	1	4
+144	474	5
+6	183	5
+257	332	5
+374	480	3
+266	152	5
+137	3	4
+463	38	5
+320	443	4
+180	456	5
+261	140	3
+56	433	4
+457	15	1
+16	465	5
+369	319	3
+445	247	2
+474	242	1
+114	423	5
+350	370	4
+495	153	4
+96	338	4
+241	312	1
+93	118	2
+418	243	5
+426	321	5
+41	136	2
+378	423	5
+431	165	4
+308	25	5
+489	109	1
+86	95	5
+47	77	5
+438	333	4
+312	340	1
+348	117	5
+114	327	4
+406	453	2
+405	437	4
+451	67	5
+68	99	5
+147	318	3
+370	31	1
+474	330	3
+356	183	2
+24	214	4
+74	499	1
+460	46	5
+216	70	2
+120	281	2
+375	460	1
+438	352	1
+49	344	2
+290	361	2
+462	174	1
+101	398	3
+74	51	3
+276	134	1
+417	478	2
+95	193	2
+142	107	1
+333	362	3
+22	147	1
+301	17	5
+109	271	1
+391	107	2
+314	398	3
+158	177	2
+132	439	3
+292	18	5
+442	241	5
+259	363	5
+323	5	4
+223	28	3
+15	175	1
+491	92	3
+152	395	2
+11	114	5
+199	302	4
+78	112	5
+154	353	3
+7	463	5
+192	285	2
+32	43	1
+166	232	5
+248	466	1
+398	367	4
+75	312	2
+157	129	2
+370	126	2
+268	309	2
+65	69	4
+391	484	3
+325	254	4
+121	137	3
+265	299	5
+41	488	1
+304	476	1
+456	203	5
+244	110	2
+111	367	4
+143	434	2
+284	428	5
+215	87	5
+101	48	2
+342	342	1
+167	287	3
+235	158	3
+112	147	5
+115	172	2
+52	388	5
+375	356	5
+256	465	4
+437	45	5
+352	442	1
+317	133	3
+390	190	2
+312	149	3
+132	62	3
+10	396	4
+173	418	3
+308	384	4
+123	253	1
+413	223	4
+32	79	2
+207	164	1
+171	416	4
+228	129	2
+325	136	3
+381	117	1
+498	307	5
+101	408	3
+269	385	1
+69	147	4
+67	241	3
+376	500	1
+376	167	2
+318	180	4
+144	84	1
+123	498	3
+335	423	1
+97	146	2
+231	242	1
+276	441	5
+44	116	2
+40	250	5
+104	3	3
+426	204	1
+361	103	3
+318	376	4
+112	142	2
+416	138	3
+499	196	1
+334	438	4
+124	243	1
+481	321	1
+441	255	2
+24	401	4
+361	415	3
+153	164	5
+354	459	4
+265	81	1
+224	498	5
+265	254	4
+336	431	1
+96	167	1
+7	125	4
+414	115	2
+326	284	5
+396	424	4
+385	217	2
+483	483	3
+399	416	3
+69	350	1
+289	222	1
+398	357	3
+487	465	3
+214	398	3
+256	69	1
+187	390	5
+435	355	3
+176	495	1
+410	86	4
+318	116	2
+336	77	3
+165	404	4
+415	169	4
+114	495	5
+135	204	4
+307	430	5
+405	43	4
+197	371	5
+187	286	5
+434	127	1
+341	342	1
+434	392	5
+77	319	1
+102	212	2
+499	396	1
+263	68	5
+375	124	4
+388	191	2
+383	146	3
+10	203	4
+110	404	5
+436	154	2
+41	425	3
+412	360	3
+329	286	3
+300	122	1
+157	433	4
+307	419	5
+72	375	5
+58	331	2
+43	69	5
+465	264	5
+161	464	1
+195	295	5
+300	105	3
+492	199	1
+61	464	1
+187	476	2
+8	270	4
+174	46	4
+377	452	4
+490	150	4
+445	176	4
+496	493	5
+472	399	2
+285	252	4
+500	274	3
+4	232	3
+3	313	2
+14	239	3
+246	365	1
+434	51	4
+190	498	2
+233	307	1
+400	415	3
+387	416	1
+126	140	1
+320	43	2
+327	18	4
+97	486	2
+286	283	1
+251	412	5
+46	339	1
+464	238	1
+237	139	2
+29	482	3
+379	397	4
+297	464	5
+12	440	2
+66	2	1
+327	333	4
+24	348	2
+291	193	1
+119	9	4
+374	370	1
+203	50	4
+308	211	1
+149	67	2
+266	294	1
+209	370	3
+41	396	1
+491	196	1
+84	103	5
+300	491	2
+205	272	1
+60	236	2
+49	53	1
+447	266	3
+398	125	2
+418	467	1
+198	319	4
+410	195	3
+231	356	3
+68	307	4
+118	500	1
+161	322	1
+242	282	4
+443	432	1
+111	442	5
+9	12	4
+440	35	3
+368	477	5
+127	377	5
+465	265	2
+452	14	5
+12	47	3
+428	422	3
+63	389	1
+193	361	1
+477	268	2
+188	238	4
+344	62	5
+256	466	4
+374	371	3
+271	7	3
+417	48	1
+321	176	2
+11	91	5
+355	457	2
+78	350	3
+481	210	5
+417	265	3
+155	221	5
+82	174	1
+499	34	4
+168	69	5
+13	457	1
+454	116	3
+344	349	3
+352	497	5
+243	135	1
+193	241	4
+150	293	2
+205	78	2
+236	42	5
+55	345	2
+191	135	3
+244	98	2
+221	109	2
+5	387	2
+32	232	5
+489	233	2
+184	400	1
+156	331	3
+289	203	5
+16	207	1
+447	304	3
+29	199	5
+308	43	4
+144	48	2
+20	209	1
+385	42	1
+467	78	4
+226	286	5
+69	384	2
+246	389	2
+229	94	1
+11	352	4
+55	62	5
+432	321	1
+388	452	3
+103	446	5
+498	416	2
+279	141	2
+383	159	3
+166	8	4
+491	52	4
+17	389	4
+313	111	2
+244	155	4
+115	184	4
+19	288	3
+68	391	4
+330	235	5
+357	205	2
+229	312	1
+349	383	3
+484	74	5
+6	152	2
+479	104	2
+71	230	1
+41	155	1
+38	190	4
+486	319	1
+278	350	2
+83	140	3
+39	335	5
+210	227	3
+288	124	4
+369	134	5
+267	113	1
+42	360	1
+147	32	1
+411	267	1
+383	369	5
+338	227	4
+367	42	2
+196	319	3
+460	66	1
+7	466	4
+253	333	1
+425	50	3
+433	66	5
+390	331	4
+116	127	1
+84	277	1
+301	423	3
+235	138	2
+269	478	2
+332	263	5
+267	358	1
+39	391	5
+51	428	4
+289	463	1
+449	104	1
+63	123	1
+172	200	2
+25	350	4
+398	63	5
+192	52	1
+500	251	4
+451	440	3
+278	24	1
+101	151	2
+128	386	5
+290	252	3
+224	72	3
+46	302	2
+399	161	4
+262	263	5
+125	455	1
+472	146	3
+212	126	3
+282	199	4
+366	383	3
+25	185	1
+85	180	5
+423	174	2
+470	474	3
+405	44	3
+209	5	4
+315	366	1
+116	424	4
+164	62	3
+189	158	4
+451	465	4
+88	211	5
+73	243	2
+256	56	5
+343	117	1
+13	378	5
+129	475	5
+90	181	1
+431	114	4
+143	259	1
+116	217	3
+116	456	1
+411	400	4
+476	115	4
+274	252	5
+68	396	1
+145	329	4
+332	420	3
+80	203	5
+272	147	2
+43	369	1
+94	483	4
+99	250	4
+251	303	5
+394	429	1
+435	55	1
+276	20	1
+203	195	5
+203	106	2
+109	386	2
+390	319	2
+1	207	5
+305	7	5
+329	97	1
+36	264	3
+275	130	1
+153	290	2
+105	331	5
+359	175	2
+103	12	2
+254	174	3
+114	340	4
+232	220	3
+302	51	3
+12	407	2
+293	339	2
+240	52	5
+70	103	5
+109	157	2
+400	308	5
+338	49	4
+23	239	2
+292	64	2
+296	460	2
+481	490	4
+398	9	1
+220	227	2
+10	464	2
+1	61	3
+142	333	3
+86	182	5
+244	140	4
+245	367	5
+348	187	1
+135	417	5
+434	124	4
+485	139	5
+133	354	3
+392	156	5
+465	108	4
+315	210	5
+231	390	1
+214	423	2
+229	225	2
+223	110	3
+86	418	1
+361	355	3
+243	188	3
+289	89	1
+232	377	4
+313	39	5
+253	368	2
+371	489	1
+258	142	4
+18	152	3
+254	11	4
+410	92	1
+160	358	2
+192	210	4
+15	227	3
+146	150	2
+158	204	4
+206	131	2
+159	28	2
+214	348	3
+334	59	5
+193	45	3
+477	290	2
+176	373	4
+385	431	5
+161	387	2
+478	221	4
+435	40	3
+209	462	4
+393	343	2
+264	290	1
+316	225	1
+66	331	2
+445	492	3
+240	304	3
+61	188	2
+363	275	1
+217	163	4
+73	91	1
+385	145	5
+200	312	2
+258	409	1
+293	321	4
+417	153	5
+327	161	5
+208	468	4
+434	361	3
+357	476	1
+306	410	5
+421	472	4
+84	177	3
+211	7	1
+367	120	5
+190	194	2
+194	358	2
+161	374	1
+28	45	4
+302	98	3
+467	330	4
+183	303	2
+469	233	2
+154	339	4
+271	220	2
+133	101	4
+70	253	5
+115	379	3
+454	32	4
+391	91	2
+93	123	1
+177	222	5
+158	213	3
+194	406	2
+210	396	5
+245	77	3
+66	450	1
+196	88	5
+270	162	1
+374	499	2
+465	311	3
+419	253	5
+174	6	1
+16	483	1
+475	225	3
+466	293	3
+173	282	3
+109	340	4
+119	316	5
+297	25	1
+318	223	2
+468	14	1
+470	302	5
+450	312	2
+272	480	1
+427	94	5
+437	397	3
+295	455	3
+495	423	5
+446	67	4
+175	455	5
+354	460	3
+480	45	5
+6	360	4
+84	382	1
+397	126	1
+13	62	3
+482	221	3
+126	295	1
+461	201	3
+242	27	1
+439	278	5
+473	214	3
+346	128	3
+210	221	5
+172	498	4
+175	343	4
+402	23	2
+220	22	3
+339	160	1
+183	438	5
+107	418	2
+91	59	5
+302	469	3
+471	91	5
+464	302	1
+309	178	2
+455	132	3
+404	262	2
+390	421	1
+318	414	2
+411	8	1
+39	399	1
+305	469	4
+496	407	1
+245	459	1
+471	140	4
+28	203	5
+225	482	5
+242	159	2
+240	101	4
+500	37	2
+387	170	1
+87	160	1
+156	16	2
+457	329	5
+475	186	4
+113	425	1
+295	426	4
+282	397	4
+406	143	3
+440	203	2
+381	240	1
+18	38	1
+59	100	5
+484	492	3
+95	142	5
+139	353	2
+83	154	1
+152	224	1
+411	362	2
+453	233	2
+367	387	1
+85	38	3
+267	258	3
+474	16	3
+83	431	3
+403	124	2
+252	459	3
+485	228	2
+113	26	3
+476	208	3
+73	63	1
+315	468	5
+371	83	4
+230	334	4
+330	3	3
+167	122	1
+20	359	3
+457	99	5
+183	98	4
+169	499	4
+356	119	4
+427	82	2
+142	389	4
+199	28	5
+213	186	5
+403	62	3
+446	254	4
+483	122	1
+324	246	2
+354	152	5
+226	264	4
+100	365	3
+407	344	3
+154	134	1
+33	124	2
+167	239	4
+154	362	4
+498	53	2
+102	219	1
+397	2	5
+220	465	1
+416	100	3
+442	71	1
+51	324	5
+429	152	5
+447	214	4
+35	489	1
+179	111	1
+398	445	2
+112	387	2
+472	262	4
+219	349	5
+16	333	2
+66	113	4
+399	307	5
+450	96	4
+399	280	3
+196	409	4
+208	314	2
+403	3	2
+69	174	1
+253	180	4
+35	12	3
+138	351	3
+145	323	2
+477	372	2
+268	402	5
+258	370	5
+432	437	1
+45	364	1
+198	157	3
+430	256	1
+155	244	3
+130	347	1
+335	305	5
+416	263	2
+438	89	3
+18	56	4
+261	355	5
+438	370	2
+171	399	4
+355	48	4
+52	167	4
+8	97	2
+329	421	2
+34	223	3
+118	87	3
+472	209	4
+67	295	1
+358	433	3
+452	384	1
+280	134	5
+176	157	4
+170	149	3
+24	171	2
+163	46	1
+426	172	4
+489	411	2
+347	128	4
+205	113	5
+4	455	5
+379	200	2
+134	383	4
+342	306	4
+14	435	4
+187	341	2
+304	232	2
+92	353	1
+41	88	5
+103	255	3
+63	8	4
+196	433	4
+152	201	4
+184	260	1
+109	485	4
+257	146	5
+302	24	2
+226	306	4
+6	271	4
+80	38	4
+331	270	1
+387	229	4
+51	433	4
+321	275	5
+382	256	3
+98	208	1
+477	456	5
+132	97	4
+293	497	1
+176	13	1
+178	370	3
+16	358	2
+60	303	1
+168	257	2
+254	85	2
+23	310	3
+269	234	4
+386	406	4
+171	418	1
+396	466	4
+114	68	5
+99	467	4
+388	85	1
+64	284	3
+78	443	4
+430	165	3
+106	319	5
+420	48	2
+14	135	3
+173	85	2
+260	106	1
+444	404	1
+343	95	4
+498	351	2
+331	355	4
+309	164	3
+411	115	5
+369	358	1
+413	476	5
+295	174	2
+355	381	3
+329	223	2
+122	310	2
+407	190	1
+132	41	2
+485	316	2
+467	247	3
+419	54	4
+445	294	5
+223	230	1
+213	466	4
+73	391	4
+25	445	4
+80	404	4
+288	99	2
+102	379	3
+486	75	5
+1	162	3
+67	69	2
+44	97	1
+266	500	3
+203	215	2
+68	75	4
+199	472	2
+397	216	3
+193	289	5
+118	270	3
+352	170	5
+199	442	3
+488	485	4
+52	220	2
+388	356	3
+64	85	1
+196	311	4
+102	126	1
+203	379	3
+128	173	4
+7	291	2
+395	215	1
+277	185	5
+110	94	5
+377	44	4
+2	5	2
+307	406	1
+252	216	5
+238	78	1
+448	278	1
+37	112	2
+195	87	3
+231	100	1
+114	329	4
+21	280	3
+438	199	1
+125	330	3
+149	447	3
+137	283	3
+353	143	1
+275	132	3
+31	110	4
+490	216	5
+442	92	4
+191	394	4
+469	103	4
+174	255	2
+387	430	4
+338	281	1
+486	180	4
+472	206	2
+374	172	1
+312	83	2
+125	311	5
+331	326	3
+68	427	2
+43	251	3
+474	387	4
+405	367	4
+291	460	3
+437	408	5
+203	34	5
+31	458	4
+307	52	2
+278	414	2
+438	390	1
+195	448	5
+138	309	3
+241	263	5
+84	386	4
+210	286	5
+394	322	5
+478	211	3
+217	331	2
+91	42	4
+150	454	2
+42	383	5
+218	293	5
+465	484	3
+191	94	4
+76	455	1
+124	398	3
+192	381	1
+392	221	2
+22	239	5
+434	315	2
+477	227	3
+6	174	3
+389	6	1
+195	287	5
+412	213	5
+271	176	1
+279	62	2
+41	287	2
+307	367	5
+298	277	3
+195	270	5
+474	38	5
+84	264	5
+437	100	3
+46	279	3
+163	42	5
+474	314	2
+217	418	2
+414	461	5
+465	299	1
+286	57	2
+129	200	5
+375	416	2
+64	133	5
+395	451	1
+340	74	4
+121	484	4
+496	46	5
+237	414	2
+261	406	1
+59	305	3
+91	62	4
+217	494	4
+368	184	4
+448	97	5
+381	320	2
+151	107	1
+55	179	5
+403	219	4
+228	315	1
+346	102	4
+37	357	3
+278	362	4
+282	424	4
+326	487	3
+216	361	1
+244	330	4
+175	472	3
+488	166	4
+423	315	5
+318	416	2
+20	480	1
+243	268	4
+229	210	4
+49	15	2
+397	186	4
+213	443	2
+223	21	5
+67	327	3
+243	224	4
+69	65	2
+165	79	4
+244	340	5
+45	155	5
+164	43	3
+184	241	2
+443	219	5
+155	87	2
+334	188	1
+239	158	3
+17	331	3
+120	199	3
+176	326	5
+411	445	4
+180	301	2
+113	428	4
+394	259	4
+394	4	3
+51	164	2
+144	33	1
+48	129	4
+195	206	2
+278	266	4
+267	291	3
+449	162	1
+244	333	4
+410	200	5
+37	73	3
+37	102	1
+427	158	5
+212	367	4
+393	165	2
+299	340	2
+146	2	2
+151	234	5
+179	166	1
+276	199	4
+251	49	1
+334	281	1
+38	189	5
+335	156	2
+440	407	4
+351	380	1
+330	201	1
+396	259	4
+277	218	4
+76	45	4
+212	268	2
+68	84	4
+81	258	4
+450	116	3
+417	430	2
+257	415	4
+229	330	2
+288	348	4
+187	444	4
+199	141	5
+300	278	4
+109	52	3
+469	274	3
+8	500	3
+359	217	4
+495	289	1
+73	365	2
+395	423	4
+293	136	1
+106	363	2
+90	245	4
+431	250	2
+282	300	4
+457	244	1
+201	72	4
+326	442	4
+44	143	5
+418	332	4
+483	279	5
+203	225	4
+461	177	4
+187	163	1
+266	18	1
+153	310	2
+132	19	2
+338	319	3
+131	66	1
+196	133	3
+285	119	4
+87	324	1
+213	46	5
+168	187	3
+63	29	2
+175	400	2
+340	90	3
+149	143	1
+161	34	4
+157	37	1
+150	164	4
+61	230	5
+249	54	1
+329	232	1
+147	377	4
+176	226	2
+88	214	1
+436	234	2
+131	292	1
+334	127	3
+40	411	1
+401	341	3
+279	15	3
+421	374	2
+16	192	4
+424	251	5
+141	352	1
+123	30	5
+467	137	2
+439	247	4
+234	457	3
+361	337	1
+320	63	2
+409	474	2
+209	379	1
+235	496	2
+444	116	2
+126	255	5
+275	429	1
+7	370	5
+327	128	3
+194	367	1
+409	500	3
+126	299	2
+362	62	4
+173	333	5
+165	499	3
+304	71	4
+303	394	1
+364	362	3
+480	5	2
+82	398	5
+395	467	2
+148	146	4
+53	296	1
+259	451	3
+490	369	4
+204	379	2
+496	47	2
+122	157	3
+166	270	1
+315	239	1
+234	202	2
+243	147	4
+35	456	3
+76	197	2
+427	471	5
+223	477	5
+455	480	3
+217	453	1
+367	275	1
+451	399	3
+233	244	1
+227	331	5
+299	271	3
+83	69	5
+440	408	1
+132	129	5
+288	371	3
+112	259	5
+254	7	1
+243	386	3
+294	135	2
+371	303	3
+191	272	3
+474	55	1
+453	294	2
+261	414	4
+83	1	1
+103	263	1
+212	83	5
+331	338	2
+369	258	3
+457	330	5
+468	489	4
+17	265	4
+83	454	4
+297	138	3
+366	427	1
+209	215	2
+114	363	1
+364	446	4
+79	98	4
+362	428	3
+139	454	1
+92	296	2
+470	89	1
+262	8	2
+36	329	3
+452	90	2
+417	142	4
+56	230	5
+13	71	4
+239	379	5
+315	133	5
+60	417	2
+420	347	4
+266	240	1
+286	332	2
+120	435	1
+257	98	5
+467	209	1
+22	459	1
+112	203	5
+90	316	4
+94	228	4
+306	291	3
+430	245	5
+28	394	5
+272	59	3
+457	396	5
+44	299	1
+3	130	5
+331	222	3
+471	229	5
+116	35	5
+176	470	5
+322	498	4
+39	57	3
+403	439	4
+463	362	4
+467	388	3
+421	428	2
+134	386	1
+39	482	3
+160	6	2
+289	13	2
+73	254	1
+217	111	5
+99	223	5
+432	367	4
+291	129	2
+424	460	3
+41	468	1
+205	211	2
+144	467	2
+494	360	4
+207	3	1
+369	60	2
+94	113	2
+498	457	3
+327	218	1
+149	72	5
+442	208	3
+310	373	4
+465	357	5
+64	12	1
+2	412	4
+206	386	4
+368	194	3
+25	469	3
+461	151	2
+3	82	1
+69	126	2
+467	30	1
+191	67	5
+139	67	3
+141	256	3
+6	356	2
+68	268	3
+317	111	1
+394	392	2
+168	344	1
+274	445	1
+85	307	4
+356	200	1
+173	94	5
+146	140	1
+426	474	2
+196	49	5
+220	89	4
+440	289	1
+58	1	5
+45	243	4
+437	341	1
+58	41	3
+132	274	2
+202	260	2
+317	433	1
+269	127	4
+449	15	1
+488	102	1
+76	447	1
+272	236	5
+66	13	3
+278	474	5
+126	395	5
+299	383	5
+276	357	4
+282	64	2
+319	198	3
+55	56	5
+220	25	1
+404	462	4
+288	39	5
+394	25	1
+495	393	4
+348	157	2
+464	391	5
+375	272	3
+263	96	2
+135	144	2
+37	120	4
+332	392	5
+331	321	3
+214	88	2
+14	450	2
+72	308	4
+500	319	1
+74	442	1
+112	119	2
+201	342	3
+428	81	1
+283	357	4
+422	97	2
+171	352	2
+133	409	4
+266	454	3
+357	204	1
+16	458	2
+296	222	2
+273	463	3
+434	422	2
+61	442	5
+379	76	2
+81	381	2
+198	30	1
+65	223	3
+134	75	3
+2	492	3
+5	273	4
+427	318	3
+42	343	3
+91	147	4
+430	203	3
+334	19	2
+374	113	2
+286	368	3
+84	164	5
+206	344	5
+296	120	2
+171	288	4
+272	290	5
+99	318	4
+137	365	5
+325	39	1
+325	429	4
+320	401	3
+188	331	3
+28	488	3
+396	129	2
+278	497	4
+117	306	2
+174	106	5
+190	177	1
+373	367	1
+395	288	5
+361	132	2
+281	323	1
+212	300	4
+380	136	2
+110	219	2
+241	169	2
+79	353	3
+23	198	4
+270	177	5
+374	407	2
+105	463	1
+201	461	5
+25	229	5
+418	106	3
+85	289	2
+190	469	5
+496	188	1
+368	111	3
+450	81	1
+325	240	5
+143	431	5
+471	159	4
+203	463	4
+232	415	4
+49	20	2
+102	346	5
+139	431	5
+329	301	3
+347	132	3
+354	477	3
+380	481	4
+421	152	5
+128	100	2
+59	491	1
+222	128	2
+218	56	4
+114	386	2
+455	266	5
+139	110	4
+56	245	1
+237	462	1
+372	279	4
+229	479	2
+338	488	4
+81	366	4
+262	369	4
+50	348	3
+446	300	3
+401	115	4
+479	303	2
+268	499	3
+230	456	2
+285	66	1
+69	141	1
+393	468	1
+10	266	4
+137	261	5
+247	292	5
+404	141	5
+115	197	4
+248	227	1
+378	103	1
+46	395	5
+446	310	5
+334	126	2
+56	228	4
+300	216	5
+375	375	3
+118	308	5
+450	276	3
+284	3	1
+461	316	1
+328	493	2
+444	443	1
+368	288	4
+425	424	1
+22	490	2
+114	30	3
+267	152	4
+157	175	1
+21	158	4
+300	51	1
+481	404	2
+52	448	3
+426	93	4
+266	270	5
+332	471	2
+471	111	1
+406	381	1
+64	392	5
+260	492	4
+456	353	4
+403	220	3
+6	58	3
+400	185	5
+495	330	2
+168	351	3
+406	215	5
+274	330	4
+474	32	4
+423	124	2
+199	399	2
+383	148	1
+411	332	5
+396	423	4
+129	158	5
+331	82	5
+12	341	3
+459	282	5
+120	294	5
+447	461	2
+365	113	5
+159	365	2
+260	423	5
+239	460	1
+486	76	4
+230	251	2
+500	56	1
+32	491	2
+434	155	3
+394	312	3
+21	241	5
+55	407	5
+425	33	3
+226	385	4
+367	40	5
+43	394	1
+370	143	2
+497	367	4
+386	208	3
+375	333	2
+111	340	2
+443	407	2
+16	2	2
+347	349	1
+20	99	2
+466	299	5
+382	332	5
+88	222	1
+386	317	1
+14	40	1
+359	276	2
+442	406	3
+333	346	3
+110	128	3
+495	188	5
+61	238	1
+409	286	2
+420	145	1
+44	329	4
+446	357	5
+453	436	4
+80	234	4
+87	42	1
+66	341	2
+75	200	3
+32	416	3
+302	364	1
+210	382	1
+202	476	4
+84	450	5
+246	274	1
+206	350	3
+256	20	3
+336	203	3
+121	356	5
+280	61	5
+109	146	4
+130	139	1
+370	392	4
+467	459	5
+281	91	2
+88	262	1
+158	341	4
+355	287	2
+140	242	5
+184	61	1
+427	139	5
+308	244	5
+314	373	2
+450	291	1
+453	104	1
+465	96	3
+263	82	2
+393	240	3
+91	50	3
+374	358	1
+220	62	3
+287	384	1
+83	108	5
+434	494	1
+101	85	2
+419	255	2
+330	332	5
+218	231	5
+477	82	3
+165	60	1
+250	220	4
+474	350	2
+486	194	1
+453	493	5
+86	192	2
+112	31	4
+169	190	4
+42	334	4
+395	93	1
+467	166	4
+74	67	5
+197	260	5
+434	39	3
+150	276	4
+2	66	2
+356	168	1
+410	440	3
+292	431	4
+16	74	2
+419	104	2
+50	139	4
+276	486	5
+373	384	5
+64	286	2
+246	258	1
+40	143	5
+380	463	2
+188	346	5
+243	194	1
+477	266	3
+158	460	4
+172	90	1
+369	396	1
+250	38	4
+472	168	1
+220	197	3
+430	109	3
+32	143	3
+269	265	2
+393	467	2
+222	155	3
+290	149	5
+462	405	4
+145	218	4
+214	500	2
+88	350	3
+29	19	4
+41	409	4
+166	196	2
+283	73	3
+384	132	1
+152	300	5
+181	374	2
+353	369	4
+474	235	3
+300	339	1
+285	438	3
+6	14	4
+148	142	1
+457	126	1
+204	242	5
+107	112	2
+327	240	3
+53	61	5
+331	290	3
+457	11	1
+221	24	2
+127	110	5
+157	412	4
+357	422	5
+95	3	2
+358	30	2
+81	194	2
+273	18	1
+419	62	5
+20	236	4
+405	66	2
+151	292	2
+46	398	2
+53	453	4
+420	232	5
+94	47	2
+404	252	1
+94	267	1
+493	347	5
+210	410	3
+424	279	1
+239	500	1
+99	263	5
+347	47	4
+438	164	1
+175	391	3
+140	278	1
+39	225	3
+318	91	4
+391	258	5
+441	137	5
+379	116	5
+359	356	5
+240	171	3
+145	226	5
+81	332	3
+200	499	5
+222	261	5
+164	387	1
+109	4	5
+40	248	1
+90	280	1
+314	357	3
+426	193	2
+56	403	1
+275	83	4
+190	350	4
+48	382	5
+23	445	2
+152	405	1
+464	320	1
+186	195	1
+298	379	2
+448	298	5
+331	419	2
+130	291	3
+400	47	5
+162	495	4
+341	246	1
+110	205	3
+117	377	3
+34	139	3
+452	275	5
+438	256	4
+351	22	1
+61	181	5
+292	362	4
+213	250	4
+350	4	5
+373	404	1
+205	413	3
+463	319	2
+52	34	1
+161	140	3
+399	417	1
+470	337	2
+30	361	2
+170	63	3
+354	478	1
+456	131	3
+215	456	5
+457	150	4
+315	380	4
+102	364	3
+282	486	5
+103	378	3
+165	294	4
+366	114	2
+294	89	2
+237	263	5
+277	15	3
+310	27	1
+309	158	1
+58	116	3
+58	455	2
+468	67	4
+116	254	4
+471	328	1
+436	354	5
+316	388	3
+178	54	2
+141	368	3
+47	43	1
+279	314	1
+341	484	5
+424	59	4
+412	319	1
+62	410	1
+484	309	4
+248	47	5
+421	189	3
+338	115	4
+135	356	4
+88	439	5
+150	463	4
+353	60	2
+374	435	4
+450	39	2
+490	486	3
+110	25	1
+65	224	4
+133	153	1
+381	178	2
+75	253	2
+488	282	5
+169	31	4
+260	305	3
+230	146	1
+428	456	3
+58	473	4
+116	346	3
+367	127	3
+94	92	5
+271	401	1
+415	175	3
+134	179	4
+234	37	4
+42	266	1
+330	68	2
+31	68	5
+82	136	5
+72	2	2
+495	335	1
+281	355	4
+311	170	2
+228	388	1
+192	41	1
+379	424	5
+359	157	4
+244	477	5
+252	76	5
+235	77	2
+480	75	3
+377	107	3
+448	27	4
+457	461	5
+214	28	3
+15	38	1
+478	94	1
+294	456	2
+33	396	4
+188	133	3
+295	105	4
+261	138	4
+160	285	3
+432	329	2
+165	10	3
+11	470	3
+349	256	5
+275	4	3
+211	34	2
+453	330	1
+498	244	4
+146	38	4
+137	177	4
+327	426	4
+478	78	5
+458	52	5
+470	223	5
+441	197	2
+474	71	4
+257	84	2
+63	491	4
+353	301	2
+320	179	5
+147	143	1
+308	67	4
+324	325	1
+398	285	3
+273	496	1
+163	69	4
+161	324	5
+302	186	4
+490	114	3
+337	188	2
+13	241	2
+298	208	5
+8	20	3
+228	480	2
+398	218	2
+309	289	4
+471	11	5
+466	276	5
+141	445	1
+487	479	1
+258	241	1
+379	455	5
+380	439	2
+394	437	4
+190	77	5
+305	224	3
+157	38	1
+221	470	5
+220	100	4
+278	165	3
+151	473	5
+500	26	3
+445	325	1
+277	465	2
+42	467	4
+368	97	5
+100	42	1
+269	142	5
+130	272	2
+435	10	2
+103	349	5
+294	351	4
+272	97	3
+91	421	3
+230	498	4
+448	157	3
+126	23	2
+312	475	2
+405	458	2
+55	391	2
+469	326	3
+388	149	2
+115	8	2
+295	356	5
+62	53	2
+366	147	5
+21	102	3
+414	158	5
+398	417	3
+70	238	2
+412	22	1
+141	463	4
+494	415	3
+322	60	3
+125	181	5
+310	293	5
+106	295	5
+132	140	2
+343	312	2
+250	368	2
+161	208	5
+440	25	4
+367	409	4
+291	133	1
+433	489	4
+311	449	2
+219	229	3
+212	198	5
+257	222	4
+73	295	4
+396	421	1
+244	196	3
+6	429	3
+16	202	1
+358	500	3
+148	383	4
+222	137	2
+159	128	2
+111	200	3
+17	141	4
+200	101	4
+349	375	2
+2	222	2
+20	187	5
+471	36	3
+141	421	4
+430	160	5
+67	414	1
+302	210	2
+121	257	1
+277	192	1
+163	228	2
+425	310	5
+484	185	1
+143	366	2
+322	29	5
+91	189	2
+342	442	2
+74	99	5
+134	204	2
+90	40	4
+137	200	3
+193	408	4
+179	9	1
+432	381	5
+19	89	4
+17	443	2
+229	459	1
+137	354	1
+117	24	5
+106	52	2
+109	217	2
+345	473	2
+210	104	5
+29	72	3
+149	366	3
+85	242	4
+47	467	4
+429	199	2
+287	88	3
+500	22	5
+71	215	1
+321	73	5
+122	165	5
+265	318	4
+201	328	4
+461	206	3
+411	427	1
+40	434	2
+112	409	3
+328	82	5
+316	116	5
+364	486	2
+376	71	5
+185	339	5
+397	427	2
+211	257	2
+481	15	4
+62	159	4
+261	353	3
+190	389	1
+424	47	4
+437	433	5
+393	496	2
+24	133	4
+16	272	5
+87	103	3
+45	145	4
+474	33	2
+477	277	5
+46	278	3
+343	299	2
+203	96	3
+485	324	5
+198	77	3
+97	357	5
+127	412	2
+479	465	4
+267	108	2
+301	107	1
+269	426	3
+209	76	1
+193	29	3
+54	431	1
+280	374	3
+221	385	3
+482	217	3
+109	135	1
+166	282	2
+40	364	2
+201	209	4
+189	363	2
+398	26	3
+236	278	3
+472	163	3
+185	169	3
+321	108	5
+182	326	1
+500	133	1
+232	298	3
+42	405	3
+160	96	5
+373	63	2
+473	310	4
+486	14	2
+331	72	3
+428	288	1
+141	282	2
+230	485	4
+376	125	3
+135	361	3
+299	348	2
+312	120	3
+425	119	3
+341	494	5
+65	311	3
+71	335	5
+183	468	5
+82	240	4
+218	471	3
+82	304	4
+426	249	4
+84	158	5
+428	99	2
+290	458	3
+380	122	4
+343	324	3
+373	322	5
+170	295	1
+34	322	1
+32	135	2
+66	132	5
+441	165	2
+414	354	1
+378	245	4
+422	194	1
+8	323	4
+184	60	2
+202	297	1
+173	288	5
+92	66	2
+47	44	4
+263	127	5
+29	195	5
+37	464	5
+274	104	1
+495	357	4
+176	340	2
+181	55	1
+238	492	1
+311	411	4
+324	118	5
+483	50	5
+233	303	1
+15	238	4
+443	260	4
+36	278	3
+126	204	4
+161	454	5
+20	421	1
+455	456	1
+212	439	3
+487	338	5
+60	205	5
+104	253	1
+206	219	5
+192	430	1
+40	418	1
+275	431	3
+207	11	4
+343	80	4
+272	28	5
+326	416	1
+143	231	3
+221	80	2
+479	353	5
+394	315	4
+19	344	2
+105	258	4
+252	305	5
+160	247	1
+368	366	5
+168	204	5
+247	413	5
+360	222	3
+228	4	3
+25	47	3
+327	450	4
+475	328	2
+352	264	3
+124	499	1
+127	231	3
+18	29	5
+274	448	3
+202	269	1
+457	279	3
+2	328	4
+237	124	1
+467	140	5
+179	453	5
+18	422	4
+479	71	4
+417	60	1
+202	430	3
+290	330	4
+174	242	5
+274	479	1
+184	93	2
+8	273	3
+115	3	1
+90	83	1
+471	443	4
+423	167	4
+107	376	2
+292	260	3
+450	348	2
+234	22	5
+386	375	2
+186	13	4
+219	307	5
+246	130	1
+410	399	2
+299	93	5
+38	343	2
+1	375	3
+84	437	3
+229	348	5
+60	486	3
+86	2	3
+70	106	2
+258	81	5
+80	258	3
+448	263	1
+469	120	4
+422	470	5
+74	175	5
+130	484	5
+235	37	4
+321	86	4
+448	245	1
+236	327	3
+151	61	5
+399	21	2
+35	458	2
+206	138	4
+254	124	4
+65	421	1
+463	77	1
+61	374	5
+226	97	4
+414	15	4
+141	332	5
+324	205	4
+63	438	5
+244	202	5
+396	320	2
+148	30	3
+319	48	2
+382	405	2
+201	35	3
+177	426	1
+160	114	4
+222	129	5
+17	348	4
+174	479	3
+164	40	1
+332	248	2
+156	219	2
+492	336	1
+76	328	1
+380	140	5
+160	45	5
+64	281	5
+128	116	1
+297	224	1
+287	243	1
+413	227	4
+353	362	1
+474	263	2
+32	212	1
+473	69	5
+95	338	1
+122	278	1
+465	224	4
+67	256	3
+38	363	1
+154	22	3
+145	416	2
+47	492	1
+60	110	3
+158	402	5
+52	297	1
+63	456	3
+400	431	1
+261	69	1
+158	81	5
+228	379	5
+200	348	3
+6	448	3
+109	362	5
+175	137	3
+465	13	2
+459	215	1
+42	323	4
+175	217	1
+309	358	1
+52	26	1
+229	169	2
+61	126	5
+115	13	3
+70	97	2
+127	73	5
+299	75	1
+389	405	5
+339	153	2
+106	490	3
+122	243	4
+323	262	3
+248	310	3
+372	323	5
+478	292	4
+462	20	4
+109	105	5
+138	69	3
+58	252	1
+177	401	3
+398	157	1
+327	38	5
+49	118	5
+330	55	2
+116	13	3
+335	181	5
+322	466	1
+243	444	5
+102	211	2
+144	340	3
+136	23	5
+125	102	2
+478	253	1
+67	408	2
+280	229	1
+162	152	2
+368	346	4
+285	210	4
+198	88	3
+44	49	4
+493	377	4
+85	163	2
+297	146	3
+432	245	4
+179	96	5
+499	30	4
+220	69	3
+309	491	1
+285	305	2
+392	435	1
+454	22	1
+120	29	2
+337	341	4
+160	340	5
+265	88	4
+280	235	3
+50	302	1
+302	60	1
+372	42	2
+252	409	5
+203	340	5
+323	108	5
+410	184	3
+118	430	2
+351	186	2
+164	263	5
+229	335	3
+143	448	5
+443	34	1
+339	38	2
+9	323	4
+150	318	3
+55	460	3
+488	51	5
+60	5	4
+285	414	2
+259	28	3
+279	391	5
+368	206	3
+154	365	2
+427	109	3
+227	254	1
+205	407	4
+115	288	2
+395	201	4
+358	478	3
+484	56	5
+268	286	3
+121	191	4
+369	375	1
+55	45	1
+175	91	1
+96	140	2
+213	292	4
+454	21	4
+197	207	2
+179	107	1
+30	169	2
+297	255	3
+188	22	3
+410	29	1
+485	313	4
+214	482	2
+247	390	1
+196	58	2
+390	115	5
+107	176	3
+369	170	3
+433	112	2
+253	261	5
+313	411	4
+270	464	1
+58	168	4
+84	114	5
+9	181	2
+292	290	2
+78	130	1
+240	325	1
+368	164	4
+438	449	4
+468	79	5
+399	226	2
+403	456	1
+6	342	4
+225	131	4
+445	427	3
+454	320	2
+358	402	1
+139	460	4
+160	21	2
+180	18	4
+413	358	5
+402	66	4
+275	305	5
+329	413	1
+120	176	1
+225	97	2
+71	211	4
+7	388	5
+181	480	1
+130	365	2
+376	204	2
+185	40	3
+170	356	5
+335	356	2
+101	270	5
+54	187	4
+386	483	3
+185	164	1
+85	239	4
+414	400	4
+378	442	1
+76	42	4
+134	346	4
+55	180	5
+148	256	4
+49	285	3
+422	409	4
+85	107	5
+283	446	4
+181	293	2
+279	280	2
+233	149	3
+85	23	3
+255	128	4
+332	117	3
+300	438	3
+485	251	1
+134	77	2
+397	295	1
+7	393	1
+14	88	2
+251	374	5
+1	367	4
+490	219	2
+270	116	4
+471	460	2
+250	299	5
+138	158	1
+422	182	1
+92	293	1
+212	276	4
+375	336	5
+476	490	4
+126	323	3
+276	205	1
+409	123	2
+394	106	3
+113	41	1
+300	80	4
+375	280	1
+387	225	1
+32	309	2
+444	311	4
+325	453	1
+184	274	5
+364	82	1
+135	177	5
+288	420	4
+495	98	2
+484	184	3
+341	277	2
+186	367	5
+76	393	5
+94	363	4
+169	430	1
+371	482	4
+274	409	5
+332	349	4
+29	329	4
+167	476	1
+68	14	2
+341	235	2
+38	86	2
+343	445	3
+224	335	4
+120	438	5
+296	390	5
+396	353	3
+437	2	3
+297	128	2
+7	94	3
+348	419	3
+240	105	5
+346	381	5
+182	220	3
+322	371	4
+292	286	1
+445	130	2
+327	112	4
+342	20	2
+226	58	2
+360	193	1
+224	326	2
+179	224	5
+393	306	3
+419	377	4
+16	89	3
+325	224	3
+282	58	5
+221	249	3
+422	493	5
+122	201	2
+317	362	4
+394	21	4
+69	46	3
+34	303	2
+171	381	5
+39	248	1
+272	415	3
+499	424	5
+17	350	1
+435	319	2
+295	114	2
+307	452	3
+447	242	1
+412	119	2
+493	286	4
+367	412	5
+376	259	2
+320	223	3
+73	291	1
+196	415	2
+500	91	3
+14	285	3
+432	155	2
+222	67	1
+58	233	4
+428	346	3
+263	314	3
+141	288	4
+424	163	2
+491	136	2
+319	500	1
+110	152	2
+94	155	3
+37	52	3
+95	72	1
+186	156	2
+44	249	4
+105	315	5
+273	207	5
+461	173	3
+258	488	3
+388	47	3
+377	61	1
+402	291	5
+382	186	4
+191	338	4
+349	160	4
+58	361	1
+438	192	3
+367	119	4
+482	320	3
+273	358	3
+24	86	1
+302	494	2
+361	135	3
+258	367	4
+276	119	3
+400	142	1
+400	218	4
+231	314	3
+493	401	4
+464	37	5
+101	369	3
+194	66	4
+391	149	3
+65	145	4
+356	453	3
+128	358	1
+330	305	4
+287	74	1
+202	460	2
+405	201	3
+437	329	3
+443	165	3
+496	447	5
+398	488	2
+485	9	2
+354	364	1
+254	462	2
+230	23	5
+30	147	3
+234	229	1
+138	240	2
+413	202	2
+382	185	3
+302	167	4
+315	417	3
+299	148	5
+359	245	1
+169	106	1
+143	395	3
+240	377	5
+158	305	1
+257	88	2
+178	203	5
+74	3	1
+299	213	4
+384	482	4
+40	306	2
+189	243	4
+309	496	2
+374	67	4
+30	47	1
+393	218	1
+307	77	5
+234	227	2
+135	22	2
+130	436	5
+7	173	4
+170	351	3
+131	471	2
+132	48	4
+334	416	2
+306	221	1
+90	489	3
+309	187	4
+355	429	5
+272	205	2
+147	63	3
+213	384	3
+240	145	5
+193	242	4
+102	160	4
+24	488	3
+208	497	5
+83	360	2
+366	43	5
+494	210	5
+200	359	4
+288	407	5
+95	335	4
+158	16	3
+328	161	3
+52	343	4
+169	73	5
+187	168	3
+390	280	5
+469	282	5
+72	96	5
+377	182	3
+464	372	1
+239	409	1
+172	56	2
+479	352	3
+108	211	2
+294	410	1
+278	457	4
+432	164	3
+85	216	1
+10	180	3
+305	56	3
+181	205	1
+241	350	3
+122	421	1
+373	453	5
+500	153	1
+461	11	3
+318	337	1
+263	256	3
+134	222	5
+325	152	3
+8	28	5
+495	302	2
+456	193	1
+475	213	3
+88	417	4
+333	248	4
+1	457	3
+321	445	3
+391	31	2
+263	203	1
+158	171	4
+240	125	4
+370	40	1
+18	11	4
+43	366	5
+115	346	2
+110	49	2
+64	47	3
+126	419	4
+176	188	1
+235	387	3
+47	274	4
+415	249	3
+243	195	4
+467	136	1
+285	457	1
+302	399	3
+70	137	2
+476	243	5
+420	199	3
+23	376	2
+480	162	5
+308	342	1
+67	338	1
+481	388	1
+328	428	1
+473	157	1
+368	168	2
+48	267	3
+215	345	4
+464	114	5
+372	143	2
+260	133	1
+256	325	3
+442	244	4
+110	486	5
+98	179	2
+390	355	4
+422	233	4
+484	47	2
+82	318	2
+146	109	5
+71	379	4
+292	236	5
+66	400	5
+482	257	3
+327	271	2
+4	442	1
+437	131	2
+232	367	4
+225	458	2
+163	91	1
+257	67	3
+241	343	3
+436	474	3
+470	116	5
+157	428	1
+16	389	4
+409	150	3
+271	325	2
+367	12	5
+180	462	3
+369	353	2
+375	157	1
+208	325	5
+263	290	4
+450	388	1
+303	456	5
+284	345	4
+324	147	4
+207	376	1
+203	297	5
+335	465	1
+265	334	1
+92	212	1
+424	115	1
+258	138	4
+15	495	4
+420	176	5
+387	153	2
+123	110	4
+300	90	4
+344	84	3
+338	278	2
+475	479	4
+485	318	3
+269	161	5
+449	290	2
+85	9	1
+497	406	4
+467	394	4
+184	63	3
+62	370	3
+217	481	3
+258	78	3
+347	236	4
+203	464	2
+269	225	2
+228	139	1
+120	381	4
+189	99	3
+313	485	3
+437	210	2
+131	33	1
+489	396	2
+134	56	4
+382	442	2
+216	153	5
+251	62	5
+305	298	1
+153	332	3
+259	362	3
+166	44	2
+351	458	5
+82	81	2
+299	319	2
+173	179	2
+342	335	1
+315	403	2
+172	222	2
+146	159	3
+37	483	4
+341	456	2
+177	224	4
+202	118	1
+72	165	2
+319	313	5
+427	150	4
+74	341	4
+112	165	3
+293	207	1
+73	353	5
+110	78	2
+209	439	4
+368	280	3
+370	285	5
+196	105	1
+56	350	4
+133	62	4
+362	394	3
+302	234	1
+60	301	5
+165	333	1
+91	206	5
+201	484	3
+154	372	3
+14	305	5
+82	9	1
+85	237	3
+99	389	2
+176	181	1
+405	260	4
+408	149	5
+183	185	2
+7	2	1
+364	168	5
+329	34	1
+421	77	5
+366	478	4
+107	382	2
+146	191	2
+335	251	1
+180	291	5
+99	337	5
+134	206	2
+64	416	3
+122	270	5
+442	24	1
+240	281	5
+436	494	5
+240	178	1
+356	19	4
+396	463	5
+136	41	2
+138	272	5
+444	435	2
+92	24	3
+213	158	1
+132	358	1
+380	78	5
+367	248	4
+383	220	3
+328	155	1
+156	204	1
+343	337	3
+383	454	3
+373	187	3
+188	279	1
+287	385	5
+124	76	5
+58	207	3
+363	196	2
+491	270	3
+243	247	1
+86	378	4
+283	152	2
+271	451	2
+104	147	3
+203	80	4
+190	480	4
+200	260	2
+296	115	4
+416	85	4
+500	144	5
+279	401	3
+182	78	5
+5	420	5
+383	154	1
+87	406	4
+379	64	4
+240	220	2
+153	56	3
+201	464	2
+292	126	1
+376	445	1
+250	261	3
+457	14	5
+36	138	3
+475	171	2
+365	139	4
+226	249	5
+371	429	5
+209	82	2
+16	51	3
+362	57	2
+11	440	5
+208	125	5
+132	398	3
+341	331	1
+102	60	1
+23	431	1
+251	26	1
+104	151	3
+174	473	5
+271	241	2
+239	483	1
+239	311	5
+349	302	1
+275	224	3
+75	152	4
+252	98	4
+140	374	4
+486	244	2
+195	468	1
+366	158	2
+81	202	4
+358	10	5
+363	127	4
+199	101	1
+143	303	1
+281	98	4
+44	388	2
+442	125	3
+151	439	3
+155	172	3
+33	2	5
+236	459	3
+149	464	3
+129	398	2
+475	100	4
+435	346	1
+449	440	2
+487	146	3
+139	412	4
+489	424	4
+370	498	3
+5	199	2
+97	330	2
+172	213	5
+151	41	4
+24	20	2
+473	389	1
+188	23	4
+178	387	1
+125	78	3
+175	398	1
+403	168	3
+431	124	5
+294	257	2
+460	428	4
+458	447	5
+451	173	1
+16	444	4
+222	470	3
+30	237	1
+48	479	5
+253	157	3
+144	196	4
+108	171	4
+24	328	4
+46	7	2
+394	393	4
+336	276	4
+346	241	1
+281	192	5
+28	78	3
+402	281	5
+12	91	5
+247	161	1
+175	195	5
+115	94	4
+302	432	5
+132	455	4
+132	165	4
+42	230	4
+354	461	3
+144	215	3
+289	52	3
+72	82	5
+170	48	4
+253	439	1
+84	183	3
+3	354	2
+174	170	5
+298	240	3
+338	414	5
+138	198	5
+286	312	2
+241	450	1
+228	221	5
+197	471	4
+403	264	2
+269	316	5
+64	41	4
+438	419	4
+201	365	3
+177	282	2
+122	70	2
+497	179	4
+302	243	2
+64	168	4
+42	470	1
+497	99	4
+120	2	2
+63	311	1
+475	386	4
+79	430	1
+105	226	3
+197	190	4
+381	469	4
+40	258	1
+300	494	4
+394	257	4
+198	145	3
+129	133	1
+286	249	5
+231	462	3
+218	305	1
+111	477	2
+99	241	1
+96	295	2
+193	452	3
+161	469	5
+349	493	4
+22	488	5
+63	109	2
+231	263	3
+360	44	5
+51	43	3
+157	343	5
+44	230	3
+107	225	5
+76	352	4
+249	241	2
+161	118	1
+76	368	1
+80	247	2
+294	153	1
+33	377	1
+58	232	3
+464	256	4
+38	37	2
+215	221	4
+82	219	4
+247	275	3
+106	258	3
+173	334	2
+201	482	2
+220	268	5
+281	330	2
+178	111	3
+343	13	2
+328	54	4
+280	351	4
+257	298	1
+154	9	3
+189	342	3
+206	39	3
+153	439	1
+336	302	4
+210	461	2
+2	319	4
+41	73	3
+5	500	2
+161	132	3
+341	52	2
+299	500	3
+291	52	1
+470	470	4
+404	341	3
+288	408	2
+349	273	1
+207	386	3
+91	38	4
+150	51	2
+354	68	4
+116	457	1
+437	394	5
+291	385	1
+395	9	5
+461	89	4
+398	316	2
+180	323	4
+91	356	5
+295	161	5
+17	277	3
+31	317	2
+450	139	2
+53	241	1
+255	65	1
+251	385	5
+59	161	2
+378	211	5
+317	109	3
+138	381	3
+152	475	1
+454	215	3
+195	48	1
+404	31	5
+187	403	2
+124	148	5
+3	435	2
+374	280	1
+23	338	4
+254	492	3
+167	114	3
+454	93	4
+163	422	3
+187	172	1
+272	253	4
+41	306	5
+37	78	2
+111	357	3
+211	486	3
+142	428	5
+159	87	4
+373	491	5
+157	151	5
+85	489	2
+367	468	5
+244	499	4
+130	224	4
+229	143	4
+478	368	1
+465	396	1
+186	373	3
+360	395	2
+398	450	3
+292	202	3
+76	65	1
+439	107	3
+28	231	3
+143	192	1
+311	238	4
+237	351	5
+495	114	1
+203	27	2
+263	303	1
+201	13	4
+58	292	3
+68	171	5
+158	304	5
+371	210	4
+72	213	3
+229	194	1
+258	379	2
+403	114	5
+111	358	1
+424	4	5
+69	276	5
+40	193	1
+294	486	4
+76	203	3
+490	378	4
+216	486	2
+211	287	3
+45	356	2
+403	247	3
+75	340	2
+306	298	3
+18	433	4
+81	304	4
+491	80	5
+206	191	5
+155	378	4
+244	319	4
+346	449	5
+86	420	3
+266	478	4
+160	483	5
+403	482	5
+500	76	3
+231	79	3
+239	322	3
+152	457	5
+235	476	5
+122	485	2
+497	257	4
+140	439	2
+29	403	4
+422	265	1
+22	17	2
+234	130	2
+127	178	2
+187	321	3
+144	303	2
+184	251	4
+442	339	1
+469	365	3
+326	93	3
+282	134	4
+333	99	5
+53	253	3
+231	290	2
+359	456	1
+493	353	2
+208	388	4
+98	235	3
+197	282	5
+331	24	4
+472	257	1
+365	282	3
+239	318	1
+351	245	4
+467	214	4
+137	47	4
+461	44	5
+295	448	3
+232	355	5
+99	455	2
+10	113	5
+471	94	4
+67	24	2
+471	76	4
+10	92	4
+354	336	1
+362	13	4
+406	294	3
+441	380	2
+54	384	4
+324	301	5
+15	61	1
+78	468	3
+19	101	3
+110	301	4
+163	446	1
+76	291	1
+427	497	1
+325	459	5
+267	214	1
+149	295	2
+35	48	4
+344	183	5
+39	312	3
+134	311	3
+311	420	1
+267	163	3
+255	157	3
+85	65	2
+385	462	5
+228	107	4
+70	361	4
+101	35	1
+59	403	1
+191	383	1
+100	106	3
+458	442	5
+104	167	1
+161	395	4
+209	314	1
+490	400	2
+85	76	2
+484	389	4
+351	246	3
+340	264	1
+408	310	1
+113	92	5
+5	194	2
+298	104	3
+107	117	4
+358	430	1
+154	498	4
+311	60	4
+337	420	2
+52	319	2
+253	22	3
+170	432	2
+157	4	3
+70	95	1
+208	327	1
+31	474	2
+360	10	5
+2	75	2
+250	464	1
+119	86	2
+367	460	5
+416	173	4
+409	164	3
+500	463	3
+127	342	3
+172	240	5
+338	456	1
+81	396	2
+422	308	3
+193	231	4
+260	32	3
+120	77	2
+277	2	3
+53	266	4
+152	207	5
+129	339	1
+289	450	4
+266	51	1
+416	325	2
+305	209	2
+99	123	2
+106	225	5
+97	456	4
+192	67	5
+378	391	2
+36	478	2
+227	313	1
+199	152	3
+435	424	4
+412	464	5
+114	39	4
+186	6	4
+417	227	3
+382	381	5
+139	13	3
+166	340	1
+216	442	2
+197	466	1
+262	199	5
+80	161	2
+385	313	3
+472	352	1
+147	158	2
+42	38	5
+422	90	5
+327	133	5
+14	188	2
+382	16	2
+97	412	4
+244	34	5
+461	489	1
+72	35	1
+271	368	1
+468	22	1
+325	346	1
+220	179	2
+102	163	5
+144	152	2
+492	77	4
+314	175	4
+91	11	1
+399	183	5
+197	124	5
+378	192	2
+48	500	1
+102	309	1
+155	176	4
+114	179	2
+497	396	5
+185	417	4
+170	87	2
+352	216	4
+372	307	3
+190	153	3
+193	244	3
+326	262	5
+494	259	3
+365	459	5
+483	342	4
+400	6	4
+368	7	1
+103	88	3
+236	97	1
+194	364	5
+18	26	1
+64	405	1
+267	29	1
+386	345	3
+209	172	1
+74	307	4
+184	459	2
+139	458	2
+426	167	5
+29	102	4
+62	50	3
+114	417	3
+459	365	1
+9	206	3
+161	206	5
+235	456	1
+162	3	2
+484	296	4
+318	343	3
+239	40	5
+279	66	2
+330	463	2
+418	472	3
+180	147	2
+384	200	4
+482	358	3
+84	221	2
+266	438	1
+38	135	5
+409	375	1
+305	267	5
+464	300	4
+42	108	5
+2	493	2
+146	289	2
+281	331	5
+195	161	1
+379	480	1
+466	405	1
+40	422	5
+274	451	2
+181	115	2
+337	164	3
+458	390	5
+70	205	2
+292	361	3
+98	230	2
+485	250	3
+285	425	4
+365	86	2
+385	258	5
+20	348	5
+120	4	1
+2	33	2
+396	184	4
+393	449	5
+136	54	1
+339	297	4
+343	292	4
+469	441	2
+104	10	2
+208	259	2
+3	291	3
+494	176	5
+76	238	5
+71	383	2
+379	141	1
+338	140	1
+179	382	1
+352	178	3
+169	491	2
+92	339	3
+20	67	5
+295	93	2
+373	235	5
+318	150	4
+87	362	2
+263	386	5
+145	245	4
+303	188	5
+471	176	5
+368	3	4
+378	410	4
+160	128	1
+139	23	4
+81	171	1
+177	72	1
+305	146	5
+307	255	2
+232	451	5
+127	30	2
+233	209	3
+213	265	5
+252	135	3
+62	289	1
+397	375	5
+201	30	5
+42	123	1
+224	229	4
+140	33	5
+285	31	1
+35	258	2
+47	54	3
+259	162	5
+21	240	2
+298	156	1
+80	349	5
+453	312	4
+71	403	5
+448	111	4
+15	317	2
+206	49	4
+8	77	1
+128	490	3
+73	79	3
+245	238	5
+100	14	4
+126	143	3
+323	22	4
+376	431	1
+138	325	5
+218	57	2
+130	336	2
+241	273	5
+53	307	4
+129	237	1
+283	156	5
+117	19	4
+378	69	3
+234	162	3
+194	79	2
+367	348	3
+382	13	2
+326	294	1
+144	429	1
+4	406	2
+48	44	5
+59	199	2
+340	257	2
+286	381	5
+65	381	5
+418	153	4
+174	173	1
+155	336	4
+106	438	3
+440	363	2
+160	9	4
+177	110	3
+9	73	4
+218	414	3
+231	434	1
+303	461	3
+213	438	1
+280	74	2
+399	164	1
+33	475	2
+297	492	2
+475	494	3
+248	27	2
+375	94	3
+107	24	3
+313	27	1
+237	114	4
+181	393	5
+280	427	4
+115	475	5
+67	225	5
+461	103	2
+444	55	3
+77	208	1
+350	496	1
+193	89	1
+62	44	2
+123	490	3
+241	149	2
+377	197	4
+183	193	2
+129	79	1
+233	340	4
+140	63	4
+86	352	1
+311	213	5
+467	371	5
+230	303	2
+116	417	5
+28	113	4
+88	461	2
+11	245	3
+174	391	1
+63	318	5
+431	193	2
+411	394	2
+322	98	4
+246	39	1
+51	34	5
+210	115	1
+437	240	5
+291	376	2
+185	179	2
+129	352	4
+34	342	5
+28	98	3
+399	72	5
+81	31	5
+346	82	2
+158	278	2
+225	244	1
+468	295	5
+265	51	2
+427	172	3
+141	124	5
+342	170	5
+171	322	1
+20	161	2
+208	217	1
+335	415	2
+229	454	1
+421	241	4
+7	481	4
+144	406	1
+158	235	4
+17	197	1
+490	302	4
+44	145	1
+319	226	4
+96	276	4
+324	415	2
+379	324	1
+297	14	2
+18	367	5
+443	241	3
+131	466	3
+364	94	4
+288	326	4
+129	378	1
+260	21	5
+7	114	4
+272	231	3
+88	48	3
+32	244	5
+367	84	2
+366	202	1
+44	166	3
+306	230	4
+226	15	2
+192	411	5
+127	97	5
+368	338	5
+173	305	2
+262	398	4
+154	90	2
+303	185	1
+17	307	5
+102	8	4
+49	169	1
+487	138	2
+277	495	4
+70	218	4
+499	221	3
+6	418	1
+246	78	3
+339	455	1
+293	297	4
+388	490	4
+55	421	1
+454	156	5
+396	357	5
+2	134	5
+109	245	1
+439	418	4
+170	367	1
+418	51	1
+391	141	5
+468	290	4
+312	465	1
+347	439	4
+330	275	1
+425	95	4
+112	418	2
+386	446	4
+406	260	3
+69	489	3
+316	461	3
+280	458	5
+330	413	5
+159	221	1
+186	149	1
+212	25	5
+76	434	3
+93	256	1
+313	31	1
+250	497	1
+303	187	5
+271	166	1
+184	53	3
+338	216	1
+71	271	3
+111	5	3
+108	456	1
+460	306	3
+371	99	1
+325	121	4
+430	21	4
+411	465	2
+192	142	3
+98	197	4
+213	185	3
+456	338	5
+311	473	2
+206	33	1
+372	373	2
+12	389	2
+461	366	2
+476	247	4
+289	442	4
+291	463	5
+364	185	1
+132	189	1
+241	483	4
+20	32	5
+100	409	4
+475	434	3
+411	352	5
+203	264	1
+432	269	2
+337	421	5
+303	179	3
+476	10	3
+179	137	4
+234	324	1
+248	450	3
+62	385	5
+279	205	2
+42	157	4
+162	119	3
+75	15	5
+12	372	3
+222	330	4
+60	151	4
+300	431	4
+158	288	3
+123	424	1
+5	451	5
+106	433	3
+106	32	3
+29	318	5
+353	397	5
+174	186	3
+436	333	3
+221	239	3
+123	366	3
+256	417	1
+74	65	3
+450	7	1
+480	197	3
+1	49	3
+356	271	2
+82	206	5
+60	63	5
+410	422	1
+215	98	2
+493	22	3
+30	387	5
+360	241	3
+288	241	3
+200	70	5
+352	365	1
+462	212	1
+314	266	2
+136	115	3
+496	433	2
+290	205	3
+197	340	1
+453	450	2
+379	131	2
+206	195	2
+404	444	2
+334	17	5
+327	4	3
+476	235	5
+37	393	3
+303	290	1
+306	29	4
+346	189	4
+277	275	3
+318	11	5
+206	80	1
+336	409	3
+440	107	1
+208	30	3
+303	184	4
+197	126	1
+45	398	1
+405	476	1
+100	225	4
+375	193	5
+419	225	4
+152	220	1
+141	39	3
+371	404	1
+447	488	2
+483	311	4
+28	371	1
+496	114	2
+15	132	5
+468	120	4
+28	425	3
+317	344	1
+387	496	3
+255	89	1
+150	25	1
+97	148	1
+277	90	2
+173	346	3
+349	369	3
+196	345	4
+97	251	1
+95	285	5
+145	94	4
+483	116	5
+245	381	4
+459	285	3
+451	359	4
+500	86	5
+337	382	5
+167	258	5
+435	450	1
+126	230	4
+167	182	2
+157	303	1
+230	277	2
+126	296	2
+380	483	2
+364	134	3
+351	449	1
+408	403	3
+177	98	3
+65	420	2
+132	192	3
+441	467	4
+239	496	3
+193	334	5
+395	139	4
+219	308	4
+30	334	1
+75	434	5
+438	481	2
+470	367	4
+8	494	2
+416	200	1
+366	6	2
+323	492	4
+345	466	5
+4	282	5
+156	499	5
+170	18	2
+388	440	2
+440	448	3
+211	464	1
+441	64	4
+199	241	2
+413	305	3
+435	184	5
+61	42	5
+178	44	3
+359	198	2
+57	245	4
+424	495	5
+249	403	2
+421	438	5
+439	81	1
+238	6	2
+110	193	2
+202	68	4
+382	93	3
+475	202	2
+7	355	4
+346	461	5
+4	41	1
+313	393	3
+400	228	1
+255	180	4
+90	240	3
+333	112	4
+193	390	3
+116	475	1
+362	167	4
+383	496	3
+173	110	5
+214	196	3
+416	193	4
+187	310	5
+440	335	1
+494	368	3
+207	343	5
+191	175	4
+397	377	3
+440	263	5
+368	229	3
+325	15	1
+308	24	3
+76	54	1
+397	393	5
+118	149	2
+332	29	2
+130	161	5
+352	235	3
+117	13	5
+304	33	3
+430	445	2
+309	469	3
+105	326	5
+146	353	5
+241	431	1
+70	18	3
+189	76	4
+270	466	2
+370	447	1
+39	63	2
+53	489	5
+257	63	3
+404	426	2
+289	358	5
+42	469	4
+237	234	4
+188	375	1
+432	314	1
+353	427	5
+290	472	2
+318	314	1
+277	8	2
+232	328	1
+228	416	3
+119	431	2
+152	90	3
+333	220	1
+306	414	5
+301	444	2
+245	123	1
+166	230	3
+221	159	5
+57	101	1
+132	374	2
+346	182	4
+484	6	2
+448	155	3
+40	438	4
+480	406	2
+372	63	2
+448	276	4
+291	483	5
+312	130	2
+446	95	1
+405	8	2
+481	3	4
+156	418	2
+398	255	2
+75	29	2
+189	379	5
+64	146	1
+47	18	2
+31	251	3
+381	184	5
+57	82	3
+38	145	4
+202	364	3
+32	139	4
+371	219	3
+251	159	5
+340	234	5
+425	287	4
+60	405	2
+330	400	5
+166	101	4
+424	133	4
+447	169	3
+335	85	5
+464	251	1
+261	455	5
+323	257	5
+136	408	1
+121	371	4
+401	303	4
+43	22	3
+31	127	4
+141	306	5
+143	117	3
+353	223	5
+376	155	5
+278	45	3
+108	57	1
+249	438	2
+220	120	4
+282	162	4
+477	319	5
+309	129	3
+403	102	3
+278	332	2
+166	66	1
+436	397	4
+172	202	5
+494	325	4
+300	242	2
+40	399	1
+30	500	3
+34	407	3
+192	248	4
+84	21	1
+19	18	4
+386	487	5
+315	158	2
+357	149	3
+421	90	4
+384	159	5
+253	141	4
+301	134	1
+318	160	4
+250	344	4
+142	196	5
+357	39	5
+401	254	3
+345	302	3
+93	401	3
+156	34	4
+29	240	4
+478	384	5
+213	428	2
+61	358	2
+90	84	5
+226	228	3
+395	450	5
+488	327	1
+439	347	5
+235	463	4
+337	396	4
+385	310	4
+171	62	3
+174	53	4
+436	57	4
+204	443	1
+331	366	4
+4	26	4
+406	174	4
+494	264	2
+161	46	3
+435	139	3
+226	337	5
+34	386	1
+260	307	2
+395	42	5
+49	413	4
+32	26	5
+201	427	1
+258	311	1
+193	152	4
+91	154	1
+255	103	3
+44	306	3
+120	239	3
+314	13	4
+473	328	5
+401	152	1
+317	243	4
+426	276	3
+165	308	4
+393	32	1
+385	109	4
+241	266	4
+405	388	1
+261	152	4
+343	94	2
+468	389	1
+260	1	1
+174	29	3
+79	365	5
+300	309	5
+363	433	5
+201	289	5
+352	117	2
+9	52	4
+249	37	2
+72	286	3
+244	163	4
+264	73	5
+122	131	2
+211	289	4
+214	474	3
+49	74	1
+35	5	2
+164	280	3
+426	91	1
+179	317	4
+34	34	5
+465	372	5
+438	165	1
+281	164	3
+80	207	3
+409	448	5
+500	267	4
+326	180	1
+69	169	2
+376	371	2
+324	491	5
+390	301	2
+96	383	3
+291	461	4
+475	110	1
+58	113	2
+112	380	3
+458	124	4
+494	169	1
+255	25	5
+190	91	5
+164	462	3
+118	299	3
+452	194	4
+80	218	1
+244	148	5
+281	214	1
+182	348	3
+439	207	1
+354	422	2
+165	210	3
+80	428	2
+31	118	1
+365	451	2
+35	143	1
+276	84	3
+487	39	2
+455	222	5
+180	390	2
+421	331	4
+466	339	1
+111	192	5
+74	441	5
+230	477	4
+91	493	2
+156	456	2
+53	170	2
+178	57	1
+431	2	5
+47	487	4
+213	405	1
+287	250	3
+46	113	1
+444	397	2
+242	243	2
+138	437	2
+424	67	5
+425	107	2
+281	435	5
+468	234	3
+419	173	2
+431	180	3
+127	389	1
+379	267	5
+51	279	4
+38	476	4
+462	359	5
+313	103	1
+406	401	2
+191	36	4
+155	348	3
+467	241	2
+317	467	4
+289	484	2
+488	12	5
+393	486	3
+78	92	2
+245	447	5
+334	189	4
+351	425	4
+333	136	4
+303	79	5
+195	380	2
+480	357	2
+20	87	2
+252	207	5
+20	284	2
+163	289	4
+202	456	2
+416	465	5
+149	74	3
+294	495	2
+370	424	3
+395	301	3
+91	144	1
+393	201	4
+59	399	5
+181	267	4
+385	56	2
+12	255	5
+115	98	2
+154	379	4
+133	426	4
+481	340	1
+313	469	5
+257	162	2
+185	59	5
+467	75	5
+33	267	3
+267	210	4
+287	476	1
+161	162	5
+454	69	3
+397	176	4
+206	280	4
+376	482	4
+415	123	1
+127	172	1
+267	129	5
+203	77	5
+88	362	4
+274	225	2
+454	145	4
+4	456	3
+332	486	5
+198	320	4
+161	417	5
+272	444	3
+46	62	1
+211	2	3
+168	96	5
+125	173	4
+453	354	5
+343	464	3
+94	325	3
+299	352	3
+287	115	1
+95	129	2
+275	93	4
+48	71	3
+335	267	4
+353	43	3
+168	65	3
+236	29	1
+157	380	1
+43	284	1
+370	59	2
+74	382	5
+41	459	4
+299	385	5
+433	480	1
+372	162	2
+398	322	2
+199	35	1
+481	428	4
+338	341	5
+277	423	4
+323	415	5
+337	262	5
+443	343	2
+97	78	1
+433	195	3
+386	22	2
+189	386	2
+70	271	4
+425	238	4
+227	173	4
+112	338	4
+198	112	2
+12	146	3
+306	30	5
+30	438	5
+181	447	2
+129	27	1
+327	385	5
+430	234	5
+256	346	2
+150	23	3
+38	374	3
+188	392	1
+92	382	2
+118	90	1
+127	35	3
+60	292	5
+328	365	1
+263	146	2
+181	143	4
+372	319	4
+452	192	3
+100	287	5
+8	299	5
+398	245	1
+491	94	4
+185	416	2
+365	117	2
+296	189	5
+56	15	5
+498	411	5
+329	121	1
+359	314	5
+372	275	3
+13	170	5
+61	88	2
+452	322	2
+56	240	4
+495	307	3
+332	250	1
+158	17	4
+19	146	3
+140	214	4
+265	209	1
+382	365	4
+118	444	5
+159	303	1
+291	120	1
+482	432	1
+385	460	3
+378	261	1
+296	364	5
+345	334	4
+322	338	4
+132	491	4
+401	402	4
+40	283	3
+97	447	2
+153	193	5
+336	271	5
+292	483	2
+337	219	2
+73	392	5
+128	90	5
+171	454	2
+393	241	2
+101	246	5
+341	383	5
+473	337	4
+357	318	5
+332	202	4
+351	406	3
+101	281	5
+181	73	5
+71	408	4
+398	102	5
+249	391	1
+177	136	2
+151	105	2
+369	232	1
+103	474	2
+65	117	5
+454	196	4
+445	250	5
+179	45	3
+2	327	2
+148	453	2
+202	41	5
+256	35	3
+29	280	2
+20	256	2
+25	149	4
+67	470	1
+418	185	5
+430	144	3
+392	90	4
+283	62	4
+40	471	1
+165	130	1
+475	442	5
+73	264	4
+46	445	3
+325	314	3
+114	191	3
+53	487	1
+424	336	1
+133	112	4
+458	77	1
+402	123	4
+210	456	5
+280	132	1
+301	315	3
+300	57	5
+13	358	5
+394	395	5
+87	19	3
+416	87	2
+248	32	1
+142	455	2
+145	110	3
+434	408	5
+480	344	1
+219	43	3
+299	443	2
+258	277	2
+236	98	4
+3	449	5
+235	255	2
+410	256	1
+405	381	1
+188	468	1
+408	158	3
+61	17	3
+284	9	1
+322	123	2
+293	301	2
+87	476	4
+45	293	4
+185	52	5
+115	311	2
+205	21	2
+207	253	5
+466	210	2
+81	118	4
+205	168	5
+260	260	4
+44	446	3
+38	456	4
+306	117	3
+6	224	3
+314	6	4
+13	233	3
+344	436	5
+284	49	3
+261	73	3
+379	402	1
+101	187	2
+487	431	3
+256	351	4
+255	121	5
+480	482	5
+32	181	3
+324	10	4
+46	463	1
+202	254	1
+210	95	4
+275	200	4
+440	145	3
+170	488	5
+497	98	4
+441	341	2
+13	493	2
+185	426	5
+482	303	2
+500	114	3
+157	103	4
+402	367	1
+370	171	5
+361	197	3
+79	333	3
+49	451	2
+442	38	5
+273	40	1
+380	479	4
+110	33	4
+377	192	1
+270	144	5
+461	355	4
+301	175	2
+385	446	5
+207	60	4
+487	165	5
+406	172	1
+15	284	3
+213	137	3
+14	189	2
+296	352	5
+242	196	3
+178	405	2
+204	139	4
+63	370	3
+67	307	4
+98	481	1
+438	141	2
+182	269	1
+432	118	1
+87	38	2
+35	217	4
+139	469	1
+287	419	2
+39	296	3
+233	377	4
+468	312	1
+496	475	2
+18	307	3
+209	385	3
+45	495	2
+18	237	2
+362	261	5
+360	254	2
+424	443	4
+451	125	3
+311	166	3
+285	212	2
+179	421	1
+191	207	3
+218	392	2
+410	211	2
+342	153	1
+98	286	5
+218	499	5
+462	238	2
+130	498	4
+303	477	5
+20	153	2
+232	309	1
+146	240	4
+93	29	1
+145	210	1
+359	185	4
+57	493	1
+118	351	4
+82	418	1
+94	324	3
+337	470	4
+423	207	4
+174	311	2
+496	266	1
+380	310	2
+366	199	4
+80	265	1
+13	429	2
+86	245	2
+250	380	2
+147	91	1
+51	112	5
+269	427	1
+77	170	3
+417	188	5
+106	199	1
+123	306	5
+176	151	3
+360	62	2
+217	198	1
+437	401	4
+244	342	3
+44	419	5
+143	142	5
+427	20	2
+140	140	2
+471	218	4
+338	15	3
+355	117	5
+4	407	2
+15	224	4
+211	228	5
+104	289	2
+72	305	5
+9	3	5
+92	389	1
+379	96	3
+125	73	5
+290	239	5
+431	178	2
+413	80	3
+95	410	5
+222	259	4
+473	476	1
+76	84	1
+224	169	1
+117	489	2
+180	354	3
+97	356	2
+444	102	4
+243	350	5
+146	345	1
+99	142	1
+500	445	1
+240	190	3
+451	367	3
+157	289	1
+475	404	4
+92	129	2
+341	151	2
+319	300	5
+464	148	5
+440	22	5
+82	186	5
+197	1	5
+46	492	5
+78	318	4
+396	346	5
+320	417	5
+225	96	5
+416	170	2
+180	139	1
+457	86	4
+125	433	5
+308	225	5
+60	388	3
+352	114	3
+7	268	5
+210	250	3
+326	23	5
+406	340	3
+106	263	5
+272	128	2
+13	440	2
+212	12	5
+102	446	2
+406	23	2
+424	173	4
+429	408	3
+304	322	4
+380	171	1
+306	493	5
+186	30	4
+327	375	3
+320	345	3
+84	102	4
+144	286	1
+258	116	4
+486	324	4
+207	17	5
+131	422	2
+296	14	5
+147	25	5
+11	190	3
+163	251	1
+50	294	2
+58	272	3
+14	149	1
+287	91	2
+247	65	5
+55	74	2
+248	457	4
+133	463	4
+257	90	4
+22	9	5
+428	352	4
+363	254	2
+375	230	3
+137	320	4
+89	219	4
+17	379	5
+460	452	1
+56	290	4
+423	363	2
+74	18	1
+129	12	5
+112	478	4
+343	133	1
+10	289	2
+158	362	5
+103	423	4
+304	310	5
+497	361	2
+45	125	3
+362	354	2
+290	331	1
+297	398	5
+154	72	3
+248	491	2
+53	237	1
+316	65	1
+461	304	4
+125	277	4
+118	203	1
+454	410	2
+343	91	1
+279	213	5
+470	194	4
+492	392	5
+342	450	3
+416	10	3
+168	46	5
+401	273	1
+81	193	5
+214	296	3
+479	390	1
+203	28	5
+435	97	3
+427	169	1
+146	135	1
+373	419	1
+51	131	4
+2	31	5
+331	389	2
+72	39	5
+238	305	5
+423	395	1
+445	352	2
+415	163	5
+326	392	4
+96	493	4
+316	293	3
+425	275	5
+223	201	4
+153	369	5
+343	154	5
+237	293	5
+476	409	3
+410	167	1
+43	429	1
+158	31	1
+408	370	3
+410	230	3
+389	189	4
+401	456	1
+146	317	2
+298	467	5
+131	81	4
+122	121	1
+217	126	1
+114	199	4
+167	113	1
+242	18	4
+68	78	2
+76	155	4
+83	469	3
+193	132	5
+332	45	3
+30	291	2
+493	248	1
+383	141	4
+83	37	1
+356	60	1
+140	25	3
+467	198	5
+306	357	5
+17	133	1
+129	166	4
+360	156	5
+242	167	5
+151	423	1
+326	182	5
+189	69	1
+6	212	1
+258	362	3
+66	8	5
+290	316	1
+365	115	1
+465	268	1
+232	424	2
+411	476	1
+3	28	3
+61	408	1
+236	400	2
+209	286	1
+348	478	5
+411	60	4
+442	285	3
+473	171	4
+466	462	2
+119	498	5
+80	399	4
+56	346	1
+495	325	5
+110	279	4
+295	6	1
+135	430	1
+226	458	4
+478	110	4
+225	446	4
+267	472	2
+328	417	4
+325	167	4
+426	413	2
+484	323	4
+194	40	3
+414	403	1
+458	139	4
+232	46	1
+400	412	1
+392	188	4
+316	328	1
+71	475	2
+366	211	4
+237	39	5
+101	118	4
+477	159	3
+309	175	4
+253	375	4
+59	414	3
+178	216	3
+7	325	5
+89	286	4
+95	202	1
+306	6	2
+153	495	4
+325	486	5
+38	479	4
+304	464	5
+29	138	5
+418	334	2
+30	435	1
+487	4	2
+490	336	5
+44	169	3
+336	269	5
+98	103	5
+46	51	4
+307	276	1
+308	343	1
+359	468	2
+95	329	4
+423	190	1
+340	211	1
+230	198	2
+470	396	1
+287	372	3
+354	298	4
+184	51	5
+143	304	5
+355	222	3
+158	287	4
+411	319	5
+160	168	4
+432	40	4
+39	88	1
+294	58	2
+350	323	2
+100	254	5
+293	21	3
+437	249	1
+488	237	1
+184	244	1
+135	31	2
+314	250	1
+407	139	5
+249	451	1
+172	77	3
+368	48	2
+452	37	5
+327	54	2
+120	249	1
+24	230	3
+100	11	2
+19	187	4
+37	168	5
+445	3	5
+15	102	3
+142	357	2
+193	458	3
+277	418	1
+354	476	3
+29	320	1
+457	55	4
+375	258	1
+98	307	1
+186	194	5
+246	420	4
+241	210	1
+101	213	1
+395	114	2
+186	434	3
+382	497	1
+182	380	5
+341	13	2
+176	354	4
+110	221	5
+461	182	3
+447	237	4
+18	424	2
+90	265	2
+423	322	1
+211	383	4
+298	313	5
+72	86	1
+411	32	3
+45	188	5
+355	277	4
+54	211	3
+479	145	4
+243	297	3
+61	247	1
+465	317	4
+23	474	4
+149	329	5
+455	419	1
+101	20	2
+486	17	3
+383	200	2
+300	257	3
+462	367	1
+211	186	4
+63	194	4
+82	189	4
+405	134	5
+52	60	2
+13	26	4
+476	66	1
+107	28	2
+494	214	1
+311	322	2
+357	252	2
+41	361	5
+325	265	5
+424	386	5
+396	458	2
+40	189	3
+262	243	3
+101	314	1
+401	423	2
+364	119	3
+429	476	2
+431	301	3
+69	492	1
+82	241	1
+21	366	1
+340	379	4
+345	14	1
+176	57	2
+291	381	5
+315	478	2
+93	365	1
+333	492	2
+291	29	3
+31	120	3
+492	476	1
+33	465	5
+217	69	2
+492	491	3
+413	428	2
+13	112	2
+388	239	1
+122	258	1
+234	76	4
+159	374	4
+492	55	3
+117	16	1
+97	21	1
+51	20	3
+305	51	3
+308	169	1
+343	413	5
+109	493	3
+492	122	4
+68	424	4
+361	329	1
+161	481	2
+271	152	5
+48	312	2
+180	320	2
+95	261	3
+414	370	5
+103	75	4
+242	399	1
+87	495	4
+232	233	2
+175	369	5
+162	464	4
+154	499	3
+359	81	1
+195	185	2
+442	326	4
+272	342	5
+281	175	1
+144	417	4
+268	257	4
+108	132	3
+450	47	2
+406	37	1
+115	58	5
+310	172	3
+91	403	4
+267	428	2
+370	218	4
+466	121	1
+173	173	1
+400	113	1
+282	52	4
+48	367	3
+207	409	2
+77	96	1
+183	268	1
+305	303	4
+362	209	5
+99	451	5
+64	117	1
+84	32	5
+159	407	4
+413	260	5
+445	420	5
+420	336	5
+368	66	1
+189	300	4
+265	92	2
+455	301	1
+136	390	1
+94	439	2
+90	59	4
+234	447	3
+474	490	5
+253	34	1
+124	14	5
+214	130	3
+364	78	5
+95	267	5
+180	38	3
+476	473	4
+235	290	2
+419	226	3
+349	66	4
+10	185	4
+153	62	1
+43	155	3
+397	140	5
+65	298	2
+122	391	3
+100	179	1
+191	164	1
+142	402	5
+333	493	2
+410	193	5
+330	196	5
+433	475	1
+369	357	2
+444	216	3
+16	70	5
+496	386	2
+112	112	4
+417	218	3
+315	246	5
+203	182	3
+243	287	1
+62	450	3
+160	134	4
+488	67	5
+268	150	2
+74	34	5
+38	465	5
+162	115	1
+53	58	2
+155	228	5
+8	435	3
+69	500	2
+319	327	3
+368	29	1
+160	261	2
+17	82	5
+267	146	2
+347	490	5
+274	180	3
+218	430	4
+107	333	4
+129	15	2
+394	61	2
+312	356	3
+457	429	2
+85	480	4
+274	320	4
+37	231	3
+481	21	2
+156	465	3
+134	170	5
+318	64	2
+382	174	2
+379	339	4
+354	246	2
+207	165	1
+267	44	3
+410	433	3
+182	288	1
+181	304	2
+193	250	3
+274	496	3
+154	336	4
+466	377	3
+395	366	4
+117	467	1
+122	386	2
+429	455	1
+442	66	3
+304	279	5
+319	490	1
+43	380	1
+300	303	1
+69	299	3
+415	209	2
+275	115	1
+284	341	3
+24	276	5
+441	462	2
+141	195	2
+387	316	3
+459	284	1
+45	230	1
+155	207	2
+89	430	4
+254	185	1
+295	204	1
+137	56	4
+155	400	3
+496	380	4
+142	309	3
+495	181	5
+316	350	1
+205	337	1
+108	497	4
+339	414	1
+83	210	4
+420	388	4
+375	407	3
+413	52	5
+211	311	5
+450	431	3
+363	358	5
+398	372	1
+360	146	5
+490	87	1
+362	378	5
+186	424	2
+91	401	2
+390	80	1
+242	291	4
+255	491	2
+138	343	5
+407	467	2
+128	285	2
+224	25	3
+83	125	3
+340	468	4
+6	276	1
+439	429	1
+131	256	2
+270	446	2
+368	85	1
+398	324	5
+70	307	1
+226	456	5
+387	164	1
+171	36	4
+460	475	1
+219	455	4
+23	325	1
+69	106	3
+139	358	1
+141	499	3
+181	279	4
+405	49	5
+213	346	1
+459	158	3
+259	247	2
+303	366	1
+242	492	2
+85	13	1
+287	421	2
+197	170	2
+438	30	1
+163	388	1
+257	270	1
+350	224	2
+58	112	4
+259	376	4
+285	300	4
+236	381	2
+344	470	3
+143	81	4
+4	34	2
+408	195	2
+117	332	3
+472	299	1
+365	275	2
+112	19	5
+65	304	3
+281	4	5
+464	77	1
+56	98	5
+295	357	5
+257	92	5
+118	440	2
+269	462	2
+300	15	5
+364	104	2
+203	436	2
+297	130	3
+238	397	5
+160	290	3
+339	246	5
+457	122	1
+209	360	4
+264	240	5
+445	319	3
+318	428	1
+69	144	1
+2	300	5
+186	45	5
+140	472	1
+202	313	2
+413	483	4
+471	400	5
+194	52	2
+229	185	4
+453	470	4
+259	462	3
+374	222	1
+133	30	4
+398	393	4
+409	38	4
+32	196	2
+481	178	5
+58	431	4
+89	130	3
+155	472	4
+70	493	5
+278	402	1
+258	183	5
+436	433	2
+58	263	1
+362	387	1
+13	161	5
+315	113	4
+191	112	3
+151	436	5
+67	168	5
+54	55	5
+208	335	3
+188	123	1
+157	348	1
+137	257	2
+323	77	2
+61	105	2
+406	394	3
+144	445	5
+64	252	2
+279	125	2
+449	191	3
+245	115	4
+159	47	2
+310	229	5
+62	67	2
+165	26	3
+125	298	2
+125	290	2
+89	27	4
+51	328	5
+181	478	3
+355	386	1
+376	77	3
+404	330	1
+36	318	4
+419	52	3
+294	52	4
+55	157	3
+55	390	1
+151	431	3
+442	181	4
+15	218	4
+495	73	5
+40	150	3
+433	188	4
+350	26	1
+265	304	3
+190	157	5
+429	106	4
+486	146	4
+65	2	4
+200	227	3
+146	151	5
+204	148	4
+373	252	4
+284	370	3
+87	198	4
+319	10	3
+54	226	1
+86	497	3
+429	463	4
+154	216	1
+458	213	5
+185	222	1
+277	265	5
+138	50	5
+166	449	4
+382	369	4
+469	389	3
+328	276	5
+472	157	2
+182	224	4
+306	266	3
+119	165	2
+213	130	4
+136	481	2
+126	316	5
+282	415	5
+209	74	4
+96	393	5
+124	473	4
+330	33	4
+229	422	5
+304	25	1
+426	130	4
+142	450	2
+263	374	4
+265	426	1
+452	490	2
+72	99	4
+239	201	4
+72	69	1
+420	2	3
+208	380	3
+339	395	5
+293	289	1
+359	165	1
+199	359	1
+490	93	5
+133	8	4
+459	327	4
+320	298	3
+246	167	5
+348	165	1
+105	238	5
+109	140	1
+33	99	4
+491	497	2
+487	167	4
+71	438	2
+231	148	2
+454	490	3
+155	318	3
+451	94	2
+24	125	4
+12	315	2
+438	193	4
+352	238	5
+123	21	1
+131	353	1
+324	161	3
+345	273	5
+75	56	2
+75	255	5
+41	86	2
+462	459	5
+491	495	3
+233	323	4
+153	417	5
+450	287	2
+29	442	5
+466	50	3
+477	343	2
+6	484	5
+40	255	5
+207	370	3
+142	97	2
+476	369	1
+222	236	3
+330	78	4
+476	367	4
+424	367	1
+167	271	1
+210	276	1
+407	226	3
+380	95	5
+31	21	2
+449	451	4
+201	329	5
+345	449	3
+406	449	3
+340	229	1
+437	247	5
+368	296	3
+214	264	3
+463	498	4
+413	200	5
+471	166	4
+429	394	3
+324	497	1
+127	349	1
+435	298	1
+373	157	4
+130	361	4
+419	361	1
+170	36	3
+173	364	5
+87	121	2
+100	243	1
+222	100	2
+466	445	1
+482	396	1
+292	406	3
+382	106	4
+231	287	4
+349	219	3
+176	347	5
+169	301	5
+228	48	5
+172	376	1
+252	50	2
+133	73	2
+148	354	2
+481	474	3
+89	222	3
+82	263	5
+324	418	2
+457	134	2
+57	305	2
+116	132	2
+128	484	4
+258	313	5
+112	381	5
+463	86	4
+37	353	4
+83	261	4
+277	223	4
+477	150	4
+1	266	2
+82	359	4
+223	98	3
+139	35	3
+116	116	5
+288	112	4
+64	353	3
+136	71	2
+358	319	3
+205	317	2
+326	472	4
+218	371	5
+275	172	5
+34	336	4
+393	284	2
+415	36	5
+439	34	4
+133	432	4
+329	319	1
+184	383	1
+160	91	5
+69	372	5
+264	197	3
+389	324	5
+334	111	2
+492	341	4
+371	114	3
+260	210	4
+1	89	1
+179	236	5
+332	446	4
+29	223	1
+401	135	1
+77	71	1
+471	360	4
+137	405	4
+387	43	2
+43	50	1
+162	213	4
+340	50	3
+447	350	4
+388	338	5
+30	70	5
+255	99	3
+95	57	4
+110	29	3
+162	46	3
+252	291	2
+372	377	2
+235	452	3
+33	474	3
+203	381	5
+338	67	2
+111	175	3
+144	291	4
+271	265	5
+456	194	1
+248	395	1
+130	493	2
+373	233	5
+87	255	4
+253	131	3
+413	249	1
+423	101	4
+1	446	4
+175	159	3
+156	91	5
+80	409	1
+308	15	5
+53	346	3
+201	241	3
+328	179	1
+473	9	1
+418	131	5
+482	283	5
+400	318	5
+333	166	2
+128	248	4
+482	78	5
+66	412	3
+406	232	4
+345	12	5
+43	212	1
+423	84	5
+2	385	4
+85	220	4
+125	129	4
+120	233	1
+123	100	3
+60	80	1
+378	163	5
+339	161	4
+59	211	4
+294	121	1
+82	316	4
+234	417	4
+198	105	4
+361	65	2
+464	375	2
+166	208	3
+183	413	5
+283	440	5
+53	232	3
+51	36	3
+459	482	3
+33	486	1
+305	448	3
+394	204	3
+469	253	3
+254	361	1
+99	90	4
+480	51	3
+243	100	1
+443	207	3
+415	77	2
+354	306	5
+229	79	5
+428	491	2
+451	149	4
+194	162	4
+488	153	3
+349	403	3
+220	159	5
+449	331	5
+353	325	1
+139	19	5
+178	373	5
+476	191	3
+350	407	2
+116	68	5
+39	228	5
+425	389	4
+480	103	1
+299	88	4
+204	132	4
+271	332	1
+333	6	3
+115	142	4
+142	87	2
+496	446	3
+249	330	2
+346	251	3
+392	13	4
+112	149	5
+47	403	5
+91	489	1
+463	178	3
+446	128	3
+407	13	3
+323	364	2
+106	254	1
+456	451	4
+282	266	2
+239	163	3
+234	487	1
+138	429	4
+61	396	3
+28	435	4
+444	113	4
+12	288	2
+218	40	3
+489	482	3
+342	453	5
+295	137	4
+270	293	5
+241	406	5
+107	202	5
+442	25	1
+137	171	2
+12	121	1
+249	356	1
+178	143	1
+301	100	2
+369	494	4
+293	135	4
+341	135	1
+134	316	3
+398	160	1
+432	21	1
+275	417	1
+243	166	3
+318	372	5
+91	132	2
+138	65	1
+479	440	5
+367	185	2
+328	35	1
+54	230	3
+251	355	1
+486	317	4
+65	118	5
+130	297	3
+242	138	2
+194	487	1
+382	473	3
+16	402	1
+211	19	4
+21	481	2
+41	416	4
+179	358	5
+212	215	3
+257	214	4
+113	76	3
+276	346	2
+397	423	3
+402	410	4
+92	490	3
+17	282	5
+29	86	2
+486	302	2
+93	263	3
+20	125	4
+193	142	2
+167	164	3
+490	395	4
+48	459	1
+471	208	3
+22	270	5
+315	68	3
+439	131	3
+35	238	3
+498	170	2
+299	212	1
+231	271	1
+138	382	4
+356	386	1
+205	9	5
+181	260	2
+424	248	1
+344	64	2
+168	243	4
+70	381	1
+9	376	2
+266	446	2
+500	282	3
+357	178	3
+462	387	1
+500	377	5
+206	45	5
+72	438	2
+170	70	4
+72	474	3
+289	401	5
+446	68	5
+192	59	1
+460	456	5
+168	358	2
+475	46	5
+296	384	2
+53	368	3
+191	304	4
+255	146	5
+137	258	4
+255	264	2
+132	354	5
+339	67	5
+283	416	2
+350	196	5
+150	93	1
+401	96	2
+400	1	4
+57	479	1
+353	169	2
+332	69	1
+171	305	1
+125	19	4
+452	144	1
+134	487	5
+354	366	4
+328	118	1
+393	169	2
+156	182	1
+222	493	1
+416	335	4
+152	193	3
+217	186	4
+385	360	2
+300	189	3
+264	378	1
+462	370	1
+173	29	1
+427	460	3
+400	307	3
+385	224	3
+199	466	1
+32	495	3
+222	322	4
+136	449	1
+67	118	4
+3	123	4
+242	277	3
+238	487	1
+173	359	3
+281	448	3
+28	451	1
+18	480	5
+440	10	1
+463	114	2
+271	280	2
+373	79	5
+132	391	1
+337	160	1
+153	223	1
+76	412	5
+460	301	2
+1	146	1
+308	23	3
+244	92	5
+490	258	4
+329	9	4
+89	418	3
+426	482	2
+235	92	4
+128	250	4
+205	219	5
+84	310	3
+42	12	3
+337	142	4
+290	64	3
+243	328	3
+36	2	1
+392	34	1
+260	130	2
+65	260	4
+195	452	3
+466	117	5
+421	348	5
+102	205	2
+102	473	4
+10	456	4
+76	480	4
+358	175	3
+113	155	2
+379	22	2
+28	263	5
+20	422	1
+192	169	5
+207	290	2
+31	374	3
+369	255	3
+168	199	3
+459	450	1
+293	336	4
+211	438	3
+347	193	5
+274	423	2
+349	398	2
+408	309	3
+176	66	5
+172	42	1
+119	483	2
+93	286	5
+483	461	5
+154	180	4
+500	47	4
+194	10	5
+476	18	2
+106	460	5
+140	294	4
+72	182	5
+192	218	1
+485	218	1
+41	83	4
+498	277	2
+43	325	4
+203	285	5
+397	351	1
+233	54	2
+308	47	1
+87	421	5
+17	361	1
+281	275	2
+298	72	1
+480	418	3
+159	406	2
+137	19	2
+132	334	2
+21	233	1
+447	27	4
+287	297	3
+286	28	1
+126	262	5
+205	155	5
+116	341	5
+457	192	4
+451	239	4
+147	417	4
+106	392	4
+368	289	2
+174	28	3
+167	207	2
+365	298	3
+465	327	4
+153	95	1
+287	442	4
+45	442	3
+330	215	1
+484	477	5
+188	285	3
+343	244	1
+182	245	2
+441	181	5
+73	75	1
+331	453	1
+292	466	5
+231	106	4
+204	387	2
+270	199	2
+328	34	4
+107	354	1
+376	128	2
+225	381	5
+327	22	4
+451	342	4
+325	339	5
+299	220	4
+275	208	5
+403	335	3
+472	306	2
+256	37	5
+317	491	1
+458	461	1
+263	474	2
+189	152	4
+388	156	1
+130	17	3
+213	318	3
+452	236	4
+338	335	4
+433	443	5
+378	446	4
+159	204	4
+416	412	1
+298	325	2
+300	272	2
+360	266	2
+314	374	4
+220	212	4
+365	184	3
+253	178	4
+39	470	1
+338	328	5
+173	470	2
+327	347	3
+441	433	1
+146	201	4
+207	190	5
+219	48	4
+75	190	5
+244	295	2
+231	235	3
+247	219	3
+442	236	3
+101	448	1
+310	356	1
+118	434	4
+234	1	1
+291	36	3
+200	382	2
+368	263	5
+221	36	1
+336	164	3
+106	262	1
+372	257	1
+182	145	1
+193	74	3
+74	486	1
+456	427	5
+138	430	3
+335	138	1
+488	10	4
+23	63	3
+52	359	5
+349	357	2
+71	31	2
+153	291	5
+168	166	2
+424	191	4
+261	474	5
+259	480	1
+190	100	5
+343	246	2
+13	84	5
+308	297	4
+217	189	5
+453	481	2
+235	319	4
+178	121	4
+457	291	2
+317	115	4
+334	380	1
+189	14	3
+51	388	5
+258	418	1
+138	423	1
+221	384	5
+328	119	2
+246	90	3
+79	341	2
+303	339	5
+73	24	1
+299	293	2
+51	53	2
+257	160	1
+334	318	4
+305	440	5
+128	389	3
+374	374	2
+474	21	1
+343	19	5
+120	230	5
+390	148	5
+59	484	3
+500	419	3
+242	227	2
+327	27	2
+457	106	5
+97	217	4
+95	473	3
+450	142	3
+357	309	2
+191	227	1
+177	431	1
+291	84	2
+435	243	5
+118	246	3
+103	233	3
+377	214	3
+266	472	3
+233	187	2
+313	495	3
+115	308	1
+359	15	4
+307	495	2
+335	199	1
+497	5	1
+154	388	5
+204	335	1
+255	446	1
+28	123	4
+28	107	3
+462	466	4
+41	310	5
+358	196	5
+106	76	3
+285	314	2
+14	36	3
+48	390	2
+7	430	2
+146	213	5
+271	447	5
+234	114	2
+187	452	2
+364	120	5
+363	435	2
+304	183	5
+166	60	1
+24	297	5
+278	202	4
+70	350	4
+313	336	4
+354	302	5
+406	121	2
+117	302	3
+294	196	2
+44	320	4
+314	336	4
+138	40	5
+301	155	2
+164	255	1
+319	90	3
+304	452	3
+279	24	2
+217	283	1
+63	73	3
+335	365	3
+201	336	1
+341	55	1
+251	332	2
+308	287	5
+155	487	4
+391	219	5
+483	7	1
+277	489	1
+286	186	2
+196	291	1
+358	2	2
+413	161	2
+118	32	2
+210	479	4
+465	302	1
+419	246	5
+137	191	3
+128	350	2
+235	147	4
+404	482	3
+189	84	4
+167	110	3
+215	115	1
+347	149	5
+11	291	1
+12	61	2
+272	7	1
+292	71	3
+137	102	5
+365	167	5
+191	486	1
+375	365	5
+95	359	2
+60	196	5
+137	483	3
+72	83	4
+444	303	1
+199	169	4
+206	482	1
+414	117	3
+5	353	4
+17	49	1
+9	424	5
+214	435	3
+425	454	2
+487	53	1
+41	477	1
+357	310	3
+167	169	1
+370	284	3
+450	342	1
+306	137	1
+30	14	5
+16	481	2
+363	146	5
+419	140	4
+442	100	3
+217	327	3
+76	254	3
+75	91	4
+379	12	4
+448	348	4
+295	281	1
+278	287	1
+453	439	3
+74	310	3
+98	473	4
+221	277	1
+411	375	4
+80	244	1
+16	260	1
+409	136	2
+379	438	2
+78	195	4
+74	42	3
+177	405	5
+389	165	3
+2	401	5
+175	226	4
+216	402	1
+312	27	5
+165	145	5
+374	452	2
+283	114	1
+428	274	5
+22	392	1
+321	469	5
+10	150	2
+307	335	5
+375	295	5
+407	135	2
+338	311	2
+381	233	5
+25	257	3
+296	74	5
+379	125	5
+300	42	5
+184	394	3
+92	180	5
+368	260	5
+5	384	2
+150	344	1
+168	141	3
+273	311	3
+90	324	2
+421	497	5
+341	98	1
+293	115	5
+56	206	5
+235	20	1
+322	321	5
+442	162	5
+356	414	4
+74	150	1
+422	252	1
+413	75	5
+365	2	1
+82	424	5
+173	396	1
+226	176	5
+223	436	3
+74	323	4
+317	190	2
+222	105	3
+418	126	4
+14	15	5
+381	216	3
+303	226	1
+439	350	3
+24	76	4
+88	359	3
+79	42	1
+206	442	5
+452	290	2
+343	63	1
+454	245	4
+455	421	4
+162	383	5
+316	330	3
+311	57	3
+449	126	1
+12	473	1
+7	385	4
+367	66	3
+476	105	2
+365	252	1
+212	434	2
+295	224	5
+166	483	4
+384	282	5
+469	494	3
+24	88	1
+79	239	1
+195	121	1
+309	133	1
+293	279	3
+326	1	5
+258	373	3
+387	68	5
+260	394	5
+230	235	2
+31	190	5
+362	332	5
+308	350	3
+91	58	4
+402	208	3
+35	228	2
+483	331	2
+84	304	2
+193	302	2
+140	198	3
+311	46	3
+242	315	2
+470	160	3
+217	158	3
+380	75	5
+194	284	1
+435	47	1
+492	206	5
+395	268	3
+495	83	5
+217	291	2
+92	138	2
+217	220	4
+127	160	4
+174	454	5
+127	385	1
+3	250	2
+97	497	4
+452	31	5
+37	125	2
+41	493	4
+361	221	3
+224	380	4
+381	277	5
+302	99	3
+145	176	5
+404	450	3
+428	432	2
+373	296	5
+478	281	3
+461	377	5
+417	90	1
+126	206	4
+248	77	4
+44	53	4
+120	427	2
+393	84	4
+200	197	5
+237	215	5
+423	404	2
+143	44	4
+59	139	2
+292	403	3
+213	26	2
+415	409	3
+189	200	4
+1	216	3
+109	208	1
+428	361	3
+101	18	1
+118	492	1
+478	337	2
+179	417	3
+103	95	2
+263	182	5
+495	275	2
+87	78	5
+37	262	4
+57	209	4
+465	274	5
+394	38	4
+468	292	4
+63	180	4
+438	376	3
+188	419	4
+271	73	2
+265	337	2
+201	417	2
+331	150	3
+156	255	5
+387	339	3
+326	379	2
+233	206	2
+446	213	5
+416	57	2
+140	250	3
+450	286	4
+106	447	2
+223	59	3
+443	456	4
+283	108	4
+42	393	1
+15	192	3
+25	414	3
+322	457	2
+279	128	3
+91	102	1
+459	86	1
+187	161	3
+138	100	4
+270	456	2
+216	249	2
+198	469	2
+477	24	1
+173	152	4
+292	307	4
+404	491	5
+226	246	5
+399	386	4
+48	58	1
+25	405	5
+219	431	2
+259	105	3
+345	11	2
+179	118	5
+470	66	3
+367	358	3
+98	350	3
+442	240	4
+58	490	2
+419	98	3
+252	194	5
+295	442	2
+152	168	5
+467	435	4
+297	486	5
+83	456	4
+272	355	4
+494	298	1
+339	216	1
+454	97	4
+307	382	3
+334	156	1
+219	111	5
+415	412	4
+9	431	1
+169	145	4
+493	372	2
+355	128	1
+451	348	3
+136	141	3
+311	84	5
+471	170	1
+346	357	4
+236	9	3
+380	126	1
+17	189	5
+252	423	3
+432	268	5
+140	59	4
+74	58	4
+135	81	1
+430	182	3
+101	153	4
+33	184	3
+17	462	3
+368	23	1
+196	112	3
+464	314	1
+454	204	5
+155	433	4
+414	393	3
+384	39	4
+397	262	5
+278	436	4
+281	415	1
+482	361	4
+266	137	4
+295	463	2
+471	277	3
+285	225	5
+416	491	3
+492	12	2
+93	235	2
+66	436	1
+41	367	3
+31	496	4
+488	483	2
+344	439	4
+267	482	2
+445	272	4
+252	336	3
+358	103	3
+292	274	1
+246	437	2
+417	403	1
+117	445	5
+358	366	4
+161	327	1
+150	39	5
+48	198	4
+82	112	3
+206	202	1
+290	151	3
+176	288	1
+487	424	5
+178	248	1
+404	287	1
+260	317	1
+21	298	2
+172	203	2
+290	447	4
+268	211	5
+69	286	3
+182	232	2
+258	415	1
+32	445	3
+430	186	4
+421	476	2
+137	415	1
+453	8	5
+468	66	5
+79	394	2
+96	367	5
+122	430	4
+439	390	4
+252	361	4
+78	101	4
+161	130	1
+466	412	4
+177	242	1
+52	58	4
+16	30	1
+261	160	2
+286	418	5
+450	216	3
+401	196	4
+253	469	4
+291	401	4
+452	185	3
+361	362	4
+87	419	5
+490	345	1
+233	143	3
+443	364	5
+67	150	1
+461	260	3
+217	445	5
+268	51	4
+55	398	3
+415	89	4
+135	161	3
+35	4	3
+138	123	3
+156	147	1
+498	365	3
+347	478	2
+240	282	4
+124	126	5
+37	428	4
+356	368	2
+340	447	3
+153	51	5
+75	128	5
+331	165	1
+94	293	1
+189	270	5
+469	455	5
+247	191	4
+83	438	5
+122	286	1
+100	150	2
+50	482	2
+124	351	4
+14	429	1
+289	147	5
+368	416	3
+125	500	2
+454	407	2
+252	85	1
+82	214	3
+122	477	2
+498	449	2
+426	326	5
+469	229	1
+498	287	2
+385	142	5
+349	203	1
+448	20	5
+429	138	5
+115	365	5
+163	298	5
+203	107	1
+200	452	3
+426	158	1
+45	239	4
+370	265	3
+468	210	4
+266	100	5
+242	220	2
+173	52	4
+419	230	2
+132	456	4
+268	410	3
+400	314	2
+162	323	5
+399	266	4
+419	357	5
+379	331	5
+325	26	3
+1	78	5
+401	181	5
+133	452	2
+199	435	3
+353	260	2
+31	329	5
+425	318	4
+257	446	5
+74	403	5
+376	330	1
+184	238	4
+434	463	1
+69	305	5
+119	179	5
+94	467	4
+57	343	3
+257	9	3
+166	217	2
+467	16	2
+1	32	5
+135	418	2
+12	240	4
+195	282	4
+15	96	2
+286	258	3
+299	191	2
+100	486	3
+253	351	3
+470	79	4
+282	229	1
+278	470	4
+301	149	3
+404	431	2
+412	23	1
+312	296	5
+464	500	2
+348	302	5
+1	349	2
+347	332	5
+76	394	4
+367	68	2
+135	426	1
+393	251	4
+5	91	1
+120	208	2
+340	82	5
+296	395	2
+486	192	3
+227	479	5
+162	66	1
+161	323	3
+98	122	1
+369	495	4
+166	76	4
+458	179	4
+405	274	4
+355	470	1
+339	427	1
+62	148	1
+68	191	3
+69	49	1
+99	402	1
+232	492	1
+491	364	5
+257	413	3
+285	219	5
+233	89	4
+321	443	1
+259	81	3
+474	331	1
+294	50	2
+385	166	1
+410	94	4
+107	456	5
+149	231	4
+382	170	5
+44	164	4
+475	344	4
+24	228	1
+399	131	5
+96	14	1
+372	452	2
+178	45	2
+495	463	3
+450	92	2
+98	89	5
+67	102	1
+53	257	2
+497	102	3
+269	330	2
+265	132	5
+101	437	1
+447	12	2
+439	424	2
+123	211	4
+208	339	2
+277	345	1
+380	47	4
+335	46	4
+28	423	5
+252	16	4
+306	94	5
+115	387	2
+219	451	2
+374	75	2
+221	344	5
+219	89	2
+41	442	4
+296	173	2
+106	123	3
+375	429	2
+435	221	5
+345	231	4
+46	128	1
+316	384	3
+348	257	5
+228	415	4
+365	401	3
+302	402	1
+333	421	1
+160	64	1
+349	413	2
+171	219	2
+355	102	2
+493	5	1
+183	266	1
+404	222	2
+327	208	1
+403	384	1
+364	96	5
+117	181	5
+257	155	2
+223	386	3
+381	266	4
+8	377	3
+178	258	3
+423	41	5
+457	177	4
+22	204	3
+217	146	5
+156	131	1
+9	34	5
+262	96	4
+350	387	3
+241	291	2
+385	277	1
+360	308	5
+81	357	5
+211	331	5
+309	467	5
+497	354	2
+81	489	2
+69	139	3
+86	57	2
+113	413	1
+92	46	2
+482	128	2
+427	245	5
+160	353	4
+314	131	1
+267	157	4
+208	369	5
+279	473	5
+340	4	2
+278	398	1
+442	293	4
+375	115	2
+311	252	2
+332	439	2
+327	195	5
+420	181	5
+125	281	3
+494	99	2
+329	283	4
+10	427	3
+31	134	1
+446	389	5
+77	326	5
+211	63	1
+428	423	2
+166	83	4
+257	57	2
+90	417	4
+467	273	4
+138	180	2
+192	482	2
+246	360	3
+240	223	1
+401	232	4
+442	438	5
+317	217	1
+137	83	3
+491	51	3
+110	343	4
+303	78	3
+8	322	1
+405	379	3
+415	263	2
+493	189	5
+6	270	5
+65	96	3
+239	375	5
+413	29	1
+480	440	5
+219	118	4
+229	159	5
+185	457	3
+313	311	2
+356	36	3
+182	89	4
+393	207	5
+78	404	3
+23	378	5
+430	309	3
+234	8	4
+443	41	4
+21	206	4
+201	164	4
+39	290	1
+260	296	4
+387	309	5
+283	281	2
+389	222	5
+479	206	3
+420	247	2
+430	281	4
+453	353	5
+52	336	1
+474	207	1
+68	474	4
+234	18	5
+282	436	2
+68	139	3
+134	32	5
+316	2	4
+258	101	5
+267	180	1
+116	397	1
+324	59	4
+149	112	5
+219	452	4
+385	143	4
+383	169	3
+186	109	5
+438	344	1
+414	235	1
+105	337	4
+193	317	1
+482	416	4
+482	357	3
+75	265	2
+173	199	2
+477	460	3
+385	447	4
+460	228	4
+369	303	3
+129	97	2
+175	346	3
+497	254	2
+362	97	1
+340	151	4
+416	99	3
+237	327	5
+352	232	1
+211	201	3
+451	132	2
+48	113	3
+250	13	5
+383	112	2
+402	247	5
+189	22	1
+304	479	1
+316	303	4
+197	57	2
+263	197	4
+473	79	2
+157	138	2
+142	259	5
+186	136	3
+327	229	2
+431	91	1
+206	34	2
+223	138	2
+188	274	1
+68	269	2
+385	469	2
+346	127	2
+60	403	3
+384	322	1
+295	42	4
+339	142	2
+274	97	1
+438	464	1
+50	377	3
+214	287	5
+110	359	3
+99	380	4
+157	99	3
+358	446	5
+46	254	5
+11	239	5
+435	475	1
+449	347	5
+96	271	3
+411	89	2
+176	462	2
+72	270	5
+181	86	5
+419	99	5
+50	232	1
+253	343	1
+154	200	1
+199	328	3
+215	84	2
+346	418	4
+418	66	1
+79	263	5
+253	413	5
+238	155	4
+198	93	2
+497	342	2
+119	222	1
+145	5	2
+104	148	4
+492	168	2
+34	110	2
+160	231	2
+453	472	4
+223	137	4
+253	117	4
+304	70	5
+199	290	5
+493	92	1
+244	471	2
+48	13	2
+441	472	5
+55	205	1
+190	415	1
+16	133	1
+56	292	1
+473	396	1
+342	417	5
+136	3	4
+311	315	2
+111	76	2
+387	224	1
+395	277	5
+252	214	5
+64	134	1
+356	256	4
+37	355	3
+259	64	5
+236	372	1
+250	340	2
+439	499	3
+383	210	3
+44	3	5
+23	152	2
+62	258	5
+457	398	1
+99	208	1
+215	89	2
+410	31	2
+159	215	5
+264	113	5
+461	136	3
+190	484	3
+67	325	5
+59	144	1
+479	377	1
+233	105	2
+272	160	1
+392	258	1
+267	158	2
+351	151	2
+305	264	1
+377	50	5
+434	80	2
+399	160	4
+414	416	5
+127	230	4
+289	497	2
+190	214	5
+272	353	1
+107	69	1
+226	186	2
+358	349	5
+287	424	3
+357	284	5
+484	441	3
+394	402	4
+311	483	5
+345	214	2
+205	396	3
+324	1	3
+485	440	3
+369	481	3
+376	465	1
+4	340	2
+466	289	1
+78	79	3
+480	241	2
+456	379	4
+419	188	2
+394	211	1
+65	289	1
+220	286	2
+447	383	4
+373	166	1
+280	409	4
+147	282	5
+79	116	2
+364	337	3
+421	130	4
+475	265	1
+125	473	4
+36	147	2
+86	304	1
+239	319	3
+258	460	2
+35	346	4
+86	259	3
+451	216	5
+132	385	5
+479	194	2
+149	327	3
+121	304	1
+48	85	1
+89	191	2
+64	347	1
+93	114	2
+164	485	1
+13	186	3
+360	125	3
+322	383	2
+52	499	2
+104	372	2
+157	279	3
+476	457	2
+104	407	5
+471	429	3
+130	182	1
+61	308	5
+454	374	2
+422	263	1
+338	52	2
+343	442	5
+131	173	5
+381	232	1
+98	266	5
+447	314	1
+108	359	4
+127	163	5
+265	65	4
+166	392	2
+214	101	3
+75	470	1
+424	226	4
+141	397	4
+381	211	3
+256	421	2
+99	465	1
+500	74	4
+46	390	5
+423	40	2
+93	421	5
+268	235	3
+435	399	3
+55	450	4
+149	55	3
+386	194	4
+92	491	3
+137	373	5
+55	348	3
+164	88	1
+289	83	4
+438	209	3
+145	265	1
+89	93	5
+110	100	4
+392	362	5
+62	41	4
+272	239	5
+307	108	4
+479	256	5
+192	204	1
+403	386	5
+80	419	2
+436	89	4
+70	158	4
+105	287	5
+303	12	4
+333	444	3
+224	66	4
+310	325	5
+225	362	1
+212	340	3
+489	456	4
+401	99	3
+318	313	1
+171	289	4
+217	491	3
+250	59	3
+185	410	3
+265	212	1
+237	120	1
+419	442	5
+162	413	4
+465	62	2
+442	395	3
+7	53	5
+178	103	5
+66	180	1
+378	277	5
+469	36	2
+188	359	3
+318	247	3
+218	107	5
+194	116	5
+192	427	4
+350	164	1
+494	465	2
+329	335	5
+244	168	4
+429	103	2
+323	130	3
+443	278	2
+330	80	1
+127	40	2
+330	290	3
+188	261	3
+290	415	5
+262	43	1
+66	242	2
+426	375	4
+184	364	1
+332	87	2
+274	72	2
+448	447	5
+307	173	2
+314	404	1
+132	364	4
+247	201	4
+227	240	3
+383	414	1
+190	414	4
+58	393	3
+16	31	1
+133	135	5
+168	133	5
+209	293	4
+327	330	4
+480	193	1
+361	438	3
+452	36	1
+388	400	3
+85	223	2
+319	478	5
+139	257	3
+222	111	4
+361	105	5
+358	42	5
+285	48	5
+47	61	1
+170	225	1
+9	407	2
+326	242	5
+205	491	5
+343	49	1
+408	478	5
+90	345	2
+217	80	1
+449	422	2
+32	306	5
+44	2	4
+234	122	2
+92	324	4
+349	267	4
+83	97	4
+209	420	1
+329	465	1
+221	450	1
+155	347	2
+215	208	3
+496	64	1
+277	143	1
+453	57	4
+98	300	1
+442	223	3
+332	17	4
+187	421	4
+408	283	2
+471	80	2
+111	322	4
+197	208	3
+17	359	4
+499	268	4
+181	5	2
+8	301	4
+436	448	4
+47	12	5
+206	56	2
+379	61	1
+16	484	4
+160	305	1
+18	63	2
+413	88	2
+6	5	3
+152	173	2
+216	347	4
+376	223	3
+42	206	5
+191	151	3
+121	256	3
+213	161	5
+302	105	4
+439	288	2
+29	297	4
+101	392	1
+458	131	2
+213	135	2
+184	128	3
+69	326	4
+373	363	3
+69	437	2
+393	11	5
+435	64	5
+294	352	3
+371	267	3
+315	48	3
+354	76	4
+348	410	3
+68	239	3
+35	215	2
+393	50	5
+289	141	5
+368	73	1
+20	66	1
+237	332	1
+362	55	3
+247	420	5
+467	83	3
+62	29	3
+86	471	5
+211	87	5
+340	248	2
+462	66	1
+170	449	5
+75	237	3
+426	475	5
+122	492	2
+428	47	5
+292	155	5
+220	140	5
+335	146	5
+468	248	3
+346	50	3
+282	155	1
+238	164	1
+29	47	1
+201	452	4
+488	263	2
+243	225	1
+29	278	2
+23	167	2
+366	384	2
+123	50	5
+305	350	4
+397	109	3
+274	203	3
+296	7	5
+453	392	4
+78	189	5
+38	420	1
+92	375	5
+47	439	3
+245	180	1
+441	224	1
+106	286	3
+361	331	2
+309	478	4
+476	21	3
+25	377	4
+176	270	4
+403	186	4
+211	24	3
+352	359	1
+185	482	3
+353	14	4
+266	417	4
+255	74	2
+76	204	3
+54	17	3
+293	191	2
+251	245	2
+254	382	1
+411	215	2
+398	65	3
+283	359	5
+35	194	3
+363	52	4
+324	91	4
+288	479	3
+230	274	4
+6	368	5
+134	95	1
+203	366	1
+48	21	3
+303	124	5
+75	257	3
+300	318	1
+29	295	4
+493	9	1
+228	167	4
+39	366	4
+123	123	1
+148	475	2
+103	225	4
+68	344	1
+174	261	5
+139	183	1
+326	76	5
+363	78	1
+488	61	5
+363	114	3
+357	451	2
+116	279	1
+307	420	3
+40	86	5
+77	115	1
+322	28	3
+450	248	4
+44	165	4
+286	157	4
+440	20	5
+66	492	3
+259	275	3
+6	453	2
+12	302	2
+370	272	2
+36	248	1
+139	76	5
+323	237	3
+317	67	4
+114	67	5
+327	374	3
+263	479	1
+44	349	5
+270	69	4
+134	228	2
+256	313	5
+351	267	3
+265	239	4
+341	224	5
+489	445	5
+419	166	2
+232	69	3
+421	282	5
+48	123	5
+257	145	2
+10	217	1
+432	85	3
+49	449	5
+167	251	1
+297	6	3
+412	377	5
+490	297	1
+189	46	3
+337	85	3
+31	47	5
+218	312	2
+121	323	4
+133	317	1
+44	45	1
+154	27	5
+97	142	2
+31	226	4
+211	423	4
+417	116	3
+54	91	3
+81	73	1
+99	355	4
+132	99	3
+290	224	2
+465	360	2
+447	236	2
+391	268	2
+385	38	3
+192	363	4
+202	74	2
+211	178	3
+46	353	4
+148	449	2
+337	443	2
+447	96	5
+441	231	3
+483	115	2
+177	416	1
+78	272	2
+397	3	2
+245	170	5
+235	493	5
+77	228	3
+33	274	1
+24	393	1
+163	231	3
+218	23	1
+135	310	3
+338	168	2
+428	286	3
+465	69	3
+249	129	1
+140	54	4
+342	189	1
+459	45	2
+97	372	2
+89	47	3
+372	401	3
+250	384	3
+311	479	4
+374	352	5
+209	465	3
+400	24	4
+150	264	2
+90	215	5
+476	383	5
+418	460	5
+471	50	1
+196	244	4
+235	51	1
+232	408	1
+95	85	5
+197	69	3
+452	216	3
+222	61	3
+374	64	3
+298	19	5
+485	83	1
+487	419	3
+291	72	1
+148	168	4
+237	18	2
+393	239	2
+302	466	5
+440	381	4
+408	13	3
+481	416	3
+124	114	4
+190	204	2
+277	370	3
+382	123	5
+329	354	4
+22	176	5
+226	433	4
+399	204	4
+110	101	3
+347	486	5
+16	96	2
+133	465	5
+437	497	2
+178	245	2
+156	256	1
+203	336	2
+1	167	2
+172	443	3
+341	307	3
+497	420	2
+89	73	3
+268	349	2
+266	361	4
+442	115	3
+278	194	2
+491	428	4
+366	234	2
+360	441	1
+234	394	5
+404	291	2
+388	315	2
+249	74	4
+270	48	3
+110	108	5
+351	144	4
+390	176	4
+42	285	1
+11	81	5
+134	78	2
+218	106	3
+69	66	5
+348	72	4
+196	95	4
+36	420	4
+185	308	4
+398	131	4
+447	283	3
+152	373	5
+389	154	5
+272	106	5
+44	381	3
+437	93	3
+247	167	3
+296	313	2
+210	148	3
+202	256	1
+140	464	5
+354	41	4
+360	57	3
+91	22	3
+200	188	4
+497	248	5
+257	45	5
+356	179	4
+206	27	5
+107	359	5
+126	266	1
+91	28	3
+83	142	4
+284	335	5
+320	297	2
+125	346	5
+29	65	5
+129	213	2
+281	138	4
+266	45	4
+73	360	2
+92	230	2
+442	194	2
+28	421	4
+495	308	4
+135	185	3
+119	136	5
+37	35	5
+227	273	5
+51	251	3
+461	481	5
+174	368	4
+394	181	5
+278	239	5
+355	441	3
+126	420	2
+48	167	1
+251	281	5
+195	242	4
+378	347	5
+115	4	3
+335	165	1
+326	95	1
+204	286	2
+81	158	3
+114	225	1
+477	473	4
+277	13	4
+179	163	3
+407	370	2
+381	129	1
+353	213	1
+222	320	4
+500	122	3
+202	89	1
+117	500	2
+331	230	4
+382	10	4
+310	60	1
+403	321	5
+148	43	1
+279	143	2
+182	114	4
+252	75	3
+489	14	4
+4	425	4
+251	323	5
+195	36	2
+174	376	1
+236	330	5
+296	449	5
+346	108	3
+331	301	4
+219	462	4
+63	72	2
+97	359	3
+303	302	1
+442	65	5
+474	474	3
+477	41	1
+146	209	3
+88	398	5
+276	251	5
+78	43	4
+211	54	3
+493	451	2
+258	360	2
+346	66	4
+375	24	4
+198	407	3
+99	285	3
+86	267	5
+405	47	5
+325	211	4
+454	339	3
+63	245	2
+164	468	5
+86	456	2
+390	446	3
+126	310	5
+402	343	1
+141	498	4
+426	313	4
+483	245	3
+440	67	4
+464	90	3
+235	470	1
+7	332	3
+42	237	5
+452	118	5
+486	46	5
+79	435	2
+165	255	5
+433	40	3
+321	406	5
+116	18	5
+409	117	3
+474	191	1
+228	162	3
+210	134	3
+340	241	5
+396	297	1
+96	260	2
+50	281	4
+104	380	5
+431	270	3
+158	407	2
+324	212	4
+69	1	3
+166	64	1
+397	189	4
+327	473	1
+31	498	1
+450	296	5
+413	53	3
+298	348	1
+282	416	2
+222	217	1
+240	499	1
+439	378	1
+193	481	3
+261	467	5
+9	91	1
+67	273	5
+194	421	2
+142	254	3
+347	21	5
+151	345	2
+314	432	4
+322	357	2
+470	178	1
+302	394	5
+414	103	1
+193	76	5
+451	32	1
+260	41	4
+77	349	1
+311	279	3
+277	276	1
+354	484	3
+182	320	3
+487	202	1
+179	100	2
+413	451	4
+333	286	3
+128	184	1
+265	186	2
+368	287	2
+413	413	1
+125	325	5
+223	384	3
+435	43	1
+132	34	2
+307	44	4
+483	452	3
+96	315	5
+397	459	5
+204	81	5
+111	173	4
+412	113	4
+397	164	4
+492	16	4
+459	225	4
+278	479	1
+436	38	1
+15	464	2
+16	315	2
+438	415	1
+102	206	3
+178	112	3
+222	151	2
+177	240	5
+402	476	5
+450	497	2
+11	298	4
+395	245	3
+443	23	4
+187	245	2
+144	331	4
+462	349	4
+71	392	3
+431	141	1
+269	80	3
+296	358	5
+155	389	2
+130	337	4
+225	27	3
+254	59	1
+451	439	3
+154	87	5
+35	71	1
+368	107	1
+62	140	5
+138	223	3
+137	374	3
+465	162	4
+490	169	3
+365	263	3
+28	246	5
+448	168	5
+61	411	3
+366	176	2
+459	181	3
+438	402	1
+116	488	4
+456	149	1
+31	33	4
+207	369	3
+308	173	1
+86	203	5
+123	133	5
+143	161	1
+193	58	2
+425	169	2
+202	266	1
+402	14	4
+330	368	5
+225	88	4
+159	234	3
+409	94	3
+287	451	2
+109	194	3
+126	96	3
+371	431	5
+188	465	2
+199	334	4
+14	56	1
+120	351	3
+180	497	5
+416	424	5
+191	255	2
+433	332	5
+331	267	2
+495	412	1
+174	364	2
+491	414	2
+78	348	1
+223	404	4
+186	73	4
+56	66	5
+292	259	2
+466	138	5
+443	463	1
+464	325	1
+237	245	4
+341	78	4
+165	43	2
+465	209	5
+339	206	2
+482	481	5
+371	466	5
+84	238	3
+105	388	1
+424	433	4
+457	100	1
+208	210	4
+130	98	1
+366	467	4
+424	185	2
+13	405	4
+162	265	3
+298	388	3
+33	406	4
+138	226	1
+312	293	2
+227	298	1
+364	97	3
+139	290	2
+499	283	1
+72	360	2
+192	144	1
+30	491	3
+269	44	3
+305	203	1
+195	411	5
+79	374	2
+94	59	5
+104	162	1
+231	38	4
+173	260	1
+58	275	3
+7	200	1
+490	337	3
+192	434	3
+386	120	5
+111	230	2
+152	394	3
+332	289	5
+5	195	3
+128	422	5
+306	277	5
+132	345	2
+369	477	3
+91	212	3
+376	51	2
+120	183	3
+381	123	5
+277	160	2
+486	108	3
+237	3	1
+59	283	1
+440	343	3
+449	183	2
+427	290	1
+464	337	5
+241	452	5
+98	241	1
+279	144	4
+79	46	3
+278	449	1
+411	493	1
+496	441	3
+205	476	5
+92	488	3
+110	317	3
+326	106	4
+218	440	1
+50	448	3
+424	327	4
+396	163	4
+196	453	5
+367	443	4
+389	64	5
+79	36	5
+298	278	1
+301	397	4
+468	156	4
+11	171	3
+155	460	3
+327	121	1
+214	215	2
+103	302	5
+201	256	2
+466	148	3
+100	270	1
+178	408	5
+202	136	3
+50	105	1
+239	99	2
+104	277	4
+252	67	3
+212	359	5
+142	61	5
+445	63	4
+177	86	1
+335	218	1
+104	360	1
+436	77	2
+319	260	1
+256	258	3
+363	288	5
+271	21	5
+116	465	1
+440	489	4
+353	66	3
+28	21	2
+187	292	2
+370	151	4
+37	346	2
+123	419	1
+249	276	2
+58	122	1
+18	227	4
+203	70	1
+208	141	2
+104	221	2
+444	226	2
+275	474	3
+200	61	5
+292	323	1
+142	494	3
+348	200	5
+315	318	3
+460	490	4
+175	399	2
+204	130	1
+396	312	2
+445	34	2
+143	145	3
+267	317	2
+388	24	3
+239	243	2
+444	416	4
+28	239	4
+378	73	3
+300	100	3
+448	145	2
+108	100	3
+490	364	3
+8	4	5
+341	294	2
+139	89	3
+348	336	4
+486	4	1
+310	192	5
+133	79	5
+314	209	2
+443	126	4
+357	485	3
+350	433	2
+291	484	4
+242	195	1
+157	64	1
+198	423	3
+122	32	3
+407	300	3
+156	327	3
+415	428	3
+10	238	3
+492	46	4
+107	61	4
+328	464	3
+373	23	2
+383	353	3
+119	296	4
+48	238	3
+148	405	1
+128	243	5
+117	117	5
+202	159	1
+332	192	4
+122	100	1
+437	226	2
+72	43	1
+134	51	5
+203	409	4
+115	480	5
+132	470	3
+257	412	1
+135	378	3
+372	468	1
+139	395	3
+113	158	3
+60	17	2
+424	312	3
+260	237	3
+240	49	1
+248	79	1
+109	163	1
+493	252	5
+322	403	1
+420	9	4
+260	334	5
+66	441	1
+60	444	5
+200	194	1
+346	471	3
+234	451	1
+337	49	1
+315	322	4
+393	347	2
+76	344	4
+13	415	2
+140	430	5
+56	221	2
+121	105	4
+4	5	1
+466	342	2
+367	354	1
+233	354	2
+265	469	1
+182	318	4
+55	5	4
+277	379	5
+82	390	1
+184	410	5
+185	312	4
+397	392	2
+87	202	2
+228	283	1
+43	186	3
+214	4	5
+340	199	4
+178	109	5
+63	138	4
+52	447	4
+146	226	5
+121	250	3
+41	115	3
+118	359	3
+454	92	2
+198	42	4
+327	310	1
+443	148	3
+22	412	1
+262	210	2
+194	432	1
+81	290	4
+283	125	1
+480	431	4
+335	280	2
+160	224	1
+175	152	3
+28	449	3
+459	151	1
+412	318	1
+143	419	4
+464	454	1
+21	401	4
+357	67	1
+115	23	4
+76	44	3
+403	308	5
+23	439	2
+32	345	5
+143	414	1
+209	72	5
+439	312	4
+76	249	3
+37	437	3
+500	312	1
+20	115	5
+134	253	3
+89	2	4
+303	250	4
+68	21	2
+406	265	1
+55	368	3
+393	43	4
+255	426	5
+58	108	3
+273	178	4
+358	415	5
+157	192	2
+272	495	1
+393	303	3
+252	493	1
+252	285	3
+325	498	3
+213	242	4
+45	66	2
+64	274	2
+173	106	2
+152	452	4
+103	406	5
+451	57	1
+64	402	3
+29	105	5
+135	491	2
+14	114	2
+395	16	4
+364	244	1
+113	288	5
+247	381	3
+486	308	1
+113	306	2
+320	48	4
+65	355	1
+409	459	1
+266	90	2
+324	197	4
+388	136	2
+427	36	2
+292	98	1
+63	419	4
+24	33	5
+250	364	5
+245	352	2
+253	315	3
+311	457	2
+402	436	2
+112	83	2
+470	48	4
+480	469	2
+135	320	4
+459	180	3
+144	235	1
+160	422	1
+214	354	3
+106	60	2
+235	318	4
+432	324	2
+377	160	1
+39	302	3
+229	2	2
+391	377	4
+472	381	1
+493	216	1
+399	261	2
+186	355	2
+423	493	1
+356	407	1
+137	237	5
+24	263	1
+223	61	3
+122	230	3
+102	384	1
+139	447	4
+325	168	3
+394	143	1
+348	430	5
+82	410	4
+436	472	3
+45	264	4
+311	476	1
+133	143	2
+398	475	2
+241	332	1
+64	394	5
+65	89	3
+205	281	1
+119	390	4
+100	423	1
+96	468	2
+133	66	2
+7	27	4
+200	155	3
+115	127	4
+210	235	5
+360	65	2
+174	484	4
+381	59	2
+16	323	5
+281	290	4
+213	256	2
+425	376	5
+437	125	4
+469	419	4
+192	289	4
+154	110	5
+193	144	2
+324	331	1
+247	416	1
+317	101	3
+224	137	4
+384	163	2
+262	395	1
+215	113	2
+387	35	2
+476	135	3
+431	92	1
+401	286	2
+447	165	2
+470	317	3
+426	116	4
+227	416	5
+423	180	5
+150	327	5
+380	258	1
+444	39	3
+294	5	5
+435	406	4
+441	464	2
+432	193	2
+476	26	1
+188	447	3
+484	112	5
+38	217	3
+151	322	2
+395	342	4
+218	416	3
+134	496	4
+79	260	2
+233	336	2
+62	486	3
+470	459	5
+274	196	2
+464	146	2
+475	181	3
+414	424	1
+173	382	2
+221	76	2
+6	190	5
+300	3	1
+102	38	4
+440	392	4
+495	461	3
+314	449	5
+374	65	2
+70	423	4
+102	475	4
+158	230	1
+185	328	1
+347	187	2
+33	299	1
+231	163	5
+111	468	1
+253	136	2
+473	37	3
+471	459	5
+269	260	1
+406	498	4
+65	256	4
+393	275	4
+280	192	3
+293	269	2
+396	130	2
+235	122	4
+22	288	3
+370	193	5
+431	188	4
+245	263	3
+482	282	5
+84	230	2
+201	144	1
+148	257	2
+385	265	3
+96	452	3
+157	491	4
+19	404	1
+467	300	5
+180	185	3
+310	345	3
+198	257	5
+430	105	3
+222	313	2
+86	322	2
+120	65	5
+213	380	2
+205	485	4
+160	420	2
+22	258	5
+361	491	3
+234	466	3
+258	236	1
+497	137	3
+427	288	5
+477	122	3
+83	269	1
+443	24	2
+34	430	2
+416	96	2
+172	317	1
+256	240	3
+145	25	1
+77	455	5
+158	453	5
+52	264	5
+89	436	4
+148	200	4
+83	406	2
+329	170	5
+442	228	1
+59	271	4
+252	142	4
+74	312	3
+327	443	5
+42	291	3
+60	26	1
+227	90	4
+132	232	4
+320	140	5
+115	60	2
+71	8	1
+36	344	3
+46	294	3
+424	202	3
+207	14	3
+340	212	3
+436	250	3
+306	395	4
+469	394	1
+254	321	2
+219	178	2
+147	469	3
+401	207	1
+211	280	5
+330	16	2
+204	199	5
+137	463	3
+291	157	1
+291	258	3
+8	93	3
+422	455	3
+96	488	5
+166	157	5
+314	40	1
+221	116	5
+192	146	5
+126	348	5
+304	430	3
+449	69	2
+448	369	2
+86	333	3
+474	238	4
+440	173	2
+458	356	5
+163	486	5
+250	402	1
+18	190	3
+28	190	1
+437	424	1
+37	37	1
+356	135	1
+263	438	1
+13	224	3
+270	165	3
+9	488	2
+427	358	1
+244	267	2
+360	298	1
+331	393	4
+467	65	4
+298	357	1
+81	234	5
+230	118	1
+196	431	3
+229	455	4
+95	247	5
+408	166	5
+375	451	4
+70	38	4
+194	462	5
+96	85	3
+401	340	3
+209	16	4
+391	217	4
+78	420	2
+229	206	2
+68	318	2
+328	40	1
+11	187	1
+109	5	4
+385	368	3
+224	144	4
+44	435	5
+88	142	1
+50	220	1
+20	84	4
+275	314	3
+418	276	4
+194	359	5
+351	456	4
+93	420	4
+115	494	5
+488	121	4
+314	201	5
+4	370	3
+150	58	3
+426	446	5
+19	15	3
+68	149	2
+15	244	4
+481	438	3
+191	110	1
+275	441	2
+399	298	4
+50	401	3
+56	431	2
+444	270	5
+10	123	1
+296	491	2
+486	394	4
+500	241	2
+315	44	5
+493	241	4
+411	430	5
+42	279	5
+472	390	4
+173	249	5
+71	474	1
+57	382	4
+167	329	2
+311	285	3
+222	438	1
+394	140	1
+193	116	2
+67	109	2
+46	180	5
+143	424	3
+394	209	5
+303	360	3
+52	453	5
+486	327	5
+97	99	4
+359	408	4
+250	100	1
+107	193	2
+354	482	1
+328	152	2
+269	62	2
+50	386	1
+91	461	2
+30	250	5
+344	135	2
+59	76	4
+38	411	2
+295	19	2
+430	122	5
+331	436	1
+265	231	2
+217	312	5
+287	423	1
+327	281	5
+374	78	1
+394	253	1
+391	342	5
+459	152	3
+486	251	5
+107	311	3
+123	225	4
+469	497	5
+108	249	3
+207	211	2
+419	293	1
+348	273	4
+343	300	3
+351	400	3
+52	298	4
+391	389	4
+272	250	1
+169	87	2
+227	389	2
+254	144	1
+7	221	4
+115	403	1
+370	39	3
+196	155	4
+307	277	2
+356	250	3
+345	158	5
+362	384	1
+169	124	3
+366	189	1
+431	474	2
+243	20	3
+295	330	4
+76	345	2
+490	227	3
+80	415	1
+25	403	4
+121	205	3
+228	112	5
+31	287	3
+408	215	1
+330	317	2
+352	48	4
+29	202	4
+385	32	5
+196	91	5
+127	2	4
+297	487	3
+302	343	2
+198	339	4
+119	409	2
+190	294	1
+371	193	2
+392	186	1
+14	21	3
+180	64	2
+426	15	1
+271	183	3
+490	64	1
+58	315	5
+398	300	1
+455	323	4
+208	105	2
+68	297	1
+237	405	3
+5	352	2
+430	173	5
+289	485	5
+211	131	2
+465	452	4
+35	345	4
+86	249	3
+358	249	5
+115	314	1
+162	347	2
+365	424	1
+466	476	2
+164	189	5
+323	453	2
+167	317	5
+137	110	2
+432	4	3
+196	397	2
+396	397	2
+146	232	2
+473	99	4
+97	463	4
+48	483	1
+257	481	5
+12	73	3
+316	7	4
+12	454	4
+54	364	4
+14	416	3
+211	108	5
+338	446	1
+390	78	2
+379	196	1
+31	346	4
+92	131	5
+164	92	5
+281	163	4
+154	287	3
+490	30	5
+291	128	5
+476	489	2
+491	437	2
+357	199	3
+392	358	4
+397	188	2
+291	479	2
+289	426	5
+231	370	2
+275	449	1
+420	233	5
+313	416	2
+437	305	4
+22	126	1
+469	62	1
+395	358	5
+125	398	2
+22	433	2
+487	408	2
+209	176	3
+479	116	4
+194	470	5
+73	51	2
+433	286	3
+481	459	3
+478	428	1
+70	31	1
+499	369	3
+236	390	3
+120	315	4
+390	418	4
+187	232	2
+152	181	2
+477	238	2
+483	343	5
+29	106	1
+500	275	2
+269	35	2
+34	399	5
+499	254	1
+327	319	3
+38	229	2
+224	227	1
+25	411	5
+132	429	3
+417	22	1
+152	355	2
+164	381	4
+388	255	4
+154	215	4
+477	416	2
+477	364	2
+200	374	3
+53	446	4
+229	323	2
+254	262	5
+4	61	5
+225	32	2
+245	398	4
+192	220	4
+82	388	2
+399	327	3
+284	107	2
+418	63	4
+363	8	1
+257	462	5
+365	427	4
+266	421	1
+420	417	3
+225	138	3
+400	119	2
+353	463	5
+319	329	1
+135	153	3
+420	321	5
+120	221	1
+164	125	3
+352	466	3
+250	301	4
+226	148	5
+475	357	3
+204	422	1
+379	365	5
+193	441	3
+191	396	5
+113	349	5
+461	440	1
+337	345	2
+111	311	3
+55	124	3
+312	224	4
+462	329	4
+49	445	3
+318	68	2
+350	351	4
+485	71	3
+365	420	4
+41	405	4
+488	7	2
+166	348	5
+51	170	3
+491	268	3
+253	390	4
+171	239	2
+416	444	4
+188	373	5
+185	459	2
+16	300	5
+33	253	4
+456	138	3
+196	406	4
+347	247	4
+209	52	1
+286	222	2
+5	359	3
+240	68	5
+92	333	1
+269	490	4
+12	476	2
+71	368	2
+181	61	4
+188	492	1
+345	382	5
+318	366	3
+128	398	4
+151	10	5
+167	286	3
+251	443	4
+287	452	2
+131	469	1
+271	84	5
+356	128	4
+477	195	3
+378	2	5
+299	17	2
+482	351	4
+241	404	2
+358	187	1
+141	450	5
+251	249	2
+377	268	2
+257	426	4
+294	18	3
+486	231	2
+65	125	2
+458	142	3
+177	302	2
+94	156	2
+2	439	3
+298	91	4
+396	60	1
+30	35	1
+212	438	5
+278	166	4
+270	55	3
+217	216	3
+287	84	3
+480	395	5
+216	283	1
+412	181	3
+56	434	3
+366	267	4
+316	392	3
+116	357	4
+83	259	2
+443	39	2
+223	3	3
+321	224	1
+466	464	3
+263	294	2
+289	481	1
+36	101	1
+13	227	4
+262	117	3
+439	9	1
+305	102	4
+406	184	2
+395	74	2
+112	407	3
+337	120	2
+263	318	4
+127	316	2
+456	382	3
+113	260	4
+327	182	2
+115	448	1
+385	60	4
+188	320	3
+290	371	1
+356	208	2
+364	155	2
+370	77	4
+345	123	1
+69	125	1
+363	389	1
+77	459	1
+449	236	4
+39	5	2
+198	98	1
+191	366	1
+465	499	5
+198	292	4
+173	443	2
+225	120	5
+95	136	4
+424	455	2
+186	292	2
+462	257	3
+461	219	4
+7	1	4
+92	60	4
+93	258	3
+388	172	2
+348	440	3
+274	264	5
+29	273	5
+413	203	2
+446	38	4
+354	184	3
+88	194	5
+109	286	4
+72	365	2
+210	446	5
+307	284	5
+377	477	5
+144	229	2
+335	344	4
+32	119	2
+366	498	1
+310	89	5
+468	394	3
+172	419	4
+379	248	3
+137	455	2
+299	253	5
+275	31	2
+312	392	1
+416	449	2
+78	393	3
+419	220	2
+156	65	4
+349	199	4
+492	265	1
+59	229	5
+318	268	1
+153	28	4
+477	221	2
+178	446	3
+110	45	4
+307	388	5
+100	273	1
+117	127	1
+191	242	2
+265	428	5
+78	296	5
+375	204	4
+203	64	4
+103	453	3
+226	404	2
+149	395	5
+482	355	2
+77	186	3
+385	356	4
+427	363	2
+467	315	4
+257	142	3
+135	7	3
+16	319	4
+107	351	2
+310	108	4
+499	339	2
+385	406	5
+130	300	4
+436	246	4
+488	451	1
+236	76	4
+251	302	1
+37	147	2
+429	196	3
+458	71	3
+420	361	5
+14	153	3
+476	154	1
+304	265	1
+189	244	2
+279	412	5
+284	228	1
+462	49	4
+249	240	3
+480	245	2
+90	108	2
+352	124	3
+45	486	2
+162	315	3
+263	227	3
+126	426	5
+381	354	3
+358	151	5
+473	329	1
+313	137	1
+137	158	1
+426	297	2
+295	48	1
+36	456	1
+485	135	2
+128	391	5
+99	194	4
+349	325	4
+437	219	4
+350	303	2
+195	213	1
+334	1	4
+227	224	3
+56	168	4
+149	168	4
+47	235	2
+83	197	2
+360	42	4
+315	154	5
+253	311	2
+204	82	3
+194	150	5
+71	47	5
+479	240	2
+326	247	5
+338	199	1
+256	254	5
+485	320	4
+316	304	2
+278	464	1
+350	189	1
+312	427	4
+168	154	3
+295	38	3
+122	479	5
+385	453	5
+499	232	3
+407	412	1
+498	191	4
+271	267	2
+495	471	5
+44	46	5
+9	124	3
+92	499	3
+442	363	2
+369	43	4
+17	185	4
+431	39	1
+275	81	4
+154	166	2
+129	444	2
+134	199	4
+49	52	3
+397	193	5
+150	40	5
+2	330	2
+91	157	2
+51	494	3
+380	347	3
+91	397	3
+64	157	4
+49	220	4
+298	177	1
+68	398	2
+424	153	5
+292	132	3
+109	318	5
+2	264	1
+139	289	1
+220	490	1
+109	87	3
+7	435	1
+30	359	4
+139	3	2
+364	242	5
+178	290	2
+275	237	2
+249	39	1
+107	403	2
+70	156	3
+431	231	5
+435	460	5
+62	417	5
+88	467	3
+376	325	3
+370	18	5
+297	309	3
+401	295	3
+257	211	4
+264	239	5
+282	246	2
+50	145	5
+306	240	4
+326	349	5
+86	230	4
+120	422	2
+487	76	1
+394	263	5
+119	441	2
+441	28	3
+287	252	5
+445	429	2
+22	343	5
+387	395	1
+329	113	4
+279	118	1
+474	217	4
+63	96	5
+431	327	1
+10	209	3
+154	278	1
+353	423	2
+177	438	3
+378	80	1
+318	477	2
+50	175	5
+212	378	1
+272	312	2
+36	498	3
+363	173	4
+238	495	5
+390	18	2
+111	171	3
+360	329	3
+103	43	1
+138	306	5
+215	363	5
+306	148	4
+31	450	4
+35	176	3
+59	65	2
+179	470	1
+89	257	3
+46	218	2
+88	201	3
+244	497	2
+66	342	3
+450	383	3
+379	344	3
+337	45	3
+318	387	5
+353	328	3
+428	22	2
+497	63	5
+140	108	5
+340	427	5
+177	1	3
+442	35	5
+70	93	4
+224	164	4
+78	428	2
+113	164	2
+394	447	1
+262	287	3
+453	326	3
+75	158	2
+429	234	5
+444	358	2
+341	499	4
+194	376	3
+348	407	5
+194	77	5
+236	161	1
+446	147	3
+118	209	4
+439	71	3
+151	494	3
+264	368	3
+33	273	1
+138	185	4
+356	109	3
+90	271	3
+396	344	4
+474	10	1
+73	74	2
+253	419	2
+46	81	2
+337	192	3
+463	25	5
+98	96	2
+136	58	5
+83	318	3
+226	61	4
+51	72	3
+451	271	3
+398	146	1
+448	139	2
+148	202	1
+39	60	3
+17	470	2
+401	283	4
+260	488	3
+6	53	2
+153	187	1
+372	444	3
+366	50	3
+268	13	2
+289	150	1
+213	467	5
+273	473	5
+41	2	5
+342	464	3
+143	168	2
+295	188	1
+46	46	5
+338	175	1
+48	265	1
+474	289	5
+412	143	1
+143	385	2
+381	189	2
+186	135	2
+23	356	4
+230	208	4
+395	442	5
+162	96	3
+328	458	5
+149	418	2
+487	93	3
+74	241	1
+89	299	2
+42	53	2
+300	235	2
+427	220	3
+275	184	5
+329	292	1
+446	3	3
+124	430	3
+181	155	1
+140	351	2
+395	384	4
+44	254	2
+450	292	5
+484	191	1
+192	389	4
+234	442	1
+446	335	5
+189	327	1
+421	365	3
+117	261	5
+71	153	3
+431	30	2
+259	66	1
+264	242	1
+237	342	4
+183	228	5
+239	110	4
+308	97	4
+470	340	2
+338	308	4
+371	251	5
+236	174	1
+346	468	1
+216	114	3
+381	306	1
+92	283	2
+32	429	2
+134	427	3
+19	90	1
+407	106	5
+8	453	4
+56	432	4
+409	270	4
+497	185	2
+433	240	5
+465	438	2
+268	298	5
+30	413	4
+70	75	4
+163	483	3
+412	172	1
+476	381	1
+150	212	5
+99	288	1
+377	42	3
+78	264	5
+287	398	2
+18	156	1
+50	111	1
+486	386	2
+33	48	3
+364	137	2
+88	236	5
+141	103	2
+450	263	4
+158	77	5
+426	288	3
+11	48	5
+343	131	4
+441	484	1
+356	277	3
+392	407	4
+172	110	4
+435	474	4
+343	175	2
+319	116	5
+60	45	3
+426	72	2
+111	489	1
+452	362	2
+293	448	5
+174	327	3
+270	468	1
+452	310	4
+95	246	1
+315	242	3
+334	182	4
+124	443	3
+226	39	1
+446	17	2
+409	111	5
+311	328	4
+377	422	5
+209	434	2
+20	2	3
+218	233	1
+175	413	1
+347	408	5
+120	255	1
+64	299	5
+108	458	3
+456	440	2
+65	302	4
+335	116	2
+333	24	4
+375	452	5
+465	430	3
+202	253	2
+269	275	4
+360	250	4
+352	186	4
+10	204	2
+17	130	4
+142	415	1
+361	166	5
+33	191	2
+75	191	1
+69	432	5
+200	417	2
+440	130	4
+197	20	3
+197	370	4
+285	379	2
+465	266	1
+235	180	5
+35	375	1
+59	368	3
+425	277	3
+120	216	2
+162	260	5
+327	138	1
+96	473	4
+291	263	3
+111	73	2
+425	383	3
+204	168	1
+5	295	1
+177	217	5
+305	392	4
+439	323	3
+279	152	4
+424	209	5
+307	429	2
+489	264	1
+40	385	3
+322	259	5
+413	325	5
+354	141	4
+421	212	3
+270	405	1
+386	215	5
+242	377	3
+84	22	3
+294	143	2
+71	128	3
+406	169	2
+117	1	4
+376	354	1
+215	164	4
+386	457	2
+407	251	2
+144	346	3
+159	306	4
+263	92	2
+345	188	5
+474	249	5
+256	435	2
+435	265	3
+414	72	2
+94	8	2
+191	88	4
+193	283	2
+190	253	1
+276	111	1
+88	107	3
+364	424	1
+156	371	1
+426	40	2
+434	186	5
+486	235	5
+298	85	2
+404	242	3
+231	427	3
+157	15	2
+498	76	5
+96	482	2
+236	13	4
+218	127	3
+424	380	1
+227	394	1
+323	475	5
+309	354	1
+116	431	3
+8	382	4
+179	304	3
+445	115	4
+101	387	5
+254	21	3
+346	248	2
+48	131	3
+251	483	5
+272	473	1
+214	246	5
+60	351	5
+237	319	5
+350	22	5
+287	325	3
+211	312	2
+167	63	5
+348	170	5
+80	133	5
+302	254	2
+4	441	2
+2	189	4
+166	399	3
+187	322	4
+375	369	1
+4	269	5
+43	247	4
+446	382	1
+126	39	3
+228	496	4
+344	202	3
+247	484	4
+258	238	5
+16	214	3
+40	270	5
+47	232	5
+421	87	4
+151	68	2
+191	419	5
+495	172	1
+359	141	4
+274	460	4
+283	130	3
+40	96	4
+168	142	4
+59	180	5
+448	188	2
+112	482	2
+228	327	1
+8	225	5
+213	214	5
+498	271	4
+111	117	3
+340	413	4
+385	194	1
+469	433	5
+353	271	4
+281	356	5
+351	101	4
+231	246	5
+198	288	2
+104	483	4
+192	162	4
+61	232	3
+277	25	2
+328	137	1
+298	264	2
+99	242	5
+289	437	5
+327	463	5
+79	185	5
+35	411	3
+406	149	3
+3	374	3
+112	211	5
+385	476	3
+157	347	2
+98	223	4
+338	146	1
+238	463	1
+374	479	3
+343	228	1
+497	474	3
+490	192	1
+384	85	1
+267	483	5
+257	164	4
+205	479	2
+84	496	3
+14	220	5
+320	343	4
+320	344	4
+401	165	4
+458	433	5
+276	103	1
+479	215	4
+282	487	3
+201	322	5
+358	57	5
+324	392	1
+204	219	5
+176	107	1
+175	272	3
+430	301	4
+412	293	4
+242	97	2
+219	1	5
+144	469	4
+375	201	3
+264	42	1
+475	228	3
+79	81	4
+17	304	1
+412	493	2
+458	330	1
+377	96	2
+226	91	4
+202	5	3
+466	131	3
+496	168	5
+315	71	4
+135	329	4
+414	116	3
+347	444	4
+288	82	1
+306	386	5
+65	422	1
+417	415	5
+52	316	1
+463	92	2
+450	219	3
+250	3	5
+202	349	3
+208	187	5
+457	200	2
+239	331	1
+406	400	5
+183	233	1
+276	39	2
+63	463	3
+98	316	4
+483	22	3
+337	88	3
+67	161	4
+323	361	3
+363	369	2
+481	405	4
+323	303	5
+266	292	1
+116	404	2
+353	476	5
+410	454	4
+181	375	4
+324	9	1
+132	423	1
+227	84	2
+447	388	4
+245	3	2
+453	352	2
+6	195	1
+288	36	4
+157	304	1
+233	19	1
+80	285	5
+361	455	3
+238	281	5
+61	282	1
+244	184	2
+168	377	1
+24	248	5
+148	419	2
+208	487	1
+419	203	4
+175	24	1
+160	159	2
+250	325	3
+288	252	3
+53	54	5
+346	226	5
+458	284	3
+382	425	5
+320	85	2
+32	297	3
+45	77	2
+209	33	2
+294	99	2
+437	451	1
+375	57	2
+201	101	2
+94	276	5
+170	101	4
+187	387	2
+197	321	5
+388	357	1
+136	488	5
+83	201	4
+65	91	4
+403	240	5
+366	443	4
+413	172	1
+140	161	5
+343	366	1
+457	42	2
+417	280	1
+126	28	5
+395	34	1
+179	229	2
+204	362	2
+15	481	5
+208	58	1
+309	369	5
+152	21	4
+429	183	5
+361	369	2
+37	473	5
+170	374	1
+131	318	1
+40	328	1
+476	179	4
+191	331	3
+329	183	4
+303	482	5
+276	63	5
+456	497	4
+384	32	1
+342	368	5
+182	8	1
+77	466	5
+159	409	1
+51	404	3
+102	308	1
+124	74	3
+499	32	5
+432	222	4
+92	312	2
+408	9	4
+353	439	1
+274	293	1
+426	256	1
+237	445	1
+488	284	2
+209	377	3
+284	131	2
+440	56	3
+476	19	2
+479	415	4
+198	89	4
+442	148	5
+85	351	1
+331	89	1
+375	90	4
+390	420	4
+276	277	2
+208	36	1
+14	180	4
+156	95	2
+447	307	2
+120	68	4
+190	184	5
+499	302	4
+236	171	4
+64	390	3
+180	168	3
+44	486	1
+14	278	4
+500	112	4
+367	362	5
+324	463	1
+486	114	5
+184	289	3
+173	255	4
+267	46	1
+210	137	5
+91	318	4
+227	326	4
+456	468	3
+159	452	5
+3	177	2
+113	54	4
+151	272	3
+73	201	3
+280	294	2
+215	350	1
+348	229	3
+316	70	3
+110	426	4
+419	108	4
+436	337	3
+223	147	5
+425	478	1
+159	435	4
+426	77	1
+104	240	2
+38	311	5
+448	413	2
+285	316	1
+364	259	1
+475	5	1
+353	97	3
+269	88	4
+435	437	2
+273	71	4
+472	453	5
+106	155	5
+64	170	2
+320	314	2
+184	327	3
+85	87	1
+327	433	1
+363	331	1
+288	419	2
+70	178	3
+452	327	4
+111	359	1
+147	473	1
+455	286	4
+197	150	4
+339	126	2
+214	245	1
+44	200	3
+414	489	3
+224	26	5
+472	374	2
+194	48	4
+354	396	3
+273	240	1
+35	230	4
+424	38	2
+416	167	4
+141	14	3
+72	121	5
+53	70	4
+69	225	5
+395	437	5
+199	257	1
+358	290	5
+271	157	3
+388	66	4
+155	1	5
+311	418	5
+111	418	1
+332	7	5
+373	437	1
+1	370	4
+366	273	4
+107	118	5
+387	45	3
+31	99	4
+180	490	3
+142	30	4
+492	251	2
+348	476	4
+490	262	1
+268	109	4
+368	474	4
+71	361	2
+394	457	4
+458	224	1
+303	133	1
+369	450	5
+440	250	2
+365	373	1
+38	52	1
+399	376	2
+259	318	3
+124	64	5
+162	308	5
+85	382	3
+253	229	1
+30	187	1
+31	153	4
+418	364	1
+253	478	2
+463	216	3
+106	305	5
+435	288	1
+147	35	3
+382	437	1
+56	8	2
+385	207	3
+146	304	3
+405	188	2
+488	449	3
+95	59	1
+257	209	5
+267	98	2
+228	369	3
+217	93	5
+177	358	5
+164	231	5
+449	262	1
+338	235	3
+376	28	1
+151	60	2
+420	195	1
+387	368	3
+218	495	3
+37	438	5
+472	4	5
+297	209	3
+197	114	1
+148	446	1
+342	100	3
+77	366	1
+238	168	2
+347	33	5
+359	46	5
+293	275	3
+66	418	4
+252	137	4
+326	146	3
+486	253	2
+37	50	3
+299	127	2
+405	434	1
+318	265	2
+322	188	1
+362	390	1
+473	324	2
+250	441	1
+153	474	2
+76	218	3
+199	385	2
+325	4	4
+360	462	4
+378	230	5
+321	381	3
+93	451	3
+163	77	4
+52	421	2
+145	341	5
+302	196	4
+93	367	5
+277	382	3
+105	133	5
+453	282	1
+256	53	3
+389	108	3
+357	426	1
+392	37	1
+129	80	1
+477	218	1
+267	19	1
+466	401	2
+347	498	3
+436	210	1
+474	420	3
+113	213	4
+46	358	1
+282	285	1
+391	235	4
+79	405	3
+123	314	3
+451	387	3
+255	341	5
+153	258	5
+467	434	4
+265	365	5
+439	416	4
+146	33	1
+98	93	4
+440	275	1
+276	334	4
+342	173	2
+327	140	2
+373	297	5
+96	433	3
+143	58	4
+43	411	2
+416	153	3
+43	226	2
+474	395	1
+104	80	4
+224	496	4
+139	306	5
+395	312	2
+66	468	2
+211	416	4
+367	135	2
+448	358	4
+459	376	3
+38	33	5
+451	129	2
+42	423	3
+402	176	4
+463	107	3
+136	145	1
+189	67	5
+472	59	2
+458	276	2
+227	289	3
+275	423	1
+482	379	1
+461	336	5
+478	260	4
+417	183	4
+378	348	3
+318	29	2
+402	139	4
+431	425	2
+80	232	2
+34	280	1
+340	403	4
+435	75	2
+414	178	3
+72	34	5
+274	355	2
+84	468	1
+152	247	2
+163	147	3
+247	336	1
+305	426	1
+210	256	3
+111	487	1
+18	352	3
+262	365	2
+318	10	1
+179	140	2
+484	76	3
+172	449	3
+230	196	3
+39	484	2
+234	441	5
+94	1	1
+351	499	4
+100	194	2
+324	378	2
+147	307	5
+277	339	1
+189	240	1
+109	321	2
+128	103	2
+41	255	3
+331	342	1
+482	162	4
+2	414	3
+34	238	3
+88	132	2
+182	14	2
+23	225	3
+65	123	3
+324	279	2
+147	356	2
+42	145	3
+400	169	1
+74	233	5
+472	339	4
+88	361	1
+125	31	1
+362	337	2
+190	333	4
+485	458	1
+105	47	5
+153	47	2
+158	343	2
+150	332	5
+107	10	2
+374	278	2
+483	88	4
+418	18	5
+334	414	5
+325	19	5
+350	421	2
+312	444	3
+128	313	3
+486	8	1
+411	481	1
+172	300	5
+220	319	5
+261	68	5
+131	438	1
+159	456	2
+257	37	3
+137	121	1
+139	175	3
+455	44	3
+480	373	1
+75	490	4
+256	407	2
+5	123	3
+240	420	4
+24	408	5
+71	404	1
+209	375	1
+300	126	3
+137	399	5
+103	458	3
+47	245	3
+230	3	3
+14	133	5
+360	460	3
+85	61	1
+50	12	3
+120	399	5
+212	69	2
+38	408	5
+240	241	4
+222	299	4
+132	78	1
+401	279	2
+437	460	1
+213	9	4
+60	377	1
+39	69	1
+420	124	2
+355	180	3
+156	372	5
+67	104	4
+231	371	1
+492	33	5
+4	64	4
+86	54	4
+182	9	2
+483	352	4
+343	155	4
+11	284	1
+124	39	2
+222	78	4
+233	193	3
+43	367	3
+397	93	2
+431	356	5
+35	32	5
+421	394	4
+100	381	1
+13	320	3
+137	76	2
+427	496	4
+177	363	1
+110	441	2
+274	206	4
+387	66	5
+117	305	5
+482	399	1
+238	303	3
+391	242	1
+462	320	2
+210	111	4
+225	2	3
+446	354	4
+364	136	3
+361	435	4
+334	27	4
+396	152	3
+45	336	4
+367	261	4
+342	390	3
+330	471	2
+467	7	5
+93	191	4
+164	240	3
+431	93	2
+304	471	5
+147	286	5
+145	71	1
+371	290	4
+240	416	5
+272	87	3
+360	328	3
+440	104	4
+285	11	3
+10	474	2
+389	232	4
+127	147	5
+111	131	1
+9	223	2
+466	313	3
+404	219	1
+421	281	3
+221	207	3
+463	462	1
+429	111	2
+368	380	5
+103	193	1
+161	294	3
+179	482	3
+256	109	5
+111	111	3
+277	378	1
+14	123	3
+154	152	4
+1	297	4
+23	252	4
+114	434	1
+121	464	5
+201	182	3
+111	424	5
+466	162	4
+205	28	3
+41	71	3
+292	369	5
+246	450	1
+68	79	3
+30	103	1
+184	401	3
+346	157	2
+159	338	2
+285	81	4
+461	25	3
+483	6	5
+298	352	4
+209	358	1
+418	469	1
+100	175	3
+150	186	2
+306	8	2
+59	303	1
+208	446	3
+295	319	5
+393	329	2
+128	434	4
+379	360	1
+283	244	4
+167	388	3
+499	491	1
+234	97	3
+75	99	1
+83	434	5
+479	51	1
+271	139	2
+7	224	1
+135	463	3
+60	112	2
+409	20	3
+241	325	3
+129	74	4
+418	9	2
+465	211	3
+137	27	3
+168	396	3
+299	33	5
+480	403	4
+282	10	2
+132	417	1
+356	398	3
+296	396	5
+67	489	1
+179	154	3
+219	140	1
+374	46	3
+175	416	1
+150	8	2
+242	267	3
+72	78	4
+112	284	3
+431	16	3
+243	93	2
+94	362	3
+268	496	1
+212	232	1
+435	415	4
+161	373	3
+16	262	1
+64	184	4
+359	227	2
+432	300	2
+128	86	2
+468	372	5
+475	236	3
+32	41	3
+247	394	1
+214	139	2
+12	319	4
+353	498	3
+219	128	5
+490	477	2
+419	21	1
+394	210	1
+374	248	5
+215	40	3
+153	216	3
+369	156	3
+351	427	2
+402	211	4
+424	35	4
+430	449	5
+469	34	3
+286	174	3
+170	316	3
+360	238	3
+88	289	4
+397	247	4
+57	220	3
+361	430	2
+306	305	3
+105	428	1
+302	28	1
+245	278	4
+408	141	5
+362	234	2
+153	441	4
+232	187	1
+444	141	5
+273	382	5
+342	10	5
+371	270	1
+229	249	4
+414	96	1
+421	88	4
+334	118	3
+53	435	2
+407	431	2
+223	290	2
+370	1	3
+141	3	3
+156	50	2
+365	269	3
+398	382	4
+192	26	4
+302	231	5
+228	209	1
+305	333	5
+500	276	1
+220	291	5
+41	270	4
+269	73	1
+327	349	3
+300	16	5
+7	247	3
+468	264	4
+220	236	1
+291	87	5
+323	300	2
+113	363	3
+35	450	2
+116	307	2
+55	493	1
+7	263	4
+316	264	1
+151	54	4
+499	70	3
+182	125	2
+486	453	1
+424	245	2
+333	427	5
+150	403	1
+301	246	4
+325	313	1
+396	283	3
+288	361	4
+388	63	3
+262	405	5
+145	259	1
+467	318	5
+254	380	5
+215	231	4
+42	254	5
+321	318	3
+342	304	5
+265	4	3
+408	357	1
+404	351	5
+314	469	2
+274	274	2
+74	147	1
+489	464	3
+452	143	2
+208	489	2
+398	80	5
+349	17	5
+263	262	1
+236	37	1
+163	162	3
+185	299	4
+497	483	1
+337	248	1
+185	498	3
+269	175	5
+303	228	5
+130	334	5
+212	478	2
+203	237	5
+140	228	1
+428	28	1
+431	298	5
+303	279	1
+20	80	3
+299	23	3
+29	234	2
+38	316	3
+126	457	3
+187	302	4
+124	386	2
+424	299	3
+299	439	4
+259	359	5
+484	300	5
+300	379	3
+371	82	4
+99	498	2
+250	63	2
+411	189	1
+300	121	1
+57	378	3
+444	19	4
+466	96	2
+255	306	2
+236	462	1
+168	274	5
+94	190	1
+403	313	3
+497	149	1
+110	300	2
+80	120	5
+200	256	2
+322	415	1
+498	60	4
+362	259	3
+111	168	1
+221	459	2
+429	22	4
+445	129	3
+74	375	2
+400	106	1
+210	3	4
+467	58	3
+402	421	4
+130	281	5
+63	461	3
+309	43	1
+230	249	2
+98	423	3
+227	157	4
+110	50	3
+204	206	1
+417	388	4
+207	126	3
+250	442	3
+400	129	3
+80	390	2
+130	441	1
+116	86	1
+77	13	2
+126	401	1
+242	483	1
+392	160	2
+351	272	1
+384	448	1
+429	498	1
+12	140	3
+240	166	3
+323	210	3
+20	274	5
+184	229	4
+245	449	4
+192	314	2
+30	425	2
+40	110	4
+88	280	4
+334	469	3
+370	301	2
+34	423	5
+444	146	1
+394	385	4
+373	109	4
+311	174	3
+430	447	5
+236	4	3
+218	181	2
+412	168	5
+116	308	2
+351	164	4
+428	260	3
+412	170	4
+363	265	5
+434	390	2
+420	422	4
+23	234	3
+376	140	2
+497	352	3
+322	436	5
+457	57	1
+68	403	5
+188	300	2
+315	476	3
+263	156	3
+135	112	2
+204	46	3
+154	115	3
+405	290	4
+109	84	4
+416	428	2
+247	389	5
+110	435	1
+94	221	2
+493	173	2
+8	291	5
+77	310	5
+490	349	2
+32	168	5
+393	18	3
+145	405	1
+48	271	2
+136	236	3
+217	72	4
+157	359	4
+450	377	4
+48	445	2
+247	8	1
+367	223	4
+253	484	3
+447	61	1
+211	437	1
+194	379	3
+453	19	3
+267	67	4
+354	93	5
+176	358	1
+168	127	3
+18	260	3
+56	145	2
+162	243	5
+153	162	5
+470	482	1
+119	84	4
+34	103	3
+350	302	4
+446	329	2
+277	497	2
+331	108	4
+227	8	5
+24	118	1
+227	145	2
+211	433	4
+81	207	1
+8	279	4
+354	325	4
+458	357	2
+499	243	1
+331	180	1
+216	345	1
+14	234	4
+120	316	5
+213	164	5
+447	437	3
+500	181	5
+479	331	3
+346	83	4
+91	404	4
+100	456	2
+390	364	1
+286	257	1
+297	347	3
+368	145	3
+397	407	5
+146	468	2
+472	459	3
+172	295	4
+260	86	3
+330	211	2
+35	295	2
+285	345	2
+319	481	4
+316	472	4
+379	373	1
+139	186	1
+464	125	4
+300	125	5
+385	326	2
+42	287	5
+4	478	1
+244	169	5
+428	37	2
+248	431	1
+165	40	2
+469	111	3
+179	321	3
+156	467	4
+249	156	2
+122	17	5
+399	223	1
+40	303	4
+59	94	3
+5	430	5
+453	278	3
+306	427	2
+154	264	4
+184	416	5
+182	121	3
+253	363	5
+427	421	3
+455	378	1
+358	195	5
+268	55	4
+178	397	4
+335	52	2
+169	363	5
+333	14	1
+378	404	2
+431	482	5
+262	477	2
+494	398	3
+240	116	2
+273	67	1
+166	176	5
+408	132	2
+270	126	2
+159	136	5
+474	467	4
+33	139	2
+383	337	4
+202	6	2
+142	278	3
+496	119	5
+471	125	4
+10	55	1
+317	43	5
+280	13	1
+314	196	4
+94	322	4
+282	191	1
+484	362	2
+395	497	3
+190	435	2
+488	187	4
+301	140	5
+195	207	3
+480	112	2
+498	324	2
+111	281	5
+353	425	3
+239	411	5
+155	125	5
+81	168	3
+102	443	5
+139	461	1
+250	247	3
+371	248	2
+119	117	2
+447	194	2
+344	444	5
+88	14	3
+425	261	5
+282	118	5
+415	392	3
+218	175	3
+140	167	3
+18	220	4
+301	97	1
+54	101	1
+449	245	2
+283	372	1
+443	390	3
+489	471	2
+309	16	1
+192	407	1
+259	184	3
+259	461	4
+426	33	2
+478	452	2
+485	493	5
+261	157	2
+194	160	4
+162	200	4
+264	263	3
+117	51	5
+428	13	1
+409	315	1
+113	194	1
+215	428	2
+460	115	4
+325	469	2
+489	6	5
+70	42	3
+89	327	3
+340	57	3
+336	224	1
+163	235	5
+477	491	1
+414	199	4
+390	231	5
+38	94	5
+39	415	1
+217	188	1
+317	142	3
+199	46	4
+396	489	2
+234	433	4
+493	429	3
+201	315	3
+259	432	3
+149	50	5
+203	454	4
+481	175	2
+147	472	1
+250	240	3
+68	266	5
+93	243	1
+230	137	1
+391	469	5
+380	206	1
+237	244	5
+212	270	5
+64	127	2
+477	103	4
+408	373	3
+41	430	3
+438	310	2
+157	470	3
+81	54	5
+119	437	2
+35	364	2
+248	9	4
+496	297	4
+53	216	3
+321	325	2
+101	131	2
+214	206	5
+34	261	4
+343	423	2
+199	71	2
+427	405	1
+455	350	5
+296	55	5
+343	169	5
+139	104	1
+151	344	5
+421	287	1
+353	491	3
+320	240	2
+119	471	5
+72	404	4
+152	143	4
+96	101	5
+279	405	1
+417	391	3
+460	188	1
+459	168	2
+330	388	3
+214	359	4
+10	245	1
+10	87	3
+295	210	3
+19	194	5
+456	469	4
+454	331	1
+468	193	5
+201	116	2
+374	418	1
+233	110	5
+198	295	5
+346	484	5
+440	55	3
+111	299	5
+477	425	1
+114	393	1
+229	134	1
+419	451	1
+89	376	4
+468	418	3
+28	444	2
+284	409	1
+244	137	5
+116	256	5
+133	212	3
+257	129	5
+443	102	4
+480	62	1
+358	425	1
+484	365	3
+425	341	5
+281	220	1
+359	82	2
+303	451	2
+151	255	3
+378	337	3
+75	61	2
+408	305	3
+19	500	4
+151	89	5
+465	323	2
+277	346	3
+211	269	5
+144	61	5
+320	294	1
+383	23	1
+347	475	3
+91	351	1
+55	490	1
+171	349	3
+126	49	3
+173	268	4
+361	193	1
+343	146	1
+325	58	1
+47	252	1
+499	427	5
+17	374	3
+422	99	5
+287	52	3
+143	441	4
+480	327	1
+385	193	1
+134	285	4
+463	288	3
+495	36	4
+313	444	2
+104	171	5
+123	214	3
+164	273	5
+38	105	2
+419	156	3
+400	331	1
+327	282	2
+147	287	5
+353	141	1
+172	323	3
+360	236	2
+411	75	3
+411	176	3
+109	91	3
+412	232	4
+60	242	3
+355	284	3
+283	263	5
+398	500	5
+402	47	4
+318	351	2
+314	253	2
+131	482	5
+378	97	1
+168	491	3
+130	326	3
+418	457	2
+159	246	4
+135	148	5
+190	120	2
+478	11	2
+475	9	2
+450	193	3
+324	433	5
+30	301	5
+487	159	1
+355	131	5
+189	286	1
+139	171	4
+318	433	3
+178	323	4
+447	318	2
+129	4	5
+78	54	1
+120	486	3
+273	461	3
+142	100	2
+23	461	5
+400	338	4
+286	408	2
+321	111	4
+192	300	1
+234	411	5
+332	52	4
+294	115	1
+404	12	2
+270	207	2
+336	287	4
+358	378	2
+112	47	2
+202	379	2
+121	74	4
+448	79	2
+158	411	4
+372	293	2
+402	469	1
+318	204	2
+41	36	5
+162	298	4
+157	14	3
+91	289	2
+28	352	2
+229	220	3
+80	273	3
+292	284	1
+442	451	2
+369	173	4
+193	425	2
+165	261	4
+391	378	2
+64	329	4
+215	307	5
+117	50	4
+119	91	1
+242	473	3
+307	79	4
+44	158	1
+310	16	3
+193	466	4
+452	160	2
+40	46	1
+169	389	3
+100	468	2
+307	194	2
+320	455	4
+96	458	1
+168	472	1
+357	11	1
+223	320	1
+40	121	3
+313	381	1
+313	153	4
+47	244	2
+493	63	2
+296	153	3
+270	427	3
+323	158	5
+459	422	4
+286	267	5
+206	459	5
+391	81	5
+217	239	4
+101	352	3
+432	20	3
+426	367	2
+113	360	1
+193	498	4
+182	200	2
+159	243	1
+436	422	3
+238	1	1
+244	55	5
+450	435	4
+382	46	3
+13	197	1
+415	317	3
+276	290	3
+148	122	2
+453	124	2
+230	167	3
+406	93	2
+403	234	1
+389	361	3
+439	465	2
+418	476	5
+249	290	2
+68	381	1
+468	217	4
+284	43	2
+116	125	2
+16	244	5
+421	38	5
+463	106	4
+2	156	5
+156	281	4
+385	57	2
+428	372	5
+385	160	5
+459	379	1
+419	7	4
+314	52	2
+141	347	5
+312	407	3
+470	363	3
+317	151	3
+169	2	1
+111	443	5
+344	472	5
+238	91	3
+304	405	5
+338	200	1
+211	382	2
+81	40	5
+118	161	1
+33	259	4
+467	324	2
+319	229	4
+103	426	5
+135	152	4
+357	50	3
+170	140	3
+48	453	4
+127	226	1
+385	444	1
+341	382	3
+201	236	4
+113	344	1
+186	67	5
+302	25	1
+423	484	1
+106	237	5
+276	480	5
+383	149	5
+346	401	1
+200	14	5
+210	180	3
+43	262	4
+479	359	2
+478	62	4
+378	62	5
+350	243	4
+356	355	3
+123	499	3
+173	117	5
+398	249	3
+437	384	3
+298	458	3
+298	20	4
+332	21	3
+314	64	5
+268	168	4
+118	427	3
+420	91	5
+495	145	2
+302	437	4
+320	489	4
+137	91	2
+181	343	4
+120	462	1
+367	180	4
+135	305	5
+216	415	5
+157	342	2
+131	203	4
+398	200	2
+43	364	1
+312	438	3
+266	276	3
+7	4	3
+319	382	4
+262	26	4
+466	337	4
+91	54	4
+391	105	1
+487	346	3
+57	260	2
+204	301	4
+206	397	3
+301	68	3
+121	392	5
+426	484	2
+401	160	5
+261	130	4
+451	472	3
+179	409	4
+339	15	1
+483	332	3
+317	330	5
+376	92	2
+347	154	4
+84	166	5
+218	355	4
+31	82	3
+220	208	3
+137	404	5
+110	355	2
+408	263	3
+331	133	3
+134	461	2
+432	9	4
+281	6	5
+94	317	2
+334	233	5
+116	434	1
+310	307	1
+306	225	5
+483	144	1
+416	248	3
+177	474	1
+461	60	2
+110	414	3
+215	339	2
+342	326	3
+418	379	1
+154	361	2
+242	278	2
+171	46	3
+29	476	1
+44	277	2
+65	219	2
+185	170	3
+91	253	2
+320	329	5
+360	285	5
+447	265	2
+400	162	5
+457	129	3
+376	497	3
+225	168	4
+59	304	4
+107	300	4
+244	11	2
+366	59	5
+445	99	2
+430	172	1
+53	213	2
+317	162	3
+200	60	2
+365	170	4
+417	143	5
+210	205	5
+133	28	2
+89	294	2
+380	70	5
+410	301	1
+488	389	4
+5	386	2
+300	91	5
+248	284	3
+441	450	1
+491	418	5
+192	242	5
+79	130	5
+315	216	4
+401	294	5
+226	362	5
+165	181	4
+189	57	3
+171	159	3
+333	263	5
+389	111	1
+459	476	4
+194	15	3
+209	394	1
+398	66	3
+379	213	2
+197	369	1
+461	58	1
+249	163	2
+303	208	4
+282	386	2
+178	200	3
+122	466	5
+14	100	1
+25	34	4
+388	135	3
+103	13	5
+478	164	4
+119	440	3
+226	468	5
+33	145	3
+480	194	5
+486	443	2
+262	318	2
+328	461	4
+500	352	1
+48	72	2
+202	250	2
+215	447	1
+15	405	1
+7	354	4
+340	411	2
+31	285	3
+279	236	5
+60	432	4
+172	444	1
+1	47	3
+424	250	5
+269	138	5
+132	299	5
+350	104	1
+355	66	3
+454	76	1
+45	309	5
+28	88	5
+12	193	2
+209	70	1
+149	150	4
+304	188	5
+188	217	5
+61	217	4
+360	350	5
+298	488	1
+180	51	4
+406	209	5
+331	485	5
+495	139	3
+327	372	4
+466	44	3
+347	96	1
+290	365	2
+34	411	3
+75	276	4
+495	154	4
+457	4	1
+417	26	4
+178	329	4
+179	340	5
+132	223	2
+406	481	3
+368	121	2
+173	455	3
+247	485	4
+218	475	4
+336	367	5
+169	243	3
+352	302	1
+267	92	2
+185	288	5
+42	199	5
+259	80	1
+95	118	3
+332	185	1
+379	435	3
+412	396	5
+465	82	4
+187	5	2
+188	54	3
+123	35	3
+195	419	5
+96	12	1
+237	443	3
+443	68	2
+87	15	5
+87	213	2
+149	109	1
+136	495	1
+385	163	5
+457	350	3
+142	294	1
+254	454	2
+28	109	5
+315	303	3
+243	220	2
+335	6	3
+297	327	2
+290	14	5
+13	321	5
+158	306	4
+171	407	2
+103	413	4
+45	444	5
+71	356	5
+118	25	1
+85	72	5
+479	8	3
+294	27	3
+388	346	5
+488	363	2
+303	497	1
+262	99	3
+110	191	2
+41	293	1
+141	199	2
+377	282	5
+172	23	3
+414	157	4
+224	292	4
+392	315	3
+73	390	5
+485	498	2
+10	369	4
+413	118	3
+484	295	3
+315	459	3
+432	105	5
+405	474	5
+343	139	4
+99	340	1
+472	225	5
+259	299	3
+485	487	2
+103	82	4
+420	204	5
+73	364	2
+246	63	4
+284	319	2
+128	121	1
+43	144	1
+106	434	4
+208	266	1
+173	461	4
+353	461	2
+352	445	3
+86	412	3
+393	317	3
+300	315	2
+463	223	2
+229	310	2
+336	135	1
+226	136	5
+382	221	4
+414	65	2
+268	144	2
+49	120	4
+473	406	2
+390	461	1
+440	224	1
+269	87	4
+237	450	3
+461	452	4
+416	366	1
+427	397	5
+164	419	4
+188	434	4
+264	304	1
+256	392	2
+164	68	1
+30	328	4
+212	150	4
+229	176	2
+390	282	2
+500	129	1
+449	273	3
+295	134	5
+493	479	5
+94	401	4
+347	160	3
+85	119	4
+220	476	1
+281	168	2
+420	224	1
+125	468	3
+232	332	3
+428	424	2
+63	76	2
+438	224	2
+481	123	1
+38	127	3
+145	422	3
+226	436	1
+450	97	3
+108	263	4
+237	97	3
+22	419	3
+63	225	1
+299	91	2
+261	383	5
+430	314	4
+393	478	5
+171	235	4
+101	274	4
+335	230	1
+282	24	5
+91	43	3
+56	212	2
+115	52	4
+326	394	1
+254	338	1
+363	245	2
+322	273	5
+449	84	3
+274	229	4
+465	27	1
+457	456	1
+127	48	1
+496	154	4
+204	8	3
+12	452	2
+343	458	5
+18	81	3
+415	197	4
+309	74	1
+227	482	5
+90	263	2
+49	250	1
+270	494	2
+292	66	3
+64	177	4
+443	93	4
+395	434	2
+195	491	4
+231	142	5
+437	398	3
+169	387	1
+368	241	3
+485	407	3
+141	11	3
+397	181	2
+125	305	1
+394	69	5
+390	134	1
+70	446	3
+359	189	5
+193	208	5
+70	484	2
+99	395	2
+75	391	3
+454	226	4
+9	359	2
+160	70	3
+437	269	4
+239	167	3
+466	498	1
+381	103	1
+331	188	4
+412	287	4
+88	62	5
+397	282	2
+127	267	5
+174	456	2
+196	399	5
+74	154	1
+161	310	1
+87	125	1
+415	400	5
+441	98	4
+382	373	3
+235	38	1
+407	118	3
+125	60	3
+155	3	1
+407	48	3
+349	327	5
+229	108	4
+483	91	4
+90	140	3
+409	364	4
+191	245	3
+498	241	1
+33	355	2
+491	473	1
+117	10	3
+210	266	4
+146	190	4
+377	208	5
+356	371	4
+55	320	1
+451	437	1
+264	492	2
+37	54	5
+187	132	4
+382	28	5
+315	483	4
+46	464	2
+312	117	4
+464	443	5
+217	456	3
+397	18	1
+494	407	2
+46	12	1
+66	286	1
+58	337	5
+234	104	4
+402	286	3
+400	165	1
+335	158	3
+341	286	2
+497	108	5
+332	247	3
+483	208	1
+458	96	4
+399	277	1
+251	298	4
+103	330	1
+395	260	3
+313	63	1
+486	484	3
+227	323	3
+452	148	3
+165	472	2
+458	30	1
+240	403	5
+278	238	4
+441	25	1
+413	314	3
+241	374	1
+348	289	4
+408	353	3
+58	142	4
+411	19	2
+375	21	1
+110	222	2
+416	411	2
+272	61	1
+218	9	2
+429	419	2
+189	83	4
+367	122	1
+443	172	3
+86	301	3
+449	456	2
+297	58	3
+223	58	5
+9	30	1
+324	307	4
+312	458	1
+99	255	3
+347	7	4
+345	166	5
+417	226	2
+210	197	3
+133	330	1
+94	158	4
+285	366	3
+488	199	1
+341	268	2
+500	97	1
+207	105	1
+83	369	5
+488	417	5
+81	43	3
+167	37	2
+320	102	2
+370	478	1
+477	500	1
+281	334	4
+125	68	2
+329	98	1
+257	150	2
+74	168	5
+43	116	2
+378	135	3
+478	348	4
+74	225	5
+232	205	2
+420	255	1
+464	12	1
+411	221	3
+353	295	1
+214	144	1
+240	255	3
+28	50	1
+217	60	2
+166	334	2
+370	336	2
+303	120	4
+96	131	1
+478	99	2
+173	149	3
+276	417	3
+365	174	5
+23	390	2
+115	253	3
+39	107	2
+181	162	3
+421	390	4
+260	212	2
+288	89	5
+192	358	4
+348	481	5
+339	283	2
+373	169	4
+213	192	2
+477	14	1
+437	114	4
+369	321	3
+151	58	3
+435	44	5
+180	150	1
+476	328	1
+263	44	3
+340	477	4
+397	497	2
+33	8	4
+459	219	1
+68	154	4
+212	155	2
+453	305	2
+18	263	2
+156	149	5
+80	255	3
+161	426	5
+286	82	5
+309	261	2
+441	251	2
+397	150	5
+461	399	4
+139	210	3
+251	465	5
+396	200	4
+81	308	3
+380	309	5
+468	472	2
+367	303	2
+193	483	4
+449	31	1
+95	422	1
+327	257	2
+109	314	4
+152	465	5
+291	291	1
+83	34	4
+4	445	4
+492	269	5
+158	418	2
+412	466	2
+398	412	1
+60	320	2
+230	85	1
+202	220	1
+231	256	1
+31	1	4
+34	92	5
+24	26	3
+151	361	2
+398	495	3
+451	304	3
+127	213	3
+201	67	4
+266	260	2
+174	430	4
+134	103	5
+272	388	4
+22	292	4
+441	469	2
+62	495	1
+21	110	1
+86	467	2
+221	100	3
+217	47	1
+29	463	5
+265	98	5
+384	375	3
+250	231	1
+427	431	4
+82	243	2
+481	187	4
+323	383	2
+62	425	2
+422	72	5
+197	437	3
+399	249	2
+91	64	5
+477	329	5
+36	85	4
+206	396	1
+310	236	1
+250	360	1
+281	367	3
+104	389	4
+233	480	1
+323	101	5
+311	367	1
+331	409	2
+22	237	2
+256	241	5
+341	290	2
+339	209	1
+147	111	4
+4	321	5
+204	467	3
+276	252	5
+329	144	2
+441	76	4
+368	155	1
+61	267	5
+493	165	2
+394	111	2
+39	253	5
+388	321	4
+196	166	4
+206	210	1
+39	448	1
+65	143	5
+182	489	3
+6	437	5
+263	105	5
+469	168	1
+141	134	3
+442	44	4
+391	419	2
+221	418	1
+154	393	1
+93	49	1
+408	500	5
+259	200	5
+175	202	4
+247	314	3
+399	211	2
+162	24	5
+268	136	1
+98	388	5
+173	34	4
+421	48	3
+68	465	2
+9	351	5
+404	68	2
+421	430	4
+88	472	3
+145	145	1
+263	32	2
+87	333	1
+191	257	5
+368	367	3
+76	78	5
+256	266	5
+40	124	5
+59	115	3
+346	73	3
+462	290	3
+133	179	2
+32	404	3
+145	32	5
+410	349	5
+106	379	3
+10	312	4
+194	365	2
+443	160	1
+130	18	1
+376	453	2
+402	340	5
+115	373	2
+394	134	2
+18	326	1
+248	12	3
+213	399	4
+400	494	2
+119	494	5
+315	450	1
+392	305	1
+248	235	5
+177	18	5
+62	279	5
+39	170	4
+285	480	5
+374	76	2
+458	93	3
+98	38	1
+131	209	3
+154	194	5
+429	55	3
+34	273	5
+25	136	2
+222	373	1
+405	196	4
+318	312	4
+15	29	3
+469	401	5
+103	143	1
+320	313	5
+472	295	1
+363	269	1
+468	219	2
+101	484	4
+115	315	2
+450	195	2
+495	205	1
+172	70	2
+367	308	4
+492	19	2
+218	455	2
+184	335	4
+170	232	5
+483	206	2
+282	477	3
+306	307	2
+233	162	5
+456	26	1
+2	89	2
+103	170	1
+11	76	4
+477	458	1
+139	304	5
+35	94	3
+449	409	1
+39	137	1
+135	471	2
+424	413	2
+467	36	5
+67	265	1
+56	38	3
+22	115	1
+73	17	5
+198	276	4
+100	494	4
+308	367	1
+261	329	1
+440	124	3
+469	87	3
+176	398	2
+190	301	5
+289	121	2
+431	402	5
+497	87	5
+210	194	2
+257	403	2
+442	440	2
+174	262	4
+225	335	3
+291	383	4
+229	382	1
+20	237	1
+298	115	5
+156	222	3
+367	222	3
+415	113	2
+382	63	3
+259	484	4
+393	114	3
+258	130	3
+208	90	3
+407	442	2
+425	489	2
+427	295	5
+271	174	1
+151	226	2
+180	96	4
+404	229	1
+69	2	4
+247	260	1
+465	44	4
+172	53	1
+122	36	5
+361	45	2
+444	119	2
+451	305	5
+55	250	4
+170	413	4
+5	90	3
+363	431	5
+374	24	2
+164	366	3
+482	295	1
+246	300	4
+250	393	5
+403	98	2
+13	133	2
+467	147	3
+133	394	1
+54	36	4
+260	151	4
+490	389	1
+412	321	3
+436	253	2
+237	471	2
+66	327	5
+484	335	2
+218	156	5
+202	175	3
+182	135	4
+96	368	2
+390	77	5
+272	47	3
+242	400	2
+177	487	1
+344	283	3
+138	167	4
+157	496	2
+93	78	4
+197	94	1
+271	389	2
+407	270	3
+315	58	5
+440	85	1
+42	4	4
+485	187	2
+141	56	1
+232	291	1
+369	338	2
+164	18	2
+106	130	1
+213	43	1
+404	1	4
+380	153	1
+215	122	1
+319	117	2
+490	190	4
+334	259	5
+356	465	1
+233	127	1
+85	84	2
+388	206	4
+262	325	3
+345	44	4
+208	104	1
+124	487	4
+398	429	3
+126	165	2
+163	472	1
+147	200	1
+383	171	1
+418	110	3
+128	175	3
+77	488	4
+453	327	4
+103	54	2
+497	160	4
+349	107	5
+449	300	5
+375	47	2
+61	315	3
+254	51	5
+250	137	4
+370	441	3
+473	13	5
+56	45	1
+177	93	5
+475	28	2
+423	62	1
+342	285	1
+238	55	2
+115	6	1
+254	326	5
+489	395	5
+371	232	2
+480	166	3
+203	196	2
+483	336	2
+365	48	2
+348	434	1
+278	20	2
+310	286	2
+300	217	2
+338	63	5
+127	288	3
+4	109	5
+482	319	4
+106	355	1
+309	219	5
+197	30	4
+404	353	4
+199	55	5
+168	119	2
+480	404	4
+155	326	3
+471	66	5
+246	103	3
+335	335	5
+496	472	3
+19	72	5
+224	106	4
+386	434	4
+391	246	4
+480	232	3
+399	457	4
+119	339	3
+154	318	5
+85	491	5
+18	483	5
+346	155	4
+65	410	5
+207	172	1
+410	461	4
+413	87	1
+16	495	5
+449	294	4
+78	23	5
+344	386	4
+314	224	4
+249	441	2
+166	201	3
+2	372	5
+312	460	3
+77	68	5
+202	388	2
+308	64	5
+21	352	4
+291	205	4
+102	29	3
+81	336	5
+280	167	1
+190	397	5
+49	232	4
+143	370	3
+199	266	5
+453	310	3
+427	317	3
+350	235	5
+477	51	3
+264	236	1
+456	258	2
+374	110	2
+219	214	5
+421	173	4
+138	298	3
+129	477	1
+410	13	4
+104	122	4
+233	188	3
+287	396	4
+356	439	5
+407	17	5
+284	181	5
+360	237	5
+13	55	4
+130	280	1
+353	104	1
+379	317	4
+388	126	4
+366	283	1
+82	197	2
+149	78	4
+45	32	5
+1	249	4
+278	143	3
+109	99	4
+230	396	3
+255	134	2
+450	281	5
+454	488	3
+257	330	3
+300	496	1
+146	302	5
+64	137	5
+327	66	5
+335	475	3
+85	353	2
+278	133	4
+40	257	3
+156	11	3
+335	150	3
+404	69	4
+355	197	4
+428	300	2
+138	324	1
+187	446	1
+407	452	4
+136	12	1
+405	189	2
+165	183	5
+16	212	4
+213	304	3
+322	463	1
+172	483	5
+80	226	5
+489	370	5
+77	117	1
+298	302	2
+463	487	4
+428	160	5
+22	26	3
+409	470	3
+44	227	5
+4	157	2
+29	382	1
+63	233	5
+239	37	4
+220	492	1
+300	194	5
+73	361	2
+311	436	2
+115	395	5
+124	223	5
+296	9	1
+267	274	2
+253	260	5
+277	354	5
+345	69	3
+220	421	2
+288	448	2
+99	196	1
+57	362	1
+479	224	2
+443	482	4
+116	107	2
+215	497	1
+152	10	5
+259	218	5
+392	368	3
+381	415	2
+395	386	2
+64	243	4
+281	48	5
+39	419	1
+291	346	1
+489	387	2
+309	127	2
+178	36	3
+257	203	2
+453	456	5
+67	119	2
+115	84	1
+351	4	3
+427	392	5
+157	12	2
+56	387	2
+166	121	4
+2	321	5
+387	433	5
+388	484	4
+449	275	4
+9	387	1
+268	475	4
+132	245	3
+432	308	5
+440	46	2
+327	190	3
+113	264	5
+241	354	4
+221	98	5
+98	124	1
+464	409	5
+377	251	1
+155	38	4
+341	115	3
+48	446	2
+235	366	3
+378	7	4
+131	129	2
+47	108	1
+268	251	4
+412	130	5
+279	97	3
+16	303	5
+441	398	1
+70	212	5
+429	434	3
+135	304	2
+487	456	4
+449	343	5
+260	191	4
+268	90	1
+428	388	4
+499	463	4
+287	187	5
+235	16	5
+193	490	4
+317	79	2
+199	421	2
+210	373	3
+255	472	1
+366	127	2
+371	189	4
+260	278	5
+284	135	2
+197	163	3
+102	178	5
+86	137	1
+4	47	2
+66	135	1
+239	474	3
+198	212	5
+385	52	2
+416	458	1
+145	366	5
+65	430	1
+463	133	3
+277	222	4
+411	52	3
+173	284	5
+31	457	4
+137	466	3
+159	165	5
+124	293	4
+468	64	5
+372	78	1
+473	188	3
+158	459	1
+49	324	1
+452	46	4
+400	446	4
+190	238	5
+107	257	4
+92	233	3
+266	467	5
+73	269	3
+210	211	4
+115	432	1
+454	64	2
+188	484	3
+39	390	5
+433	117	1
+454	23	4
+55	428	4
+146	179	1
+432	417	3
+198	354	3
+275	201	2
+472	84	3
+143	332	3
+215	467	4
+228	128	1
+32	292	4
+9	212	3
+457	169	1
+192	383	1
+273	458	3
+303	206	1
+92	47	5
+368	421	4
+39	160	2
+480	65	2
+13	232	4
+284	480	2
+470	227	4
+45	173	3
+193	71	3
+42	43	4
+305	193	2
+333	155	3
+8	386	3
+113	408	1
+245	262	1
+154	56	2
+308	451	1
+420	259	1
+498	278	3
+397	408	3
+45	63	2
+498	337	5
+450	202	4
+107	98	4
+398	213	2
+471	168	1
+7	162	3
+428	246	1
+216	202	1
+125	368	3
+448	426	1
+171	488	5
+404	21	3
+497	43	4
+361	229	1
+318	88	2
+99	433	3
+85	492	1
+153	232	2
+208	7	5
+384	347	5
+9	94	1
+10	386	5
+161	360	4
+272	91	2
+393	291	5
+360	386	1
+259	131	1
+199	370	3
+277	144	2
+469	459	3
+110	371	4
+135	64	4
+57	115	5
+35	87	2
+84	312	4
+291	431	4
+104	72	5
+53	95	2
+447	353	3
+154	139	1
+169	455	4
+470	350	3
+220	91	4
+221	282	4
+184	358	3
+109	182	4
+126	80	3
+344	325	3
+68	101	2
+214	294	5
+441	196	2
+163	164	3
+30	363	4
+163	87	3
+142	378	4
+87	138	4
+71	387	1
+392	45	3
+390	265	2
+496	203	2
+124	314	3
+235	86	2
+249	354	2
+243	99	2
+64	311	4
+471	62	1
+62	210	1
+181	342	5
+325	409	4
+365	241	3
+4	174	2
+488	467	1
+136	368	5
+123	45	5
+290	431	1
+115	289	4
+333	37	3
+414	120	4
+496	191	1
+442	425	3
+99	307	4
+177	195	4
+2	313	5
+284	101	4
+220	289	4
+339	352	1
+498	100	2
+474	82	1
+464	157	5
+418	310	5
+468	274	3
+97	338	3
+348	189	2
+142	88	5
+492	146	4
+295	3	5
+219	454	4
+92	195	5
+413	468	5
+86	266	4
+483	368	1
+257	195	2
+6	65	1
+431	88	2
+56	218	3
+186	347	2
+444	209	4
+322	298	1
+386	210	4
+460	242	5
+75	319	1
+238	247	2
+419	209	2
+64	69	2
+74	176	4
+380	253	5
+262	327	1
+16	172	3
+448	266	4
+482	356	2
+393	61	1
+345	359	3
+72	124	1
+85	381	1
+23	26	5
+34	344	3
+258	247	1
+116	482	2
+262	39	3
+350	341	3
+36	275	4
+266	348	5
+8	214	5
+63	359	3
+408	198	1
+9	90	4
+237	180	5
+46	132	3
+34	97	4
+145	340	5
+101	10	4
+101	385	1
+224	131	4
+130	349	1
+391	218	5
+178	158	5
+240	323	5
+367	343	3
+22	493	4
+96	425	1
+170	304	4
+486	407	5
+343	456	1
+51	391	1
+11	136	5
+454	146	5
+246	229	3
+383	79	3
+303	29	4
+396	330	2
+475	363	1
+209	283	1
+263	224	2
+46	385	5
+367	422	5
+180	106	2
+282	144	1
+435	260	2
+184	288	1
+323	180	1
+291	278	1
+159	174	4
+144	50	3
+384	414	2
+166	262	4
+141	318	5
+459	15	2
+464	189	1
+64	348	3
+219	348	4
+240	176	3
+8	463	3
+252	220	2
+63	188	5
+295	106	3
+40	148	1
+487	135	1
+238	496	2
+457	230	1
+405	217	3
+335	331	5
+308	65	2
+118	336	1
+385	428	4
+462	443	5
+396	161	2
+373	406	4
+138	45	4
+23	181	3
+229	219	2
+442	258	4
+71	99	1
+60	445	5
+158	129	1
+335	113	3
+77	214	2
+343	8	2
+499	23	2
+2	208	4
+423	424	3
+373	255	1
+457	33	4
+474	451	3
+132	344	2
+201	498	3
+304	313	1
+134	147	5
+346	183	2
+327	373	5
+401	85	2
+133	130	4
+272	313	5
+111	352	4
+433	396	5
+31	476	3
+472	166	3
+11	128	2
+452	274	3
+210	301	1
+287	128	3
+190	193	3
+395	258	5
+495	300	1
+297	300	1
+309	388	1
+131	131	4
+125	479	5
+159	472	3
+437	264	3
+161	431	1
+428	331	1
+246	191	3
+251	9	1
+475	379	4
+174	381	2
+485	121	1
+386	349	3
+323	296	5
+329	124	5
+19	67	1
+248	413	4
+136	137	5
+295	285	3
+84	55	3
+191	299	2
+180	197	4
+367	235	3
+149	56	3
+427	160	3
+112	375	5
+124	470	4
+145	206	3
+137	196	1
+418	403	2
+130	402	2
+202	415	3
+314	169	3
+20	483	3
+278	123	4
+399	124	1
+438	472	2
+109	71	2
+363	329	1
+476	75	1
+219	254	1
+338	470	2
+136	40	1
+322	15	2
+470	210	2
+438	325	2
+414	136	1
+24	197	4
+9	411	2
+53	105	4
+141	398	4
+69	134	3
+108	405	5
+446	132	2
+139	265	2
+296	252	2
+347	377	5
+104	224	2
+371	2	1
+47	96	3
+326	424	5
+495	460	1
+323	484	3
+257	187	5
+499	156	2
+105	21	1
+3	74	1
+248	312	2
+480	229	3
+261	208	3
+130	333	3
+109	311	2
+419	23	5
+75	108	4
+419	36	2
+96	159	3
+3	221	1
+433	400	2
+232	230	5
+378	284	1
+481	193	3
+448	34	3
+379	130	3
+70	492	2
+263	378	5
+188	206	3
+216	52	1
+321	166	1
+365	340	4
+411	107	1
+433	451	4
+469	61	4
+129	376	5
+406	403	2
+462	226	2
+337	335	3
+123	207	5
+361	284	3
+315	427	5
+464	168	2
+177	400	4
+424	242	2
+216	290	5
+307	83	2
+111	11	3
+170	181	3
+465	231	2
+190	295	2
+85	429	2
+150	447	1
+264	466	5
+216	472	1
+33	22	2
+286	201	1
+326	400	3
+489	48	5
+363	224	5
+174	229	4
+447	433	5
+286	349	3
+350	322	1
+249	149	1
+497	218	4
+348	448	4
+273	97	3
+127	184	3
+439	31	1
+156	468	1
+252	479	5
+322	141	4
+181	77	5
+115	115	3
+31	56	5
+355	285	3
+101	355	5
+421	357	3
+361	312	1
+94	187	3
+380	220	5
+363	367	2
+242	301	4
+391	238	5
+336	458	3
+273	307	3
+97	204	2
+294	31	1
+408	394	4
+258	331	3
+76	388	1
+65	378	1
+424	179	3
+117	287	3
+187	368	5
+405	25	3
+24	438	3
+206	364	5
+149	288	5
+255	500	5
+142	283	1
+224	303	5
+335	107	2
+46	351	1
+279	264	3
+294	346	2
+482	347	2
+46	291	4
+176	475	3
+47	312	1
+486	357	1
+81	371	1
+136	483	2
+299	260	2
+462	451	3
+467	329	2
+123	262	5
+205	450	4
+127	149	3
+398	383	3
+82	411	3
+500	82	5
+330	445	3
+29	497	5
+177	92	5
+198	113	1
+376	218	1
+122	162	1
+213	184	5
+320	221	5
+76	145	4
+430	12	3
+216	282	2
+184	99	1
+31	289	3
+279	309	2
+193	91	3
+400	116	1
+441	291	5
+33	201	2
+229	367	4
+264	187	1
+139	11	5
+383	81	1
+273	303	2
+124	401	2
+119	257	4
+331	285	2
+251	418	3
+331	461	2
+206	161	5
+125	193	1
+100	157	1
+397	289	3
+140	230	5
+257	259	5
+98	379	3
+167	133	4
+236	391	2
+172	15	5
+88	327	5
+363	46	3
+392	96	1
+365	479	5
+60	258	1
+311	3	1
+106	163	5
+239	41	4
+4	421	5
+500	382	2
+424	64	3
+110	84	3
+66	16	1
+108	238	3
+398	327	1
+266	471	1
+340	425	5
+325	484	1
+269	346	2
+155	98	4
+10	8	1
+186	218	2
+394	363	4
+480	88	2
+288	167	2
+353	391	3
+429	62	1
+34	94	4
+306	365	4
+383	261	1
+250	485	4
+313	463	4
+209	95	1
+129	344	1
+282	248	5
+297	27	4
+34	434	4
+123	349	3
+279	492	4
+263	281	5
+331	13	1
+267	11	3
+426	105	3
+178	283	3
+285	360	1
+77	246	3
+207	368	4
+275	382	1
+433	189	5
+135	266	5
+229	26	1
+481	2	1
+49	94	2
+58	453	5
+363	353	2
+155	489	1
+89	281	1
+110	156	4
+321	350	4
+473	172	3
+42	485	5
+150	106	4
+412	294	4
+487	398	3
+1	3	1
+390	447	5
+412	416	2
+158	37	4
+259	201	2
+374	230	1
+128	240	1
+60	3	1
+474	351	4
+107	306	3
+480	160	2
+306	411	5
+342	108	4
+205	456	4
+223	78	4
+448	160	5
+412	435	1
+259	57	4
+406	295	5
+448	41	2
+459	230	5
+248	267	5
+155	218	1
+445	153	4
+15	69	2
+149	37	4
+382	8	5
+375	134	4
+29	258	2
+490	403	3
+378	158	5
+405	315	4
+211	310	5
+98	57	1
+169	418	4
+289	371	3
+130	252	2
+392	99	5
+209	404	5
+433	263	1
+303	436	1
+491	160	3
+489	357	5
+386	132	1
+167	1	1
+101	382	4
+459	264	3
+375	459	3
+60	277	4
+430	317	2
+478	12	5
+414	90	1
+117	271	1
+343	62	2
+138	337	2
+309	263	2
+206	101	1
+59	13	1
+12	127	2
+137	308	5
+78	499	1
+152	410	3
+328	374	2
+293	274	3
+164	303	3
+119	474	4
+226	142	1
+195	341	5
+467	466	3
+484	215	4
+57	496	5
+80	367	4
+93	38	1
+235	312	2
+358	382	1
+217	36	4
+143	48	5
+407	227	3
+124	477	3
+136	208	4
+125	381	1
+50	143	4
+69	200	3
+438	211	4
+115	418	1
+278	465	4
+398	195	3
+141	63	4
+374	417	4
+272	109	5
+262	160	5
+108	38	1
+457	83	1
+197	255	1
+342	356	5
+19	305	5
+393	236	1
+450	466	1
+494	358	1
+229	326	3
+474	154	1
+265	316	3
+443	197	2
+336	317	4
+312	244	2
+349	483	4
+297	474	1
+82	159	5
+37	379	2
+58	148	5
+198	199	3
+472	123	5
+192	475	1
+298	96	5
+63	256	3
+306	372	1
+436	276	5
+278	229	2
+317	360	1
+281	86	4
+178	207	2
+75	113	5
+291	331	5
+233	208	5
+42	446	4
+496	42	1
+415	161	2
+236	421	1
+181	300	2
+418	98	1
+315	491	3
+126	133	1
+349	284	5
+15	365	4
+461	145	3
+63	126	4
+325	445	5
+191	84	5
+408	379	2
+376	99	4
+228	145	3
+483	80	5
+136	27	2
+401	430	1
+307	256	1
+498	377	3
+284	356	4
+42	252	5
+368	298	2
+497	329	1
+366	358	4
+99	474	2
+67	19	4
+483	255	1
+97	23	5
+222	343	3
+130	443	2
+31	163	4
+296	489	4
+101	164	2
+176	52	5
+450	78	1
+98	330	2
+74	25	3
+287	50	3
+485	104	2
+243	473	2
+425	123	2
+188	101	1
+489	282	5
+442	419	3
+178	458	4
+320	134	5
+167	306	3
+10	255	5
+217	190	2
+319	294	2
+317	213	3
+457	351	2
+199	425	1
+127	430	3
+271	356	4
+86	453	2
+153	305	2
+171	417	5
+315	378	5
+23	467	5
+373	413	1
+306	131	1
+137	280	2
+190	79	2
+401	310	1
+494	19	5
+109	32	1
+438	474	3
+107	338	3
+376	256	1
+225	276	2
+15	183	4
+339	36	1
+52	203	1
+235	298	5
+131	423	4
+408	51	1
+334	461	1
+487	365	3
+120	47	5
+454	298	4
+235	135	1
+467	463	1
+79	21	1
+434	459	1
+287	38	1
+207	329	4
+284	283	5
+18	221	5
+258	376	2
+266	160	3
+338	205	5
+18	376	2
+419	289	4
+83	95	1
+254	342	2
+40	349	4
+478	493	5
+243	10	1
+130	69	3
+275	148	5
+110	369	5
+410	311	1
+96	389	3
+324	196	5
+39	341	1
+411	389	3
+442	239	2
+48	248	2
+471	368	1
+241	441	1
+263	242	3
+229	77	3
+139	4	4
+345	207	3
+380	4	4
+52	75	3
+190	99	1
+186	143	4
+40	244	3
+439	80	5
+84	474	5
+469	285	4
+193	121	3
+477	451	3
+309	188	3
+1	416	2
+227	440	4
+115	156	5
+331	287	3
+196	418	1
+157	70	4
+145	448	5
+30	388	2
+207	357	3
+4	277	5
+476	119	5
+258	405	3
+318	298	1
+68	265	3
+471	195	2
+312	236	5
+162	29	4
+144	97	1
+100	404	3
+124	202	1
+244	239	5
+149	154	2
+58	411	5
+334	295	3
+148	351	5
+298	376	1
+388	407	5
+263	235	5
+363	165	3
+331	351	2
+1	321	1
+121	92	1
+131	365	1
+440	265	2
+57	194	5
+322	27	5
+40	251	4
+2	320	4
+143	487	1
+430	413	5
+215	329	5
+93	67	1
+328	303	2
+118	439	1
+65	31	1
+326	234	3
+41	362	1
+374	423	4
+306	466	2
+133	304	3
+217	374	2
+268	262	2
+495	417	1
+417	438	2
+100	73	1
+287	353	2
+76	264	4
+155	385	1
+300	492	2
+330	118	2
+319	259	4
+226	171	3
+479	467	2
+16	251	5
+386	152	1
+452	429	5
+306	448	4
+86	309	4
+289	109	2
+\.
+
+
+--
+-- TOC entry 3493 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: cleaninglog_logid_seq; Type: SEQUENCE SET; Schema: public; Owner: myUser
+--
+
+SELECT pg_catalog.setval('public.cleaninglog_logid_seq', 120000, true);
+
+
+--
+-- TOC entry 3494 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: cleaningsupplies_suppliesid_seq; Type: SEQUENCE SET; Schema: public; Owner: myUser
+--
+
+SELECT pg_catalog.setval('public.cleaningsupplies_suppliesid_seq', 2500, true);
+
+
+--
+-- TOC entry 3495 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: housekeepingemployee_employeeid_seq; Type: SEQUENCE SET; Schema: public; Owner: myUser
+--
+
+SELECT pg_catalog.setval('public.housekeepingemployee_employeeid_seq', 2500, true);
+
+
+--
+-- TOC entry 3496 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: housekeepingstatus_statusid_seq; Type: SEQUENCE SET; Schema: public; Owner: myUser
+--
+
+SELECT pg_catalog.setval('public.housekeepingstatus_statusid_seq', 25, true);
+
+
+--
+-- TOC entry 3497 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: housekeepingtask_taskid_seq; Type: SEQUENCE SET; Schema: public; Owner: myUser
+--
+
+SELECT pg_catalog.setval('public.housekeepingtask_taskid_seq', 2500, true);
+
+
+--
+-- TOC entry 3498 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: room_roomid_seq; Type: SEQUENCE SET; Schema: public; Owner: myUser
+--
+
+SELECT pg_catalog.setval('public.room_roomid_seq', 2500, true);
+
+
+--
+-- TOC entry 3499 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: roomcheck_checkid_seq; Type: SEQUENCE SET; Schema: public; Owner: myUser
+--
+
+SELECT pg_catalog.setval('public.roomcheck_checkid_seq', 1, false);
+
+
+--
+-- TOC entry 3500 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: tasktype_tasktypeid_seq; Type: SEQUENCE SET; Schema: public; Owner: myUser
+--
+
+SELECT pg_catalog.setval('public.tasktype_tasktypeid_seq', 25, true);
+
+
+--
+-- TOC entry 3289 (class 2606 OID 32868)
+-- Name: belongsto belongsto_pkey; Type: CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.belongsto
+    ADD CONSTRAINT belongsto_pkey PRIMARY KEY (employeeid, taskid);
+
+
+--
+-- TOC entry 3281 (class 2606 OID 32826)
+-- Name: cleaninglog cleaninglog_pkey; Type: CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.cleaninglog
+    ADD CONSTRAINT cleaninglog_pkey PRIMARY KEY (logid);
+
+
+--
+-- TOC entry 3287 (class 2606 OID 32863)
+-- Name: cleaningsupplies cleaningsupplies_pkey; Type: CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.cleaningsupplies
+    ADD CONSTRAINT cleaningsupplies_pkey PRIMARY KEY (suppliesid);
+
+
+--
+-- TOC entry 3279 (class 2606 OID 32817)
+-- Name: housekeepingemployee housekeepingemployee_pkey; Type: CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.housekeepingemployee
+    ADD CONSTRAINT housekeepingemployee_pkey PRIMARY KEY (employeeid);
+
+
+--
+-- TOC entry 3273 (class 2606 OID 32788)
+-- Name: housekeepingstatus housekeepingstatus_pkey; Type: CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.housekeepingstatus
+    ADD CONSTRAINT housekeepingstatus_pkey PRIMARY KEY (statusid);
+
+
+--
+-- TOC entry 3275 (class 2606 OID 32795)
+-- Name: housekeepingtask housekeepingtask_pkey; Type: CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.housekeepingtask
+    ADD CONSTRAINT housekeepingtask_pkey PRIMARY KEY (taskid);
+
+
+--
+-- TOC entry 3269 (class 2606 OID 32774)
+-- Name: room room_pkey; Type: CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.room
+    ADD CONSTRAINT room_pkey PRIMARY KEY (roomid);
+
+
+--
+-- TOC entry 3285 (class 2606 OID 32845)
+-- Name: roomcheck roomcheck_pkey; Type: CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.roomcheck
+    ADD CONSTRAINT roomcheck_pkey PRIMARY KEY (checkid);
+
+
+--
+-- TOC entry 3271 (class 2606 OID 32781)
+-- Name: tasktype tasktype_pkey; Type: CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.tasktype
+    ADD CONSTRAINT tasktype_pkey PRIMARY KEY (tasktypeid);
+
+
+--
+-- TOC entry 3277 (class 2606 OID 40966)
+-- Name: housekeepingtask unique_task_room_date; Type: CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.housekeepingtask
+    ADD CONSTRAINT unique_task_room_date UNIQUE (roomid, tasktypeid, duedate);
+
+
+--
+-- TOC entry 3292 (class 2606 OID 32885)
+-- Name: uses uses_pkey; Type: CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.uses
+    ADD CONSTRAINT uses_pkey PRIMARY KEY (suppliesid, taskid);
+
+
+--
+-- TOC entry 3282 (class 1259 OID 40961)
+-- Name: idx_cleaninglog_employeeid; Type: INDEX; Schema: public; Owner: myUser
+--
+
+CREATE INDEX idx_cleaninglog_employeeid ON public.cleaninglog USING btree (employeeid);
+
+
+--
+-- TOC entry 3283 (class 1259 OID 40960)
+-- Name: idx_cleaninglog_starttime; Type: INDEX; Schema: public; Owner: myUser
+--
+
+CREATE INDEX idx_cleaninglog_starttime ON public.cleaninglog USING btree (starttime);
+
+
+--
+-- TOC entry 3290 (class 1259 OID 40962)
+-- Name: idx_uses_supplies; Type: INDEX; Schema: public; Owner: myUser
+--
+
+CREATE INDEX idx_uses_supplies ON public.uses USING btree (suppliesid);
+
+
+--
+-- TOC entry 3300 (class 2606 OID 32869)
+-- Name: belongsto fk_belongs_employee; Type: FK CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.belongsto
+    ADD CONSTRAINT fk_belongs_employee FOREIGN KEY (employeeid) REFERENCES public.housekeepingemployee(employeeid);
+
+
+--
+-- TOC entry 3301 (class 2606 OID 32874)
+-- Name: belongsto fk_belongs_task; Type: FK CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.belongsto
+    ADD CONSTRAINT fk_belongs_task FOREIGN KEY (taskid) REFERENCES public.housekeepingtask(taskid);
+
+
+--
+-- TOC entry 3298 (class 2606 OID 32851)
+-- Name: roomcheck fk_check_employee; Type: FK CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.roomcheck
+    ADD CONSTRAINT fk_check_employee FOREIGN KEY (employeeid) REFERENCES public.housekeepingemployee(employeeid);
+
+
+--
+-- TOC entry 3299 (class 2606 OID 32846)
+-- Name: roomcheck fk_check_room; Type: FK CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.roomcheck
+    ADD CONSTRAINT fk_check_room FOREIGN KEY (roomid) REFERENCES public.room(roomid);
+
+
+--
+-- TOC entry 3296 (class 2606 OID 32832)
+-- Name: cleaninglog fk_log_employee; Type: FK CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.cleaninglog
+    ADD CONSTRAINT fk_log_employee FOREIGN KEY (employeeid) REFERENCES public.housekeepingemployee(employeeid);
+
+
+--
+-- TOC entry 3297 (class 2606 OID 32827)
+-- Name: cleaninglog fk_log_task; Type: FK CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.cleaninglog
+    ADD CONSTRAINT fk_log_task FOREIGN KEY (taskid) REFERENCES public.housekeepingtask(taskid);
+
+
+--
+-- TOC entry 3293 (class 2606 OID 32796)
+-- Name: housekeepingtask fk_room; Type: FK CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.housekeepingtask
+    ADD CONSTRAINT fk_room FOREIGN KEY (roomid) REFERENCES public.room(roomid);
+
+
+--
+-- TOC entry 3294 (class 2606 OID 32806)
+-- Name: housekeepingtask fk_status; Type: FK CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.housekeepingtask
+    ADD CONSTRAINT fk_status FOREIGN KEY (statusid) REFERENCES public.housekeepingstatus(statusid);
+
+
+--
+-- TOC entry 3295 (class 2606 OID 32801)
+-- Name: housekeepingtask fk_tasktype; Type: FK CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.housekeepingtask
+    ADD CONSTRAINT fk_tasktype FOREIGN KEY (tasktypeid) REFERENCES public.tasktype(tasktypeid);
+
+
+--
+-- TOC entry 3302 (class 2606 OID 32886)
+-- Name: uses fk_uses_supply; Type: FK CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.uses
+    ADD CONSTRAINT fk_uses_supply FOREIGN KEY (suppliesid) REFERENCES public.cleaningsupplies(suppliesid);
+
+
+--
+-- TOC entry 3303 (class 2606 OID 32891)
+-- Name: uses fk_uses_task; Type: FK CONSTRAINT; Schema: public; Owner: myUser
+--
+
+ALTER TABLE ONLY public.uses
+    ADD CONSTRAINT fk_uses_task FOREIGN KEY (taskid) REFERENCES public.housekeepingtask(taskid);
+
+
+-- Completed on 2026-04-28 09:50:23 UTC
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict g5uDsZpLMPlr4yvgPoAO7pUfCPRokfbjqGpLyNZC4GDFIJ1AvgLCqrdtThUNsEQ
+

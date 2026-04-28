@@ -77,7 +77,7 @@ ROLLBACK;
 -- Transaction: COMMIT — demonstrates saving the change permanently.
 BEGIN;
 
-UPDATE CLEANNINGSUPPLIES
+UPDATE CLEANINGSUPPLIES
 SET quantity = quantity + 50
 WHERE quantity < 10;
 
@@ -96,7 +96,7 @@ SET statusID = (
 )
 WHERE taskID IN (
     SELECT taskID 
-    FROM CLEANNINGLOG 
+    FROM CLEANINGLOG 
     WHERE endTime IS NOT NULL
 )
 AND statusID != (
