@@ -39,6 +39,8 @@ This database system was designed to manage the Housekeeping department of a hot
   - [Index 2: Foreign Key Optimization](#index-2-optimizing-foreign-key-lookups-employee-performance-tracking)
   - [Index 3: Junction Table Optimization](#index-3-optimizing-inventory-queries-in-the-junction-table-uses)  
 
+- [Commit & Rollback](#commit--rollback)
+
 - [Database Constraints Analysis](#database-constraints-analysis)
   - [Constraint 1: Inventory Integrity](#1-inventory-integrity-cleanningsupplies-table)
   - [Constraint 2: Score Range Validation](#2-score-range-validation-roomcheck-table)
@@ -393,7 +395,59 @@ Execution Run: ![update3](stage1/images/update3.png)
 
 After Update: ![afterUpdate3](stage1/images/afterUpdate3.png)
 
+---
 
+## Commit & Rollback
+
+PostgreSQL supports **transaction control** using `BEGIN`, `COMMIT`, and `ROLLBACK` commands. This allows us to group SQL statements into a single unit of work and decide whether to **save** or **undo** the changes before they become permanent.
+
+| Command | Purpose |
+|---------|---------|
+| `BEGIN` | Opens a new transaction block |
+| `COMMIT` | Saves all changes made since `BEGIN` permanently |
+| `ROLLBACK` | Undoes all changes made since `BEGIN`, restoring the data to its previous state |
+
+We wrapped each of our 3 update queries inside transactions to demonstrate full control over the data flow.
+
+---
+
+### COMMIT Example (Update 2)
+
+Using **Update 2** (Restock Low-Inventory Supplies), we open a transaction with `BEGIN`, run the `UPDATE`, and then execute `COMMIT` to **save the change permanently**.
+
+After the `COMMIT`, the quantity change persists in the database and cannot be undone.
+
+```sql
+BEGIN;
+
+UPDATE CLEANNINGSUPPLIES
+SET quantity = quantity + 50
+WHERE quantity < 10;
+
+COMMIT;
+```
+
+![commitExample](stage1/images/commitExample.png)
+
+---
+
+### ROLLBACK Example (Update 2)
+
+Using the same **Update 2**, we open a transaction with `BEGIN`, run the `UPDATE`, verify the data has changed, and then execute `ROLLBACK` to **undo the change completely**.
+
+After the `ROLLBACK`, the quantity returns to its original value as if the `UPDATE` never happened.
+
+```sql
+BEGIN;
+
+UPDATE CLEANNINGSUPPLIES
+SET quantity = quantity + 50
+WHERE quantity < 10;
+
+ROLLBACK;
+```
+
+![afterRollbackExample](stage1/images/afterRollbackExample.png)
 
 
 
