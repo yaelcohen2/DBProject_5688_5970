@@ -38,6 +38,13 @@ This database system was designed to manage the Housekeeping department of a hot
   - [Index 1: Date Range Optimization](#index-1-optimizing-date-range-searches-in-the-cleaning-log)
   - [Index 2: Foreign Key Optimization](#index-2-optimizing-foreign-key-lookups-employee-performance-tracking)
   - [Index 3: Junction Table Optimization](#index-3-optimizing-inventory-queries-in-the-junction-table-uses)  
+
+- [Database Constraints Analysis](#database-constraints-analysis)
+  - [Constraint 1: Inventory Integrity](#1-inventory-integrity-cleanningsupplies-table)
+  - [Constraint 2: Score Range Validation](#2-score-range-validation-roomcheck-table)
+  - [Constraint 3: Task Uniqueness Prevention](#3-task-uniqueness-prevention-housekeepingtask-table)
+
+    
 ---
 
 ## 🔗 System Link
@@ -475,3 +482,45 @@ Execution Time AFTER Index Creation: ~0.179 milliseconds (ms).
 ![After Index 3](stage1/images/index3_after.png)
 
 Analysis: This represents a massive performance jump (around 150x faster). The dedicated index allowed the database to bypass the complex primary key scan and retrieve the inventory usage data almost instantaneously
+
+
+---
+
+
+## Database Constraints Report
+
+### 1. Inventory Integrity (CLEANNINGSUPPLIES Table)
+**Description:** A `CHECK` constraint that ensures the stock quantity in the table is never negative. This is critical for preventing logical errors in the management system where inventory levels could erroneously drop below zero.
+
+**SQL Code:**
+```sql
+-- Constraint 1: Check that the stock quantity is not negative
+ALTER TABLE CLEANNINGSUPPLIES 
+ADD CONSTRAINT chk_quantity_not_negative CHECK (quantity >= 0);
+```
+![Constraint1_Check_Error](stage1/images/Constraint1_Check_Error.png)
+
+---
+
+### 2. Score Range Validation (ROOMCHECK Table)
+**Description:** A `CHECK` constraint that limits the score column to values between 0 and 100 only. This enforces the business logic regarding scoring standards and ensures data accuracy.
+
+**SQL Code:**
+```sql
+-- Constraint 2: Check that the score is between 0 and 100
+ALTER TABLE ROOMCHECK 
+ADD CONSTRAINT chk_score_range CHECK (score >= 0 AND score <= 100);
+```
+![Constraint2_Check_Error](stage1/images/Constraint2_Check_Error.png)
+---
+
+### 3. Task Uniqueness Prevention (HOUSEKEEPINGTASK Table)
+**Description:** A `UNIQUE` constraint applied to a combination of three fields: Room ID (`roomid`), Task Type (`tasktypeid`), and Due Date (`duedate`). This ensures that the same task cannot be assigned to the same room more than once on a specific date.
+
+**SQL Code:**
+```sql
+-- Constraint 3: Ensure a unique task per room, type, and date
+ALTER TABLE housekeepingtask
+ADD CONSTRAINT unique_task_room_date UNIQUE (roomid, tasktypeid, duedate);
+```
+![Constraint3_Check_Error](stage1/images/Constraint3_Check_Error.png)
