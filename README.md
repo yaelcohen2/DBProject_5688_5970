@@ -39,10 +39,8 @@ This database system was designed to manage the Housekeeping department of a hot
   - [Index 2: Foreign Key Optimization](#index-2-optimizing-foreign-key-lookups-employee-performance-tracking)
   - [Index 3: Junction Table Optimization](#index-3-optimizing-inventory-queries-in-the-junction-table-uses)  
 
-- [Commit & Rollback](#commit--rollback)
-
 - [Database Constraints Analysis](#database-constraints-analysis)
-  - [Constraint 1: Inventory Integrity](#1-inventory-integrity-cleanningsupplies-table)
+  - [Constraint 1: Inventory Integrity](#1-inventory-integrity-cleaningsupplies-table)
   - [Constraint 2: Score Range Validation](#2-score-range-validation-roomcheck-table)
   - [Constraint 3: Task Uniqueness Prevention](#3-task-uniqueness-prevention-housekeepingtask-table)
 
@@ -65,7 +63,7 @@ The system allows tracking and management of the following entities:
   **Rooms (`ROOM`)**:
     Managing the list of physical rooms in the hotel and ongoing monitoring.
 
-  **Tasks and Cleaning Types (`TASKTYPE`, `HOUSEKEPINGTASK`)**:
+  **Tasks and Cleaning Types (`TASKTYPE`, `HOUSEKEEPINGTASK`)**:
     Defining task types (such as deep cleaning, evening turndown) and scheduling specific tasks for rooms, including priority and deadlines.
 
   **Statuses (`HOUSEKEEPINGSTATUS`)**:
@@ -74,13 +72,13 @@ The system allows tracking and management of the following entities:
   **Employees (`HOUSEKEEPINGEMPLOYEE`)**:
     Managing housekeeping employee details and shift schedules.
 
-  **Execution Log (`CLEANNINGLOG`)**:
+  **Execution Log (`CLEANINGLOG`)**:
     Real-time digital documentation of task execution, including start/end times and employee notes.
 
   **Quality Control (`ROOMCHECK`)**:
     Inspections performed by supervisors, assigning quality scores for cleaning, and maintaining inspection history for continuous improvement.
 
-  **Inventory and Supplies (`CLEANNINGSUPPLIES`, `USES`)**:
+  **Inventory and Supplies (`CLEANINGSUPPLIES`, `USES`)**:
     Managing inventory of cleaning supplies and tools, and precise tracking of quantities consumed per task.
 
   **Employee-Task Relations (`BELONGSTO`)**:
@@ -252,11 +250,11 @@ DELETE FROM CLEANINGLOG
 WHERE logID = 105;
 ```
 
-Before Update: ![before_DELETE1](stage1/images/beforeDeleteQueryQ1.png)
+Before: ![before_DELETE1](stage1/images/beforeDeleteQueryQ1.png)
 
 Execution Run : ![DELETE1](stage1/images/deleteQueryQ1.png)
 
-After Update: ![after_DELETE1](stage1/images/afterDeleteQueryQ1.png)
+After: ![after_DELETE1](stage1/images/afterDeleteQueryQ1.png)
 
 
 
@@ -279,11 +277,11 @@ AND taskID IN (
     )
 );
 ```
-Before Update: ![before_DELETE2](stage1/images/beforeDeleteQueryQ2.png)
+Before: ![before_DELETE2](stage1/images/beforeDeleteQueryQ2.png)
 
 Execution Run : ![DELETE2](stage1/images/deleteQueryQ2.png)
 
-After Update: ![after_DELETE2](stage1/images/afterDeleteQueryQ2.png)
+After: ![after_DELETE2](stage1/images/afterDeleteQueryQ2.png)
 
 
 ---
@@ -302,11 +300,11 @@ WHERE suppliesID = (
     WHERE name = 'Supply_Item_27'
 );
 ```
-Before Update: ![before_DELETE3](stage1/images/beforeDeleteQueryQ3.png)
+Before: ![before_DELETE3](stage1/images/beforeDeleteQueryQ3.png)
 
 Execution Run : ![DELETE3](stage1/images/deleteQueryQ3.png)
 
-After Update: ![after_DELETE](stage1/images/afterDeleteQueryQ3.png)
+After: ![after_DELETE3](stage1/images/afterDeleteQueryQ3.png)
 
 
 ---
@@ -324,7 +322,7 @@ It ensures that overdue tasks are immediately flagged for attention, preventing 
 
 **SQL Code:**
 ```sql
-UPDATE HOUSEKEPINGTASK
+UPDATE HOUSEKEEPINGTASK
 SET priority = 5
 WHERE statusID = (
     SELECT statusID 
@@ -350,7 +348,7 @@ It simulates an automated restocking mechanism to ensure essential supplies are 
 
 **SQL Code:**
 ```sql
-UPDATE CLEANNINGSUPPLIES
+UPDATE CLEANINGSUPPLIES
 SET quantity = quantity + 50
 WHERE quantity < 10;
 ```
@@ -379,7 +377,7 @@ SET statusID = (
 )
 WHERE taskID IN (
     SELECT taskID 
-    FROM CLEANNINGLOG 
+    FROM CLEANINGLOG 
     WHERE endTime IS NOT NULL
 )
 AND statusID != (
@@ -395,59 +393,7 @@ Execution Run: ![update3](stage1/images/update3.png)
 
 After Update: ![afterUpdate3](stage1/images/afterUpdate3.png)
 
----
 
-## Commit & Rollback
-
-PostgreSQL supports **transaction control** using `BEGIN`, `COMMIT`, and `ROLLBACK` commands. This allows us to group SQL statements into a single unit of work and decide whether to **save** or **undo** the changes before they become permanent.
-
-| Command | Purpose |
-|---------|---------|
-| `BEGIN` | Opens a new transaction block |
-| `COMMIT` | Saves all changes made since `BEGIN` permanently |
-| `ROLLBACK` | Undoes all changes made since `BEGIN`, restoring the data to its previous state |
-
-We wrapped each of our 3 update queries inside transactions to demonstrate full control over the data flow.
-
----
-
-### COMMIT Example (Update 2)
-
-Using **Update 2** (Restock Low-Inventory Supplies), we open a transaction with `BEGIN`, run the `UPDATE`, and then execute `COMMIT` to **save the change permanently**.
-
-After the `COMMIT`, the quantity change persists in the database and cannot be undone.
-
-```sql
-BEGIN;
-
-UPDATE CLEANNINGSUPPLIES
-SET quantity = quantity + 50
-WHERE quantity < 10;
-
-COMMIT;
-```
-
-![commitExample](stage1/images/commitExample.png)
-
----
-
-### ROLLBACK Example (Update 2)
-
-Using the same **Update 2**, we open a transaction with `BEGIN`, run the `UPDATE`, verify the data has changed, and then execute `ROLLBACK` to **undo the change completely**.
-
-After the `ROLLBACK`, the quantity returns to its original value as if the `UPDATE` never happened.
-
-```sql
-BEGIN;
-
-UPDATE CLEANNINGSUPPLIES
-SET quantity = quantity + 50
-WHERE quantity < 10;
-
-ROLLBACK;
-```
-
-![afterRollbackExample](stage1/images/afterRollbackExample.png)
 
 
 
@@ -543,13 +489,13 @@ Analysis: This represents a massive performance jump (around 150x faster). The d
 
 ## Database Constraints Report
 
-### 1. Inventory Integrity (CLEANNINGSUPPLIES Table)
+### 1. Inventory Integrity (CLEANINGSUPPLIES Table)
 **Description:** A `CHECK` constraint that ensures the stock quantity in the table is never negative. This is critical for preventing logical errors in the management system where inventory levels could erroneously drop below zero.
 
 **SQL Code:**
 ```sql
 -- Constraint 1: Check that the stock quantity is not negative
-ALTER TABLE CLEANNINGSUPPLIES 
+ALTER TABLE CLEANINGSUPPLIES 
 ADD CONSTRAINT chk_quantity_not_negative CHECK (quantity >= 0);
 ```
 ![Constraint1_Check_Error](stage1/images/Constraint1_Check_Error.png)
@@ -578,3 +524,113 @@ ALTER TABLE housekeepingtask
 ADD CONSTRAINT unique_task_room_date UNIQUE (roomid, tasktypeid, duedate);
 ```
 ![Constraint3_Check_Error](stage1/images/Constraint3_Check_Error.png)
+
+
+
+### Stage C: Integration and Views
+
+#### 1. Reverse Engineering of the New Department
+
+In this stage, we received the database backup for the "Human Resources and Employees" department. To integrate it with our system, we performed a reverse engineering process to reconstruct its logical structure (ERD).
+
+**Reverse Engineering Algorithm:**
+The process we followed to extract the Entity Relationship Diagram (ERD) from the existing database tables included the following steps:
+
+Mapping Tables to Entities: Every table in the database that was not a dedicated link table (Join table) was defined as an independent Entity in the ERD.
+
+Extracting Primary Keys (PK): Columns defined as Primary Keys in PostgreSQL were mapped as the identifying attributes (Key Attributes) in the diagram.
+
+Identifying Relationships via Foreign Keys (FK): Columns defined as Foreign Keys served as the indicators for relationships between entities.
+
+Determining Cardinality:
+
+If a Foreign Key was found within a table, it indicated a 1:N relationship (the table containing the FK is the "Many" side).
+
+If a table consisted primarily of two Foreign Keys pointing to two different tables, it was defined as an M:N relationship.
+
+Translating Columns to Attributes: Remaining fields in the tables (such as names, dates, and strings) were converted into Attributes for their respective entities.
+
+![New Department DSD](stage1/images/New Department Diagrams-DSD.png)
+
+![New Department ERD](stage1/images/New Department Diagrams-ERD.png)
+
+
+2. Integration Stage (Design Level)
+After obtaining both ERD diagrams, we designed a unified ERD that merges our Housekeeping Management system with the provided Employee Management system.
+
+Integration Decisions:
+Removal of Link Tables: In our original design, the connection between an employee and a task was handled through a separate relationship table. We decided to eliminate this table and add an employeeid column directly into our core tables: housekeepingtask, cleaninglog, and roomcheck. This decision simplifies data retrieval and reduces unnecessary joins.
+
+Referential Integrity: We established that every cleaning record or inspection must be linked to an existing employee from the unified Employees table to ensure that we can always identify the staff member responsible for any action in the hotel.
+
+Post-Integration Diagrams:
+Unified ERD:
+
+Post-Integration DSD:
+
+3. Technical Implementation (Integrate.sql)
+We implemented the changes in the existing database without deleting existing data. We utilized ALTER TABLE commands to add the new link columns (ADD COLUMN) and then defined the foreign key constraints (ADD CONSTRAINT). To ensure the views displayed relevant data for the report, we executed UPDATE commands to link our existing records to employees found in the provided backup.
+
+4. Views and Queries
+Below are the three Views created to combine data from both departments.
+
+View 1: Cleaning Assignments (cleaning_assignments_view)
+Description: This view joins the cleaning logs with the names of the employees responsible for them.
+
+*View Output (SELECT ):
+
+Queries on the View:
+
+Description: Count the number of cleanings performed by each employee by name.
+
+Code: SELECT firstname, lastname, COUNT(*) FROM cleaning_assignments_view GROUP BY firstname, lastname;
+
+Output:
+
+Description: Retrieve all cleanings performed by a specific employee (e.g., 'Dasi').
+
+Code: SELECT * FROM cleaning_assignments_view WHERE firstname = 'Dasi';
+
+Output:
+
+View 2: Room Inspection Report (room_inspection_report)
+Description: This view displays quality inspection results along with the details of the inspector who performed the check.
+
+*View Output (SELECT ):
+
+Queries on the View:
+
+Description: Display the average score given by each inspector.
+
+Code: SELECT inspector_first_name, AVG(score) FROM room_inspection_report GROUP BY inspector_first_name;
+
+Output:
+
+Description: Retrieve inspections that received a score lower than 3 (Rooms that failed inspection).
+
+Code: SELECT * FROM room_inspection_report WHERE score < 3;
+
+![view1](stage1/images/view1.png)
+
+View 3: Task Management Overview (task_employee_overview)
+Description: An integrated view centralizing open tasks, their priority levels, and the assigned employee.
+
+*View Output (SELECT ):
+
+Queries on the View:
+
+Description: Display only urgent tasks (Priority 1).
+
+Code: SELECT * FROM task_employee_overview WHERE priority = 1;
+
+![view2](stage1/images/view2.png)
+
+Description: Display tasks associated with a specific room (e.g., Room 104).
+
+Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
+
+![view3](stage1/images/view3.png)
+
+
+
+
