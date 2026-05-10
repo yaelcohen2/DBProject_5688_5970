@@ -44,6 +44,9 @@ This database system was designed to manage the Housekeeping department of a hot
   - [Constraint 2: Score Range Validation](#2-score-range-validation-roomcheck-table)
   - [Constraint 3: Task Uniqueness Prevention](#3-task-uniqueness-prevention-housekeepingtask-table)
 
+- [Stage C: Integration and Views](#stage-c-integration-and-views)
+
+
     
 ---
 
@@ -527,13 +530,14 @@ ADD CONSTRAINT unique_task_room_date UNIQUE (roomid, tasktypeid, duedate);
 
 
 
+
+
 ### Stage C: Integration and Views
 
-#### 1. Reverse Engineering of the New Department
-
+1. Reverse Engineering of the New Department
 In this stage, we received the database backup for the "Human Resources and Employees" department. To integrate it with our system, we performed a reverse engineering process to reconstruct its logical structure (ERD).
 
-**Reverse Engineering Algorithm:**
+Reverse Engineering Algorithm:
 The process we followed to extract the Entity Relationship Diagram (ERD) from the existing database tables included the following steps:
 
 Mapping Tables to Entities: Every table in the database that was not a dedicated link table (Join table) was defined as an independent Entity in the ERD.
@@ -554,7 +558,6 @@ Translating Columns to Attributes: Remaining fields in the tables (such as names
 
 ![New Department ERD](stage1/images/New Department Diagrams-ERD.png)
 
-
 2. Integration Stage (Design Level)
 After obtaining both ERD diagrams, we designed a unified ERD that merges our Housekeeping Management system with the provided Employee Management system.
 
@@ -565,71 +568,76 @@ Referential Integrity: We established that every cleaning record or inspection m
 
 Post-Integration Diagrams:
 Unified ERD:
+![Unified ERD](stage1/images/ERDmerged.png)
 
-Post-Integration DSD:
+Post-Integration DSD: 
+![Post Integration DSD](stage1/images/DSDMerged.png)
 
 3. Technical Implementation (Integrate.sql)
 We implemented the changes in the existing database without deleting existing data. We utilized ALTER TABLE commands to add the new link columns (ADD COLUMN) and then defined the foreign key constraints (ADD CONSTRAINT). To ensure the views displayed relevant data for the report, we executed UPDATE commands to link our existing records to employees found in the provided backup.
 
+📜 [Link to Integrate.sql](./stage3/Integrate.sql)
+
 4. Views and Queries
 Below are the three Views created to combine data from both departments.
+
+📜 [Link to Views.sql](./stage3/Views.sql)
 
 View 1: Cleaning Assignments (cleaning_assignments_view)
 Description: This view joins the cleaning logs with the names of the employees responsible for them.
 
-*View Output (SELECT ):
+![View1](stage1/images/view1.png)
 
 Queries on the View:
 
-Description: Count the number of cleanings performed by each employee by name.
+Count the number of cleanings performed by each employee by name.
 
 Code: SELECT firstname, lastname, COUNT(*) FROM cleaning_assignments_view GROUP BY firstname, lastname;
+![View Query1](stage1/images/viewQuery1.png)
 
-Output:
-
-Description: Retrieve all cleanings performed by a specific employee (e.g., 'Dasi').
+Retrieve all cleanings performed by a specific employee (e.g., 'Dasi').
 
 Code: SELECT * FROM cleaning_assignments_view WHERE firstname = 'Dasi';
 
-Output:
+![View Query2](stage1/images/viewQuery2.png)
 
 View 2: Room Inspection Report (room_inspection_report)
 Description: This view displays quality inspection results along with the details of the inspector who performed the check.
 
-*View Output (SELECT ):
+![View2 Output](stage1/images/view2.png)
 
 Queries on the View:
 
-Description: Display the average score given by each inspector.
+Display the average score given by each inspector.
 
 Code: SELECT inspector_first_name, AVG(score) FROM room_inspection_report GROUP BY inspector_first_name;
+ ![View Query3](stage1/images/viewQuery3.png)
 
-Output:
-
-Description: Retrieve inspections that received a score lower than 3 (Rooms that failed inspection).
+Retrieve inspections that received a score lower than 3.
 
 Code: SELECT * FROM room_inspection_report WHERE score < 3;
 
-![view1](stage1/images/view1.png)
+![View Query4](stage1/images/viewQuery4.png)
 
 View 3: Task Management Overview (task_employee_overview)
 Description: An integrated view centralizing open tasks, their priority levels, and the assigned employee.
 
-*View Output (SELECT ):
+![View3 Output](stage1/images/view3.png)
 
 Queries on the View:
 
-Description: Display only urgent tasks (Priority 1).
+Display only urgent tasks (Priority 1).
 
 Code: SELECT * FROM task_employee_overview WHERE priority = 1;
 
-![view2](stage1/images/view2.png)
+![View Query5](stage1/images/viewQuery5.png)
 
-Description: Display tasks associated with a specific room (e.g., Room 104).
+Display tasks associated with a specific room (e.g., Room 104).
 
 Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 
-![view3](stage1/images/view3.png)
+![View Query6](stage1/images/viewQuery6.png)
+
 
 
 

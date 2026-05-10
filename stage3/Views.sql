@@ -1,3 +1,7 @@
+-- ==========================================
+-- Part 1: Creating the Views
+-- ==========================================
+
 -- 1. View: Cleaning assignments with employee details
 -- This view joins the cleaning log with the unified employees table.
 -- Using 'logid' and 'employeeid' based on the integrated schema.
@@ -38,3 +42,39 @@ SELECT
     e.lastname
 FROM housekeepingtask ht
 JOIN employees e ON ht.employeeid = e.employeeid;
+
+
+-- ==========================================
+-- Part 2: Queries on the Views
+-- ==========================================
+
+-- Queries for View 1: cleaning_assignments_view
+-- Query 1.1: Count the number of cleanings performed by each employee by name.
+SELECT firstname, lastname, COUNT(*) 
+FROM cleaning_assignments_view 
+GROUP BY firstname, lastname;
+
+-- Query 1.2: Retrieve all cleanings performed by a specific employee (e.g., 'Dasi').
+SELECT * FROM cleaning_assignments_view 
+WHERE firstname = 'Dasi';
+
+
+-- Queries for View 2: room_inspection_report
+-- Query 2.1: Display the average score given by each inspector.
+SELECT inspector_first_name, AVG(score) 
+FROM room_inspection_report 
+GROUP BY inspector_first_name;
+
+-- Query 2.2: Retrieve inspections that received a score lower than 3.
+SELECT * FROM room_inspection_report 
+WHERE score < 3;
+
+
+-- Queries for View 3: task_employee_overview
+-- Query 3.1: Display only urgent tasks (Priority 1).
+SELECT * FROM task_employee_overview 
+WHERE priority = 1;
+
+-- Query 3.2: Display tasks associated with a specific room (e.g., Room 104).
+SELECT * FROM task_employee_overview 
+WHERE roomid = 104;
