@@ -685,3 +685,22 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 ![Create_Function2_Success](stage4/images/Create_Function2_Success.png)
 
 ![Run_Function2_Result](stage4/images/Run_Function2_Result.png)
+
+
+
+
+## 3. Procedures
+
+### Procedure 1: Assign Cleaning Task (DML, IF, Exceptions)
+
+**Description:** This procedure dynamically assigns a cleaning task to a specific housekeeping employee. It accepts a room ID, a task ID, and an employee ID as parameters. First, it checks if the room is already 'Clean'—if it is, it throws a custom **Exception**. If the room is not clean, it uses an **IF** statement to execute **DML** commands: it inserts a new row into the `cleaninglog` table with an 'Open' status and updates the `room` table to change the status to 'In Progress'.
+
+📜[Procedure_AssignTask.sql](https://github.com/yaelcohen2/DBProject_5688_5970/blob/main/stage4/Procedure_AssignTask.sql)
+
+**Proof of Execution:** Below are screenshots showing the successful creation of the procedure, a successful assignment of a task (verifying the DML insert and update), and a test demonstrating the custom exception being thrown when trying to clean an already clean room:
+
+![Create_Procedure1_Success](stage4/images/Create_Procedure1_Success.png)
+
+![Run_Procedure1_DML_Result](stage4/images/Run_Procedure1_DML_Result.png)
+
+![Procedure1_Exception_Test](stage4/images/Procedure1_Exception_Test.png)
