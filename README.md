@@ -639,6 +639,18 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 ![View Query6](stage1/images/viewQuery6.png)
 
 
+## Database Project Report – Phase 4
+ 
+## 1. Database Schema Changes (Alter Tables)
 
+**Description:** In preparation for writing the PL/pgSQL programs (functions, procedures, and triggers), several changes and extensions were made to the existing database tables to enable more complex, non-trivial logic. 
+* Added a `room_status` column (to track whether the room is clean or dirty) and an `urgency_level` column (to indicate cleaning priority) to the `room` table.
+* Added a `task_status` column to the `cleaninglog` table to represent the current state of a cleaning task (e.g., Open, Completed).
 
+📜 [AlterTable.sql](https://github.com/yaelcohen2/DBProject_5688_5970/blob/main/stage4/AlterTable.sql)
 
+**Proof of Execution:** Below are screenshots confirming that the `ALTER TABLE` commands ran successfully, along with the results of the test queries showing the newly added columns in the `room` and `cleaninglog` tables:
+
+![AlterTable_Success](stage4/images/1_AlterTable_Success.png)
+
+![New_Columns_Verification](stage4/images/2_New_Columns_Verification.png)
