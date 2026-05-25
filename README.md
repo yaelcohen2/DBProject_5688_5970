@@ -720,3 +720,18 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 ![Create_Procedure2_Success](stage4/images/Create_Procedure2_Success.png)
 
 ![Run_Procedure2_Before_After](stage4/images/Run_Procedure2_Before_After.png)
+
+
+## 4. Triggers
+
+### Trigger 1: Enforce Employee Workload Limit
+
+**Description:** This trigger ensures that a single housekeeping employee is not overwhelmed with too many tasks at once. It fires `BEFORE INSERT OR UPDATE` on the `cleaninglog` table. The trigger function checks how many 'Open' tasks the assigned employee currently has. If the employee already has 3 or more open tasks, the trigger aborts the operation and raises a custom exception to prevent assigning a new task.
+
+📜[Trigger_CheckWorkload.sql](https://github.com/yaelcohen2/DBProject_5688_5970/blob/main/stage4/Trigger_CheckWorkload.sql)
+
+**Proof of Execution:** Below is the screenshot showing the successful creation of the trigger function and the trigger itself. The second screenshot demonstrates the trigger in action: attempting to insert an excessive 'Open' task for an employee results in the custom exception being raised, successfully preventing the database insertion.
+
+![Create_Trigger_Success](stage4/images/Create_Trigger_Success.png)
+
+![Trigger_Exception_Result](stage4/images/Trigger_Exception_Result.png)
