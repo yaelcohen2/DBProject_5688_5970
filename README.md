@@ -704,3 +704,19 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 ![Run_Procedure1_DML_Result](stage4/images/Run_Procedure1_DML_Result.png)
 
 ![Procedure1_Exception_Test](stage4/images/Procedure1_Exception_Test.png)
+
+
+
+---
+
+### Procedure 2: Auto-Suspend Overdue Tasks (Loops, DML)
+
+**Description:** This procedure performs a bulk update at the end of a shift or schedule check. It uses a **Loop** to iterate through all tasks in the `cleaninglog` table. If it finds a task that is still marked as 'Open' but its scheduled `endtime` has already passed, it automatically executes a **DML UPDATE** command to change the `task_status` to 'Suspended'.
+
+📜[Procedure_SuspendOverdueTasks.sql](https://github.com/yaelcohen2/DBProject_5688_5970/blob/main/stage4/Procedure_SuspendOverdueTasks.sql)
+
+**Proof of Execution:** Below are screenshots showing the successful creation of the procedure, and a test demonstrating the results in the `cleaninglog` table after calling the procedure, proving that the overdue task was successfully updated to 'Suspended':
+
+![Create_Procedure2_Success](stage4/images/Create_Procedure2_Success.png)
+
+![Run_Procedure2_Before_After](stage4/images/Run_Procedure2_Before_After.png)
