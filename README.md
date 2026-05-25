@@ -639,7 +639,7 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 ![View Query6](stage1/images/viewQuery6.png)
 
 
-## Database Project Report – Phase 4
+##  Phase 4
  
 ## 1. Database Schema Changes (Alter Tables)
 
@@ -651,6 +651,37 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 
 **Proof of Execution:** Below are screenshots confirming that the `ALTER TABLE` commands ran successfully, along with the results of the test queries showing the newly added columns in the `room` and `cleaninglog` tables:
 
-![AlterTable_Success](stage4/images/1_AlterTable_Success.png)
+![AlterTable_Success](stage4/images/AlterTable_Success.png)
 
-![New_Columns_Verification](stage4/images/2_New_Columns_Verification.png)
+![New_Columns_Verification](stage4/images/New_Columns_Verification.png)
+
+
+
+## 2. Functions
+
+### Function 1: Get Dirty Rooms (Ref Cursor)
+
+**Description:** This function receives a minimum urgency level as a parameter and returns a `Ref Cursor`. The cursor contains all rooms that are currently marked as 'Dirty' and have an urgency level equal to or greater than the provided threshold. The results are ordered by urgency level in descending order.
+
+
+📜[Function_GetDirtyRooms.sql](https://github.com/yaelcohen2/DBProject_5688_5970/blob/main/stage4/Function_GetDirtyRooms.sql)
+
+**Proof of Execution:** Below is the screenshot showing the successful creation of the function, followed by a screenshot of an anonymous transaction block executing the function and fetching the records from the returned cursor:
+
+![Create_Function1_Success](stage4/images/Create_Function1_Success.png)
+
+![Run_Function1_Result](stage4/images/Run_Function1_Result.png)
+
+---
+
+### Function 2: Get Busy Cleaners Count (Explicit Cursor & Records)
+
+**Description:** This function counts and returns the total number of housekeeping employees who currently have at least one 'Open' task. It utilizes an **Explicit Cursor** to iterate through all employees in the `housekeepingemployee` table, fetching each row into a **Record** variable. Inside the loop, it checks the `cleaninglog` table for open tasks associated with that specific employee.
+
+📜[Function_GetBusyCleaners.sql](https://github.com/yaelcohen2/DBProject_5688_5970/blob/main/stage4/Function_GetBusyCleaners.sql)
+
+**Proof of Execution:** Below are the screenshots showing the successful creation of the function and the execution result showing the count of currently busy cleaners:
+
+![Create_Function2_Success](stage4/images/Create_Function2_Success.png)
+
+![Run_Function2_Result](stage4/images/Run_Function2_Result.png)
