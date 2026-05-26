@@ -769,3 +769,18 @@ This showcases how functions and procedures can be combined to create complex, a
 The following image shows the successful execution of the main program. The "Messages" tab displays the `RAISE NOTICE` output, confirming that the function found a dirty room and the procedure was called to handle overdue tasks.
 
 ![Program1 Execution](stage4/images/program1.png)
+
+### Main Program 2: Dynamic Task Assignment
+
+This program demonstrates a more complex workflow that involves finding a dirty room, finding an available employee, and then dynamically assigning the cleaning task.
+
+**Workflow:**
+1.  **Call Function `GetDirtyRooms()`**: The program calls a function to find a room that needs cleaning.
+2.  **Call Function `GetBusyCleaners()`**: It then calls another function to get a list of employees who are currently busy.
+3.  **Find Available Employee**: The program queries the employee table to find an employee who is *not* in the busy list.
+4.  **Call Procedure `AssignTask()`**: Finally, it calls the `AssignTask` procedure, passing the IDs of the dirty room and the available employee to create a new cleaning assignment in the system.
+
+**Proof of Execution:**
+The image below shows the program running. The `RAISE NOTICE` messages confirm that a dirty room and an available employee were found, and that the `AssignTask` procedure was called to create the new task.
+
+![Program2 Execution](stage4/images/program2.png)
