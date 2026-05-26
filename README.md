@@ -532,7 +532,7 @@ ADD CONSTRAINT chk_score_range CHECK (score >= 0 AND score <= 100);
 ALTER TABLE housekeepingtask
 ADD CONSTRAINT unique_task_room_date UNIQUE (roomid, tasktypeid, duedate);
 ```
-![Constraint3_Check_Error](stage1/images/Constraint3_Check_Error.png)
+![Constraint3_Check_Error](stage2/images/Constraint3_Check_Error.png)
 
 
 
