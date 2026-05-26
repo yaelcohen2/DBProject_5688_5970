@@ -45,6 +45,12 @@ This database system was designed to manage the Housekeeping department of a hot
   - [Constraint 3: Task Uniqueness Prevention](#3-task-uniqueness-prevention-housekeepingtask-table)
 
 - [Stage C: Integration and Views](#stage-c-integration-and-views)
+- [Phase 4: Advanced SQL Programming](#-phase-4)
+  - [Database Schema Changes](#1-database-schema-changes-alter-tables)
+  - [Functions](#2-functions)
+  - [Procedures](#3-procedures)
+  - [Triggers](#4-triggers)
+  - [Main Program](#5-main-program)
 
 
     
@@ -647,7 +653,7 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 * Added a `room_status` column (to track whether the room is clean or dirty) and an `urgency_level` column (to indicate cleaning priority) to the `room` table.
 * Added a `task_status` column to the `cleaninglog` table to represent the current state of a cleaning task (e.g., Open, Completed).
 
-📜 [AlterTable.sql](https://github.com/yaelcohen2/DBProject_5688_5970/blob/main/stage4/AlterTable.sql)
+📜 [AlterTable.sql](./stage4/AlterTable.sql)
 
 **Proof of Execution:** Below are screenshots confirming that the `ALTER TABLE` commands ran successfully, along with the results of the test queries showing the newly added columns in the `room` and `cleaninglog` tables:
 
@@ -664,7 +670,7 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 **Description:** This function receives a minimum urgency level as a parameter and returns a `Ref Cursor`. The cursor contains all rooms that are currently marked as 'Dirty' and have an urgency level equal to or greater than the provided threshold. The results are ordered by urgency level in descending order.
 
 
-📜[Function_GetDirtyRooms.sql](https://github.com/yaelcohen2/DBProject_5688_5970/blob/main/stage4/Function_GetDirtyRooms.sql)
+📜 [Function_GetDirtyRooms.sql](./stage4/Function_GetDirtyRooms.sql)
 
 **Proof of Execution:** Below is the screenshot showing the successful creation of the function, followed by a screenshot of an anonymous transaction block executing the function and fetching the records from the returned cursor:
 
@@ -678,7 +684,7 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 
 **Description:** This function counts and returns the total number of housekeeping employees who currently have at least one 'Open' task. It utilizes an **Explicit Cursor** to iterate through all employees in the `housekeepingemployee` table, fetching each row into a **Record** variable. Inside the loop, it checks the `cleaninglog` table for open tasks associated with that specific employee.
 
-📜[Function_GetBusyCleaners.sql](https://github.com/yaelcohen2/DBProject_5688_5970/blob/main/stage4/Function_GetBusyCleaners.sql)
+📜 [Function_GetBusyCleaners.sql](./stage4/Function_GetBusyCleaners.sql)
 
 **Proof of Execution:** Below are the screenshots showing the successful creation of the function and the execution result showing the count of currently busy cleaners:
 
@@ -695,7 +701,7 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 
 **Description:** This procedure dynamically assigns a cleaning task to a specific housekeeping employee. It accepts a room ID, a task ID, and an employee ID as parameters. First, it checks if the room is already 'Clean'—if it is, it throws a custom **Exception**. If the room is not clean, it uses an **IF** statement to execute **DML** commands: it inserts a new row into the `cleaninglog` table with an 'Open' status and updates the `room` table to change the status to 'In Progress'.
 
-📜[Procedure_AssignTask.sql](https://github.com/yaelcohen2/DBProject_5688_5970/blob/main/stage4/Procedure_AssignTask.sql)
+📜 [Procedure_AssignTask.sql](./stage4/Procedure_AssignTask.sql)
 
 **Proof of Execution:** Below are screenshots showing the successful creation of the procedure, a successful assignment of a task (verifying the DML insert and update), and a test demonstrating the custom exception being thrown when trying to clean an already clean room:
 
@@ -713,7 +719,7 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 
 **Description:** This procedure performs a bulk update at the end of a shift or schedule check. It uses a **Loop** to iterate through all tasks in the `cleaninglog` table. If it finds a task that is still marked as 'Open' but its scheduled `endtime` has already passed, it automatically executes a **DML UPDATE** command to change the `task_status` to 'Suspended'.
 
-📜[Procedure_SuspendOverdueTasks.sql](https://github.com/yaelcohen2/DBProject_5688_5970/blob/main/stage4/Procedure_SuspendOverdueTasks.sql)
+📜 [Procedure_SuspendOverdueTasks.sql](./stage4/Procedure_SuspendOverdueTasks.sql)
 
 **Proof of Execution:** Below are screenshots showing the successful creation of the procedure, and a test demonstrating the results in the `cleaninglog` table after calling the procedure, proving that the overdue task was successfully updated to 'Suspended':
 
@@ -728,7 +734,7 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 
 **Description:** This trigger ensures that a single housekeeping employee is not overwhelmed with too many tasks at once. It fires `BEFORE INSERT OR UPDATE` on the `cleaninglog` table. The trigger function checks how many 'Open' tasks the assigned employee currently has. If the employee already has 3 or more open tasks, the trigger aborts the operation and raises a custom exception to prevent assigning a new task.
 
-📜[Trigger_CheckWorkload.sql](https://github.com/yaelcohen2/DBProject_5688_5970/blob/main/stage4/Trigger_CheckWorkload.sql)
+📜 [Trigger_CheckWorkload.sql](./stage4/Trigger_CheckWorkload.sql)
 
 **Proof of Execution:** Below is the screenshot showing the successful creation of the trigger function and the trigger itself. The second screenshot demonstrates the trigger in action: attempting to insert an excessive 'Open' task for an employee results in the custom exception being raised, successfully preventing the database insertion.
 
@@ -742,7 +748,7 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 
 **Description:** This trigger prevents the accidental deletion of a room if it is currently being cleaned. It fires `BEFORE DELETE` on the `room` table. The trigger function checks the `OLD.room_status`. If the status is 'In Progress', it blocks the deletion process and raises a custom exception. 
 
-📜[Trigger_PreventRoomDelete.sql](https://github.com/yaelcohen2/DBProject_5688_5970/blob/main/stage4/Trigger_PreventRoomDelete.sql)
+📜 [Trigger_PreventRoomDelete.sql](./stage4/Trigger_PreventRoomDeletion.sql)
 
 **Proof of Execution:** Below is the screenshot showing the successful creation of the trigger, followed by a screenshot demonstrating an attempt to delete a room that is 'In Progress', which successfully triggers the custom exception and prevents the deletion.
 
@@ -750,8 +756,6 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 
 ![Trigger2_Exception_Result](stage4/images/Trigger2_Exception_Result.png)
 
-![program1](stage4/images/program1.png)
-![program2](stage4/images/program2.png)
 
 ## 5. Main Program
 
