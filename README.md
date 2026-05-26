@@ -540,95 +540,54 @@ ADD CONSTRAINT unique_task_room_date UNIQUE (roomid, tasktypeid, duedate);
 
 ### Stage C: Integration and Views
 
-In this stage, we integrated a new "Human Resources" department database with our existing Housekeeping system.
+In this stage, we integrated a new "Human Resources" department database with our existing Housekeeping system. The goal was to create a unified system where housekeeping tasks and inspections are directly linked to the employees who perform them.
 
-#### 1. Diagrams Before Integration
+#### 1. Analysis of Existing Systems
 
-To begin, we analyzed the diagrams for both the existing Housekeeping system and the new Human Resources department.
+First, we analyzed the diagrams for both the existing Housekeeping system and the new Human Resources department to understand their structure.
 
-**Housekeeping Department ERD & DSD:**
+**Original Housekeeping Department Diagrams:**
 ![ERD](stage1/images/ERD.png)
 ![DSD](stage1/images/DSD.png)
 
-**New Human Resources Department ERD & DSD:**
+**New Human Resources Department Diagrams:**
 ![New Department ERD](stage1/images/New%20Department%20Diagrams-ERD.png)
 ![New Department DSD](stage1/images/New%20Department%20Diagrams-DSD.png)
 
-#### 2. Post-Integration Diagrams (Merged)
+#### 2. Merged System Design
 
-After analyzing both systems, we designed a unified model that merges the two departments. Key decisions included adding an `employeeid` column directly into our core tables (`housekeepingtask`, `cleaninglog`, `roomcheck`) to simplify data retrieval and ensure every action is linked to a specific employee.
+After analyzing both systems, we designed a unified model that merges the two departments. The key decision was to add an `employeeid` column directly into our core tables (`housekeepingtask`, `cleaninglog`, `roomcheck`). This simplifies data retrieval by removing the need for a separate linking table and ensures every action is tied to a specific employee.
 
 **Unified ERD (Merged):**
-![Unified ERD](stage1/images/ERDmerged.png)
+![ERDmerge](stage1/images/ERDmerge.png)
 
 **Unified DSD (Merged):** 
-![Post Integration DSD](stage1/images/DSDMerged.png)
+![DSDmerge](stage1/images/DRDmerge.png)
 
-#### 3. Technical Implementation (Integrate.sql)
-We implemented the changes in the existing database without deleting existing data. We utilized `ALTER TABLE` commands to add the new link columns (`ADD COLUMN`) and then defined the foreign key constraints (`ADD CONSTRAINT`). To ensure the views displayed relevant data for the report, we executed `UPDATE` commands to link our existing records to employees found in the provided backup.
+#### 3. Technical Implementation
+
+The integration was performed without losing existing data. We used `ALTER TABLE` commands to add the new `employeeid` columns and then defined the foreign key constraints to link them to the main employee table.
 
 📜 [Link to Integrate.sql](./stage3/Integrate.sql)
 
-#### 4. Views and Queries
-Below are the three Views created to combine data from both departments.
+#### 4. Creating Integrated Views
+
+To demonstrate the power of the integrated system, we created three views that combine data from both the housekeeping and human resources departments.
 
 📜 [Link to Views.sql](./stage3/Views.sql)
 
-View 1: Cleaning Assignments (cleaning_assignments_view)
-Description: This view joins the cleaning logs with the names of the employees responsible for them.
-
+**View 1: Cleaning Assignments (`cleaning_assignments_view`)**
+This view joins cleaning logs with the names of the employees responsible, providing a clear overview of who cleaned what.
 ![View1](stage1/images/view1.png)
 
-Queries on the View:
-
-Count the number of cleanings performed by each employee by name.
-
-Code: SELECT firstname, lastname, COUNT(*) FROM cleaning_assignments_view GROUP BY firstname, lastname;
-![View Query1](stage1/images/viewQuery1.png)
-
-Retrieve all cleanings performed by a specific employee (e.g., 'Dasi').
-
-Code: SELECT * FROM cleaning_assignments_view WHERE firstname = 'Dasi';
-
-![View Query2](stage1/images/viewQuery2.png)
-
-View 2: Room Inspection Report (room_inspection_report)
-Description: This view displays quality inspection results along with the details of the inspector who performed the check.
-
+**View 2: Room Inspection Report (`room_inspection_report`)**
+This view displays quality inspection results along with the details of the inspector who performed the check.
 ![View2 Output](stage1/images/view2.png)
 
-Queries on the View:
-
-Display the average score given by each inspector.
-
-Code: SELECT inspector_first_name, AVG(score) FROM room_inspection_report GROUP BY inspector_first_name;
- ![View Query3](stage1/images/viewQuery3.png)
-
-Retrieve inspections that received a score lower than 3.
-
-Code: SELECT * FROM room_inspection_report WHERE score < 3;
-
-![View Query4](stage1/images/viewQuery4.png)
-
-View 3: Task Management Overview (task_employee_overview)
-Description: An integrated view centralizing open tasks, their priority levels, and the assigned employee.
-
+**View 3: Task Management Overview (`task_employee_overview`)**
+This view provides a centralized look at open tasks, their priority levels, and the employees assigned to them.
 ![View3 Output](stage1/images/view3.png)
-
-Queries on the View:
-
-Display only urgent tasks (Priority 1).
-
-Code: SELECT * FROM task_employee_overview WHERE priority = 1;
-
-![View Query5](stage1/images/viewQuery5.png)
-
-Display tasks associated with a specific room (e.g., Room 104).
-
-Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
-
-![View Query6](stage1/images/viewQuery6.png)
-
+---
 
 ##  Phase 4
  
