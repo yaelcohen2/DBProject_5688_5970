@@ -749,3 +749,6 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 ![Create_Trigger2_Success](stage4/images/Create_Trigger2_Success.png)
 
 ![Trigger2_Exception_Result](stage4/images/Trigger2_Exception_Result.png)
+
+![program1](stage4/images/program1.png)
+![program2](stage4/images/program2.png)
