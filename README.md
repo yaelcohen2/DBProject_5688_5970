@@ -550,9 +550,7 @@ First, we analyzed the diagrams for both the existing Housekeeping system and th
 ![ERD](stage1/images/ERD.png)
 ![DSD](stage1/images/DSD.png)
 
-**New Human Resources Department Diagrams:**
-![New Department ERD](stage1/images/New%20Department%20Diagrams-ERD.png)
-![New Department DSD](stage1/images/New%20Department%20Diagrams-DSD.png)
+
 
 #### 2. Merged System Design
 
