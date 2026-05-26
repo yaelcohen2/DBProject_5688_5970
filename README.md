@@ -540,51 +540,36 @@ ADD CONSTRAINT unique_task_room_date UNIQUE (roomid, tasktypeid, duedate);
 
 ### Stage C: Integration and Views
 
-1. Reverse Engineering of the New Department
-In this stage, we received the database backup for the "Human Resources and Employees" department. To integrate it with our system, we performed a reverse engineering process to reconstruct its logical structure (ERD).
+In this stage, we integrated a new "Human Resources" department database with our existing Housekeeping system.
 
-Reverse Engineering Algorithm:
-The process we followed to extract the Entity Relationship Diagram (ERD) from the existing database tables included the following steps:
+#### 1. Diagrams Before Integration
 
-Mapping Tables to Entities: Every table in the database that was not a dedicated link table (Join table) was defined as an independent Entity in the ERD.
+To begin, we analyzed the diagrams for both the existing Housekeeping system and the new Human Resources department.
 
-Extracting Primary Keys (PK): Columns defined as Primary Keys in PostgreSQL were mapped as the identifying attributes (Key Attributes) in the diagram.
+**Housekeeping Department ERD & DSD:**
+![ERD](stage1/images/ERD.png)
+![DSD](stage1/images/DSD.png)
 
-Identifying Relationships via Foreign Keys (FK): Columns defined as Foreign Keys served as the indicators for relationships between entities.
+**New Human Resources Department ERD & DSD:**
+![New Department ERD](stage1/images/New%20Department%20Diagrams-ERD.png)
+![New Department DSD](stage1/images/New%20Department%20Diagrams-DSD.png)
 
-Determining Cardinality:
+#### 2. Post-Integration Diagrams (Merged)
 
-If a Foreign Key was found within a table, it indicated a 1:N relationship (the table containing the FK is the "Many" side).
+After analyzing both systems, we designed a unified model that merges the two departments. Key decisions included adding an `employeeid` column directly into our core tables (`housekeepingtask`, `cleaninglog`, `roomcheck`) to simplify data retrieval and ensure every action is linked to a specific employee.
 
-If a table consisted primarily of two Foreign Keys pointing to two different tables, it was defined as an M:N relationship.
-
-Translating Columns to Attributes: Remaining fields in the tables (such as names, dates, and strings) were converted into Attributes for their respective entities.
-
-![New Department DSD](stage1/images/New Department Diagrams-DSD.png)
-
-![New Department ERD](stage1/images/New Department Diagrams-ERD.png)
-
-2. Integration Stage (Design Level)
-After obtaining both ERD diagrams, we designed a unified ERD that merges our Housekeeping Management system with the provided Employee Management system.
-
-Integration Decisions:
-Removal of Link Tables: In our original design, the connection between an employee and a task was handled through a separate relationship table. We decided to eliminate this table and add an employeeid column directly into our core tables: housekeepingtask, cleaninglog, and roomcheck. This decision simplifies data retrieval and reduces unnecessary joins.
-
-Referential Integrity: We established that every cleaning record or inspection must be linked to an existing employee from the unified Employees table to ensure that we can always identify the staff member responsible for any action in the hotel.
-
-Post-Integration Diagrams:
-Unified ERD:
+**Unified ERD (Merged):**
 ![Unified ERD](stage1/images/ERDmerged.png)
 
-Post-Integration DSD: 
+**Unified DSD (Merged):** 
 ![Post Integration DSD](stage1/images/DSDMerged.png)
 
-3. Technical Implementation (Integrate.sql)
-We implemented the changes in the existing database without deleting existing data. We utilized ALTER TABLE commands to add the new link columns (ADD COLUMN) and then defined the foreign key constraints (ADD CONSTRAINT). To ensure the views displayed relevant data for the report, we executed UPDATE commands to link our existing records to employees found in the provided backup.
+#### 3. Technical Implementation (Integrate.sql)
+We implemented the changes in the existing database without deleting existing data. We utilized `ALTER TABLE` commands to add the new link columns (`ADD COLUMN`) and then defined the foreign key constraints (`ADD CONSTRAINT`). To ensure the views displayed relevant data for the report, we executed `UPDATE` commands to link our existing records to employees found in the provided backup.
 
 📜 [Link to Integrate.sql](./stage3/Integrate.sql)
 
-4. Views and Queries
+#### 4. Views and Queries
 Below are the three Views created to combine data from both departments.
 
 📜 [Link to Views.sql](./stage3/Views.sql)
