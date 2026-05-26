@@ -8,7 +8,7 @@ BEGIN
     -- A task is considered "pending" if its status is not 'Clean' or 'Inspected'.
     SELECT COUNT(ht.taskID)
     INTO v_pending_tasks
-    FROM HOUSEKEEPINGTASK ht
+    FROM housekeepingtask ht
     JOIN HOUSEKEEPINGSTATUS hs ON ht.statusID = hs.statusID
     WHERE ht.roomID = OLD.roomID
       AND hs.statusName NOT IN ('Clean', 'Inspected');
