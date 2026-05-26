@@ -752,3 +752,20 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 
 ![program1](stage4/images/program1.png)
 ![program2](stage4/images/program2.png)
+
+## 5. Main Program
+
+### Main Program 1: Automated Task Management
+
+This program demonstrates a complete, automated workflow for managing housekeeping tasks. It calls a function to identify work that needs to be done and then calls a procedure to act on that information.
+
+**Workflow:**
+1.  **Call Function `GetDirtyRooms()`**: The program first calls a function to query the database and find a room that is currently marked with a 'Dirty' status.
+2.  **Call Procedure `SuspendOverdueTasks()`**: After identifying a room, the program then calls a procedure that automatically reviews all tasks and updates the status of any that are past their due date to 'Maintenance Required'.
+
+This showcases how functions and procedures can be combined to create complex, automated business logic directly within the database.
+
+**Proof of Execution:**
+The following image shows the successful execution of the main program. The "Messages" tab displays the `RAISE NOTICE` output, confirming that the function found a dirty room and the procedure was called to handle overdue tasks.
+
+![Program1 Execution](stage4/images/program1.png)
