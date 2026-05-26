@@ -735,3 +735,17 @@ Code: SELECT * FROM task_employee_overview WHERE roomid = 104;
 ![Create_Trigger_Success](stage4/images/Create_Trigger_Success.png)
 
 ![Trigger_Exception_Result](stage4/images/Trigger_Exception_Result.png)
+
+
+
+### Trigger 2: Prevent Deletion of Active Rooms (UPDATE/DELETE)
+
+**Description:** This trigger prevents the accidental deletion of a room if it is currently being cleaned. It fires `BEFORE DELETE` on the `room` table. The trigger function checks the `OLD.room_status`. If the status is 'In Progress', it blocks the deletion process and raises a custom exception. 
+
+📜[Trigger_PreventRoomDelete.sql](https://github.com/yaelcohen2/DBProject_5688_5970/blob/main/stage4/Trigger_PreventRoomDelete.sql)
+
+**Proof of Execution:** Below is the screenshot showing the successful creation of the trigger, followed by a screenshot demonstrating an attempt to delete a room that is 'In Progress', which successfully triggers the custom exception and prevents the deletion.
+
+![Create_Trigger2_Success](stage4/images/Create_Trigger2_Success.png)
+
+![Trigger2_Exception_Result](stage4/images/Trigger2_Exception_Result.png)
