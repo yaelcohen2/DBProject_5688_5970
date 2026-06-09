@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from db_connection import get_connection 
+from dashboard import HotelDashboard # וודאי שקובץ dashboard.py נמצא באותה תיקייה
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
@@ -29,19 +30,20 @@ class HotelLoginScreen(ctk.CTk):
         email_input = self.username_entry.get()
         name_input = self.password_entry.get()
         
-        # חיבור למסד הנתונים
         conn = get_connection()
         if conn:
             try:
                 cursor = conn.cursor()
-                # שאילתה שבודקת התאמה של אימייל ושם פרטי
+                # שאילתה לבדיקת התאמת אימייל ושם
                 query = "SELECT * FROM employees WHERE email = %s AND firstname = %s"
                 cursor.execute(query, (email_input, name_input))
                 user = cursor.fetchone()
                 
                 if user:
-                    self.error_label.configure(text="התחברת בהצלחה!", text_color="green")
-                    print(f"שלום {user[1]}, ברוך הבא!") 
+                    # סגירת החלון הנוכחי ומעבר ל-Dashboard
+                    self.destroy() 
+                    app = HotelDashboard(user[1]) # מעבירים את השם שנמצא ב-user[1]
+                    app.mainloop()
                 else:
                     self.error_label.configure(text="פרטים אינם תואמים", text_color="red")
                 
@@ -52,7 +54,6 @@ class HotelLoginScreen(ctk.CTk):
                 print(e)
         else:
             self.error_label.configure(text="אין חיבור למסד הנתונים", text_color="red")
-            
 
 if __name__ == "__main__":
     app = HotelLoginScreen()
